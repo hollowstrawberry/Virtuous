@@ -1,0 +1,144 @@
+﻿/*using System;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Virtuous.Orbitals;
+
+namespace Virtuous
+{
+    class Orbital : GlobalProjectile
+    {
+        public override bool InstancePerEntity
+        {
+            get { return true; }
+        }
+
+        public override bool CloneNewInstances
+        {
+            get { return true; }
+        }
+
+        public int type = OrbitalID.None;
+        public Vector2 relativePos; //Relative position to the player
+        public float distance; //Distance away from the player
+        public int dyingTime = 0;
+
+        public float orbitingSpeed = 0;
+        public float rotationSpeed = 0;
+        public Color? lightColor = null;
+
+        private bool firstTick = true;
+
+
+        public void FirstTick(Projectile projectile)
+        {
+            Player player = Main.player[projectile.owner];
+
+            //The projectile's desired rotation and position was passed as its velocity, so we utilize it then set it to 0 so it doesn't move
+            projectile.rotation = projectile.velocity.ToRotation();
+            relativePos = projectile.velocity.SafeNormalize(Vector2.UnitY) * distance;
+            projectile.velocity = Vector2.Zero;
+            projectile.Center = player.MountedCenter + relativePos;
+        }
+
+        public void HandleMovement(Projectile projectile)
+        {
+            Player player = Main.player[projectile.owner];
+
+            relativePos = relativePos.RotatedBy(orbitingSpeed).SafeNormalize(Vector2.UnitX) * distance; //Rotates the projectile around the player and resets its distance
+            projectile.Center = player.MountedCenter + relativePos; //Moves the projectile to the new position around the player
+            projectile.rotation += rotationSpeed; //Rotates the projectile itself
+        }
+
+        public void DyingBegin(Projectile projectile)
+        {
+            projectile.damage *= 2;
+            projectile.velocity = projectile.rotation.ToRotationVector2() * 10; //Shoots out in the direction it's pointing
+        }
+
+        public void Dying(Projectile projectile)
+        {
+            projectile.alpha += (int)(200f / dyingTime);
+        }
+
+
+        public override void AI(Projectile projectile)
+        {
+            if (type != OrbitalID.None) //Orbital AI
+            {
+                Player player = Main.player[projectile.owner];
+                OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
+
+                if (!orbitalPlayer.orbitalActive[type]) //Keep it alive only while the summon is active
+                {
+                    projectile.Kill();
+                }
+                else
+                {
+                    if (firstTick)
+                    {
+                        FirstTick(projectile);
+                        firstTick = false;
+                    }
+
+                    HandleMovement(projectile);
+
+                    //Adds light to the orbital
+                    if (lightColor != null)
+                    {
+                        Color color = (Color)lightColor;
+                        Lighting.AddLight(projectile.position, color.R, color.G, color.B);
+                    }
+
+                    //Keeps the orbital from dying naturally
+                    if (dyingTime > 0)
+                    {
+                        projectile.timeLeft = dyingTime;
+                    }
+                    else
+                    {
+                        projectile.timeLeft = 2;
+                    }
+
+                    //Performs the end-of-life behavior
+                    if (orbitalPlayer.orbitalTime == dyingTime)
+                    {
+                        DyingBegin(projectile);
+                    }
+                    else if (orbitalPlayer.orbitalTime < dyingTime)
+                    {
+                        Dying(projectile);
+                    }
+                }
+            }
+
+
+            else
+            {
+                base.AI(projectile);
+            }
+        }
+
+
+        public override bool? CanCutTiles(Projectile projectile)
+        {
+            if (type != OrbitalID.None)
+            {
+                return false; //So they don't become a lawnmower
+            }
+            else return base.CanCutTiles(projectile);
+        }
+
+
+        public override Color? GetAlpha(Projectile projectile, Color lightColor)
+        {
+            if (type != OrbitalID.None)
+            {
+                return new Color(255, 255, 255, 100) * projectile.Opacity;
+            }
+            else return base.GetAlpha(projectile, lightColor);
+        }
+    }
+}
+*/

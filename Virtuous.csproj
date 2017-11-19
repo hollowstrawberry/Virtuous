@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8298EAB6-0586-4BDA-9483-83624B66B13A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Virtuous</RootNamespace>
+    <AssemblyName>Virtuous</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\..\..\..\..\Program Files %28x86%29\Steam\SteamApps\common\Terraria\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Dusts\RainbowDust.cs" />
+    <Compile Include="VirtuousItem.cs" />
+    <Compile Include="Items\Accessories\Archangel.cs" />
+    <Compile Include="Items\Accessories\AstroBoots.cs" />
+    <Compile Include="Items\Accessories\TerraWalkers.cs" />
+    <Compile Include="Items\CrusherMace.cs" />
+    <Compile Include="Items\EtherSlit.cs" />
+    <Compile Include="Items\Fireplower.cs" />
+    <Compile Include="Items\FlurryFist.cs" />
+    <Compile Include="Items\LionsMane.cs" />
+    <Compile Include="Orbitals\SpiralSword_Item.cs" />
+    <Compile Include="Orbitals\Bubble_Item.cs" />
+    <Compile Include="Orbitals\Bullseye_Item.cs" />
+    <Compile Include="Orbitals\HolyLight_Item.cs" />
+    <Compile Include="Orbitals\Facade_Item.cs" />
+    <Compile Include="Orbitals\Shuriken_Item.cs" />
+    <Compile Include="Orbitals\SacDagger_Item.cs" />
+    <Compile Include="Orbitals\Sailspike_Item.cs" />
+    <Compile Include="Orbitals\SpikedBubble_Item.cs" />
+    <Compile Include="Items\RainBow.cs" />
+    <Compile Include="Items\StaffOfFlinging.cs" />
+    <Compile Include="Items\TheGobbler.cs" />
+    <Compile Include="Items\TitanShield.cs" />
+    <Content Include="Orbital.txt" />
+    <Compile Include="Projectiles\ProjGelFire.cs" />
+    <Compile Include="Projectiles\ProjGobblerItem.cs" />
+    <Compile Include="Projectiles\ProjLionsMane.cs" />
+    <Compile Include="Projectiles\ProjTitanAOE.cs" />
+    <Compile Include="VirtuousNPC.cs" />
+    <Compile Include="Virtuous.cs" />
+    <Compile Include="OrbitalItem.cs" />
+    <Compile Include="OrbitalPlayer.cs" />
+    <Compile Include="VirtuousPlayer.cs" />
+    <Compile Include="Orbitals\Bubble_Proj.cs" />
+    <Compile Include="Orbitals\Bullseye_Proj.cs" />
+    <Compile Include="Orbitals\Facade_Proj.cs" />
+    <Compile Include="Orbitals\HolyLight_Proj.cs" />
+    <Compile Include="Orbitals\SacDagger_Proj.cs" />
+    <Compile Include="Orbitals\Sailspike_Proj.cs" />
+    <Compile Include="Orbitals\Shuriken_Proj.cs" />
+    <Compile Include="Orbitals\SpikedBubble_Proj.cs" />
+    <Compile Include="Orbitals\SpiralSword_Proj.cs" />
+    <Compile Include="Projectiles\ProjCrusherPillar.cs" />
+    <Compile Include="Projectiles\ProjFist.cs" />
+    <Compile Include="Projectiles\ProjFlinging.cs" />
+    <Compile Include="Projectiles\ProjSummonedSword.cs" />
+    <Compile Include="Projectiles\RainbowArrow.cs" />
+    <Compile Include="Sounds\Item\Slash.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Game\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Graphics\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Graphics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Xact\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Xact.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="Terraria">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\terraria\Terraria.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\terraria\Terraria.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

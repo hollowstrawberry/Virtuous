@@ -1,0 +1,6 @@
+author = Samrux
+version = 0.2
+displayName = Virtuous Weapon Pack
+homepage = https://discord.gg/ymCRQZr
+buildIgnore = *.csproj, *.user, *.sln, obj\*, bin\*, .vs\*, .tmp*.drivedownload\*, *.pdn, Orbitals\*.txt
+includePDB = true
