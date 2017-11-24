@@ -5,3 +5,6 @@ homepage = https://discord.gg/ymCRQZr
 buildIgnore = *.csproj, *.user, *.sln, obj\*, bin\*, .vs\*, .tmp*.drivedownload\*, *.pdn, Orbitals\*.txt
 languageVersion = 6
 includePDB = false
+hideResources = false
+hideCode = false
+includeSource = true
