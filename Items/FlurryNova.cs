@@ -1,13 +1,15 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
+using static Virtuous.Tools;
 
 namespace Virtuous.Items
 {
     [AutoloadEquip(EquipType.HandsOn, EquipType.HandsOff)]
-    public class FlurryFist : ModItem
+    public class FlurryNova : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -23,8 +25,9 @@ namespace Virtuous.Items
             item.height = 36;
             item.UseSound = SoundID.Item1;
             item.crit = 20;
-            item.knockBack = 2f;
+            item.knockBack = 3f;
             item.melee = true;
+            item.autoReuse = true;
             item.rare = 9;
             item.value = Item.sellPrice(0, 20, 0, 0);
             
@@ -34,7 +37,6 @@ namespace Virtuous.Items
             item.useAnimation = item.useTime;
             item.damage = 300;
             item.shoot = mod.ProjectileType<ProjFist>();
-            item.autoReuse = true;
             item.noMelee = true;
             item.noUseGraphic = true;
         }
@@ -46,30 +48,40 @@ namespace Virtuous.Items
 		
         public override bool CanUseItem(Player player)
         {
+            //Left Click
             if (player.altFunctionUse != 2)
-            {//Left Click
+            {
                 item.useStyle = 1;
                 item.useTime = 6;
 				item.useAnimation = item.useTime;
                 item.damage = 300;
                 item.shoot = mod.ProjectileType<ProjFist>();
-                item.autoReuse = true;
                 item.noMelee = true;
                 item.noUseGraphic = true;
             }
+            //Right Click
             else
-            {//Right Click
+            {
+                if (!PlayerInput.Triggers.JustPressed.MouseRight) return false; //Equivalent to autoReuse being set to false, as that flag is bugged with alternate use
+
                 item.useStyle = 3;
                 item.useTime = 10;
 				item.useAnimation = item.useTime;
                 item.shoot = 0;
-                item.damage = 600;
-                item.autoReuse = false;
+                item.damage = 900;
                 item.noMelee = false;
                 item.noUseGraphic = false;
             }
 
             return base.CanUseItem(player);
+        }
+
+        public override void GetWeaponDamage(Player player, ref int damage)
+        {
+            //So it always displays the left-click values when not using the weapon
+            CanUseItem(player);
+
+            base.GetWeaponDamage(player, ref damage);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
@@ -82,7 +94,7 @@ namespace Virtuous.Items
             int nextFist = -1;
             for (int i = 0; i < 20; i++) //Makes x attempts at creating a projectile that the player can reach. Gives up otherwise.
 			{
-                do {nextFist = Main.rand.Next(9);
+                do {nextFist = RandomInt(9);
                 } while (nextFist == previousFist); //Can't match the position of the previous one
 
                 switch (nextFist) //One of 9 different spawn points
@@ -111,6 +123,7 @@ namespace Virtuous.Items
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.KOCannon);
             recipe.AddIngredient(ItemID.FragmentSolar, 8);
             recipe.AddIngredient(ItemID.FragmentStardust, 8);
             recipe.AddTile(TileID.LunarCraftingStation);

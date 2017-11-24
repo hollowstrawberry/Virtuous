@@ -5,18 +5,13 @@ using Terraria.ModLoader;
 using Virtuous.Items;
 using Virtuous.Projectiles;
 using Virtuous.Orbitals;
+using static Virtuous.Tools;
 
 namespace Virtuous
 {
     public class VirtuousNPC : GlobalNPC
     {
-        public override bool InstancePerEntity
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool InstancePerEntity => true;
 
 
         public int fallDamage = 0; //Fall damage accumulated. 0 is inactive
@@ -76,7 +71,7 @@ namespace Virtuous
                 Item.NewItem(npc.Center, mod.ItemType<HolyLight_Item>());
             }
 
-            else if (npc.type == NPCID.GiantCursedSkull && Main.rand.Next(15) == 0)
+            else if (npc.type == NPCID.GiantCursedSkull && RandomInt(15) == 0)
             {
                 Item.NewItem(npc.Center, mod.ItemType<SacDagger_Item>());
             }

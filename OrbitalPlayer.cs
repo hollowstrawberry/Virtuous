@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
+using static Virtuous.Tools;
 
 namespace Virtuous
 {
@@ -34,7 +35,7 @@ namespace Virtuous
 
         public bool BullseyeShot() //The player is aiming in the right direction for a boosted shot by the Bullseye orbital
         {
-            return Math.Abs((Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX).X) > Bullseye_Proj.GapTreshold; //Roughly straight left or right
+            return Math.Abs((Main.MouseWorld - player.Center).Normalized().X) > Bullseye_Proj.GapTreshold; //Roughly straight left or right
         }
 
         public override void PostUpdateEquips()
@@ -101,10 +102,8 @@ namespace Virtuous
             else if(active[OrbitalID.HolyLight] && time % 10 == 0) //Every x ticks
             {
                 Dust newDust = Dust.NewDustDirect(player.Center, 0, 0, /*Type*/55, 0f, 0f, /*Alpha*/200, default(Color), /*Scale*/0.5f);
-                Vector2 velocity = new Vector2(Main.rand.NextFloat() * 2 - 1, Main.rand.NextFloat() * 2 - 1).SafeNormalize(Vector2.UnitX) * (Main.rand.NextFloat() * 2 + 4);
-                Vector2 offset = velocity.SafeNormalize(Vector2.UnitX) * 50f; //Distance from the player
-                newDust.velocity = velocity;
-                newDust.position -= offset;
+                newDust.velocity = new Vector2(RandomFloat(-1, +1), RandomFloat(-1, +1)).OfLength(RandomFloat(4, 6)); //Random direction, random magnitude
+                newDust.position -= newDust.velocity.OfLength(50f); //Distance away from the player
                 newDust.noGravity = true;
                 newDust.fadeIn = 1.3f;
             }
@@ -117,7 +116,7 @@ namespace Virtuous
         public override void ResetEffects()
         {
             if (time > 0) time--;
-            if (time == 0) ResetOrbitals();
+            if (time <= 0) ResetOrbitals();
             accessoryTimeBoost = false;
             accessoryDmgBoost  = false;
 

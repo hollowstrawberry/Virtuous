@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
@@ -22,7 +23,7 @@ namespace Virtuous.Orbitals
         private float distance = DistanceAvg; //Current distance away from the player
 
         //Right-click
-        private const float AngularSpeed = 2 * Tools.RevolutionPerSecond; //Spinning speed
+        private const float AngularSpeed = 2 * RevolutionPerSecond; //Spinning speed
         private float curAngularSpeed = AngularSpeed; //Current spinning speed
         private int rightClickTimer = 0; //How long it's been since the right click effect activated
 
@@ -54,10 +55,13 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
+            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
+			projectile.netUpdate = true;
+
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (!orbitalPlayer.active[OrbitalID.SacDagger]) //Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalID.SacDagger] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
             {
                 projectile.Kill();
             }
@@ -68,14 +72,14 @@ namespace Virtuous.Orbitals
                     firstTick = false;
                     //The projectile's desired rotation was passed as its velocity, so we utilize it then set it to 0 so it doesn't move
                     projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians(); //45 degrees because of the sprite
-                    relativePos = projectile.velocity.SafeNormalize(Vector2.UnitY) * distance;
+                    relativePos = projectile.velocity.OfLength(distance);
                     projectile.velocity = Vector2.Zero;
                     originalDamage = projectile.damage;
 
                 }
 
                 //Before it shoots out and dies
-                if (orbitalPlayer.time > DyingTime)
+                if (orbitalPlayer.time > DyingTime || projectile.owner != Main.myPlayer)
                 {
                     projectile.timeLeft = DyingTime; //Keep it from dying naturally
 
@@ -112,14 +116,14 @@ namespace Virtuous.Orbitals
                         }
                     }
 
-                    relativePos = relativePos.SafeNormalize(Vector2.UnitX) * distance; //Resets the distance
+                    relativePos = relativePos.OfLength(distance); //Resets the distance
                     projectile.Center = player.MountedCenter + relativePos; //Moves the sword to the defined position around the player
 
                 }
                 else //timeLeft actually starts going down from dyingTime while it flies away
                 {
                     if (orbitalPlayer.time == DyingTime) projectile.damage *= 3; //Deals more damage when shooting out
-                    projectile.Center += relativePos.SafeNormalize(Vector2.UnitY) * curShootSpeed; //Projectile moves forward in the direction of its rotation
+                    projectile.Center += relativePos.OfLength(curShootSpeed); //Projectile moves forward in the direction of its rotation
                     curShootSpeed -= ShootSpeed / DyingTime; //Slows down to a halt over dyingTime
                     projectile.alpha += (int)Math.Ceiling((255f - OriginalAlpha) / DyingTime); //Fades away over dyingTime
                 }

@@ -3,17 +3,12 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Virtuous.Dusts;
+using static Virtuous.Tools;
 
 namespace Virtuous.Projectiles
 {
     public class RainbowArrow : ModProjectile
     {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Rainbow Arrow");
-        }
-
-
         private const int Lifespan = 6 * 60; //Total duration of the projetile
         private const int RainDelay = 50; //Time it takes for a special arrow effect to activate
 
@@ -54,10 +49,15 @@ namespace Virtuous.Projectiles
             }
         }
 
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Rainbow Arrow");
+        }
+
         public override void SetDefaults()
         {
-            projectile.width = 10;
-            projectile.height = 10;
+            projectile.width = 15;
+            projectile.height = 15;
             projectile.friendly = true;
             projectile.arrow = true;
             projectile.alpha = 0;
@@ -87,7 +87,7 @@ namespace Virtuous.Projectiles
 				case Rain:
                     type = mod.DustType<RainbowDust>();
                     scale = Burst ? 1.5f : 1.2f; //Bigger size if it's a burst of dust
-					if (!Burst) velocity = new Vector2(Main.rand.NextFloat()*0.5f-0.25f, projectile.velocity.Length()/2); //X is random between -0.25 and 0.25, Y follows the arrow
+					if (!Burst) velocity = new Vector2(RandomFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is random, Y follows the arrow
                     break;
 			}
 
@@ -127,11 +127,11 @@ namespace Virtuous.Projectiles
             Lighting.AddLight(projectile.Center, l*projectileColor.R/255, l*projectileColor.G/255, l*projectileColor.B/255);
 
             //Special arrow effect
-            if(arrowMode == White && projectile.timeLeft == Lifespan - RainDelay) 
+            if(arrowMode == White && projectile.timeLeft == Lifespan - RainDelay && projectile.owner == Main.myPlayer) 
             {
                 const int ArrowAmount = 30;
                 float arrowSpacing = projectile.width * 6f;
-                float nextColor = Main.rand.Next(12); //Starts the rainbow of arrows at a random color
+                float nextColor = RandomInt(12); //Starts the rainbow of arrows at a random color
                 for(int i = 1; i <= ArrowAmount; i++)
                 {
                     Vector2 position = projectile.Center;

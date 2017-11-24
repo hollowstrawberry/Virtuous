@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Virtuous.Items;
 using Virtuous.Projectiles;
+using static Virtuous.Tools;
 
 namespace Virtuous
 {
@@ -14,6 +15,7 @@ namespace Virtuous
     {
 
         public int[] GobblerStorage = new int[TheGobbler.StorageCapacity]; //Stores all the item types of the items sucked by the gobbler by this player
+
 
         public int titanShieldDashing = 0; //The time left and direction of the dash. 0 is inactive
         public int titanShieldCoolDown = TitanShield.CoolDown; //Time left until the dash can be used again
@@ -44,28 +46,28 @@ namespace Virtuous
                     newDust.velocity = player.velocity; //Seems to follow the player around
                     newDust.noGravity = true;
                     newDust.fadeIn = 1f;
-                    if (Main.rand.NextBool()) //Half the time
+                    if (CoinFlip()) //Half the time
                     {
-                        newDust.position += Utils.RandomVector2(Main.rand, -3f, 3f); //Slightly different location
-                        newDust.scale += Main.rand.NextFloat(); //Different size
+                        newDust.position += new Vector2(RandomFloat(-3, +3), RandomFloat(-3, +3)); //Slightly different location
+                        newDust.scale += RandomFloat(); //Different size
                     }
                 }
             }
-            else if (player.HeldItem.type == mod.ItemType<FlurryFist>())
+            else if (player.HeldItem.type == mod.ItemType<FlurryNova>())
             {
-                player.handon = (sbyte)mod.GetEquipSlot("FlurryFist", EquipType.HandsOn);
-                player.handoff = (sbyte)mod.GetEquipSlot("FlurryFist", EquipType.HandsOff);
+                player.handon = (sbyte)mod.GetEquipSlot("FlurryNova", EquipType.HandsOn);
+                player.handoff = (sbyte)mod.GetEquipSlot("FlurryNova", EquipType.HandsOff);
                 drawInfo.handOnShader = 0;
                 drawInfo.handOffShader = 0;
             }
             else if (player.HeldItem.type == mod.ItemType<TitanShield>())
             {
                 float r, g, b;
-                if (titanShieldDashing == 0)
+                if (titanShieldDashing == 0) //Not dashing
                 {
                     r = 0; g = 0.7f; b = 0.8f;
                 }
-                else
+                else //Dashing
                 {
                     r = 0; g = 1.3f; b = 1.5f;
                 }
@@ -83,7 +85,7 @@ namespace Virtuous
             //{
             //    if (Math.Abs(player.velocity.Length()) > 0.1f && !player.mount.Active)
             //    {
-            //        if (Main.rand.NextBool() && drawInfo.shadow == 0f)
+            //        if (CoinFlip() && drawInfo.shadow == 0f)
             //        {
             //            int newDust = Dust.NewDust(player.Center, 0, 0, /*Type*/14, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, /*Alpha*/50, default(Color), /*Scale*/2.0f);
             //            Main.dust[newDust].noGravity = true;
@@ -96,7 +98,7 @@ namespace Virtuous
             //{
             //    if (Math.Abs(player.velocity.Length()) > 0.1f && !player.mount.Active)
             //    {
-            //        if (Main.rand.NextBool() && drawInfo.shadow == 0f)
+            //        if (CoinFlip() && drawInfo.shadow == 0f)
             //        {
             //            int newDust = Dust.NewDust(player.Center, 0, 0, /*Type*/14, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, /*Alpha*/50, default(Color), /*Scale*/2.0f);
             //            Main.dust[newDust].noGravity = true;
@@ -150,7 +152,7 @@ namespace Virtuous
             {
                 if (player.controlThrow)
                 {
-                    if (GobblerStorage[0] != ItemID.None)  //if there is something in the storage
+                    if (GobblerStorage[TheGobbler.BaseSlot] != ItemID.None)  //if there is something in the storage
                     {
                         Main.PlaySound(SoundID.Item3, player.Center);
                         for (int slot = 0; slot < TheGobbler.StorageCapacity; slot++) //Cycles through the storage
@@ -158,7 +160,12 @@ namespace Virtuous
                             if (GobblerStorage[slot] != ItemID.None)
                             {
                                 Item storedItem = GobblerItem(slot); //One copy for easy access
-                                Item.NewItem(player.Center, storedItem.type, 1, false, ProjGobblerItem.IsWeapon(storedItem) ? PrefixID.Broken : 0); //Spits it out
+                                int newItem = Item.NewItem(player.Center, storedItem.type, 1, false, ProjGobblerItem.IsReforgeableWeapon(storedItem) ? PrefixID.Broken : 0); //Spits it out
+
+                                if (Main.netMode == NetmodeID.MultiplayerClient) //Syncs to multiplayer
+                                {
+                                    NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem);
+                                }
                             }
                             GobblerStorage[slot] = ItemID.None; //Clears the item from the storage
                         }
@@ -197,7 +204,7 @@ namespace Virtuous
                         TitanShield titanShield = (TitanShield)player.inventory[player.selectedItem].modItem; //Gets the held item
                         int damage = titanShield.GetDamage(player);
                         float knockBack = titanShield.item.knockBack;
-                        bool crit = Main.rand.Next(100) < (titanShield.item.crit + player.meleeCrit);
+                        bool crit = RandomInt(100) < (titanShield.item.crit + player.meleeCrit);
 
                         //Damages the enemy
                         player.ApplyDamageToNPC(npc, damage, knockBack, player.direction, crit);
@@ -223,13 +230,12 @@ namespace Virtuous
             //Dust
             for (int i = 0; i < 5; i++)
             {
-                Color color = Main.rand.NextBool() ? new Color(255, 255, 255) : new Color(255, 255, 255, 0f);
-                Dust newDust = Dust.NewDustDirect(player.position + new Vector2(Main.rand.Next(-5, +5 + 1), Main.rand.Next(-5, +5 + 1)), player.width, player.height, /*Type*/16, 0f, 0f, /*Alpha*/0, color, /*Scale*/1 + Main.rand.NextFloat());
+                Color color = CoinFlip() ? new Color(255, 255, 255) : new Color(255, 255, 255, 0f);
+                Dust newDust = Dust.NewDustDirect(player.position + new Vector2(RandomFloat(-5, +5), RandomFloat(-5, +5)), player.width, player.height, /*Type*/16, 0f, 0f, /*Alpha*/0, color, /*Scale*/RandomFloat(1f, 2f));
                 newDust.velocity *= 0.2f;
                 newDust.noGravity = true;
                 newDust.fadeIn = 0.5f;
             }
-
 
             if (Math.Abs(titanShieldDashing) > TitanShield.DashTime - 8) //First 8 ticks
             {
@@ -273,10 +279,10 @@ namespace Virtuous
             if (player.HeldItem.type == mod.ItemType<TitanShield>() && hitDirection != player.direction)
             {
                 damage = (int)(damage * (1 - TitanShield.DamageReduction));
-                int dustAmount = Main.rand.Next(15, 20 + 1);
+                int dustAmount = RandomInt(15, 20);
                 for (int i = 0; i < dustAmount; i++)
                 {
-                    Dust newDust = Dust.NewDustDirect(player.Center + new Vector2(10 * player.direction, 0), 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/1 + Main.rand.NextFloat() * 1.5f);
+                    Dust newDust = Dust.NewDustDirect(player.Center + new Vector2(10 * player.direction, 0), 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/RandomFloat(1, 2.5f));
                     newDust.noGravity = true;
                 }
             }

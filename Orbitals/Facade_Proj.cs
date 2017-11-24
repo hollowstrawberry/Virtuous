@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
@@ -14,7 +15,7 @@ namespace Virtuous.Orbitals
 
         //Passive
         private const float Distance = 50; //Constant distance away from the player
-        private const float AngularSpeedMax = 1/15f * Tools.RevolutionPerSecond;
+        private const float AngularSpeedMax = 1/15f * RevolutionPerSecond;
         private const float AngularAcc = AngularSpeedMax / 60; //How quickly it changes speed, which is to say, how quickly it reaches the point of direction change
         private bool  clockwise { get { return projectile.ai[1] == 0; } set { projectile.ai[1] = value ? 0 : 1; } } //Direction the barrier is currently orbiting in. Stores into the projectile's built-in ai[1], which is 0 by default (true in this case)
         private float angularSpeed = AngularSpeedMax; //Current speed at which it orbits
@@ -44,10 +45,13 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
+            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
+			projectile.netUpdate = true;
+			
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (!orbitalPlayer.active[OrbitalID.Facade]) //Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalID.Facade] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
             {
                 projectile.Kill();
             }
@@ -58,7 +62,7 @@ namespace Virtuous.Orbitals
                     firstTick = false;
                     //The projectile's desired rotation was passed as its velocity, so we utilize it then set it to 0 so it doesn't move
                     projectile.rotation = projectile.velocity.ToRotation();
-                    relativePos = projectile.velocity.SafeNormalize(Vector2.UnitY) * Distance;
+                    relativePos = projectile.velocity.OfLength(Distance);
                     projectile.velocity = Vector2.Zero;;
                 }
 
@@ -72,7 +76,7 @@ namespace Virtuous.Orbitals
                 projectile.rotation += angularSpeed; //Rotates the sprite accordingly
                 projectile.Center = player.MountedCenter + relativePos; //Keeps the projectile around the player
 
-                if(orbitalPlayer.time <= FadeTime)
+                if(orbitalPlayer.time <= FadeTime && projectile.owner == Main.myPlayer)
                 {
                     projectile.alpha += (int)Math.Ceiling((255f - OriginalAlpha) / FadeTime); //Fades away over fadeTime
                 }

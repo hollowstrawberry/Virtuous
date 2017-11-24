@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
+using static Virtuous.Tools;
 
 namespace Virtuous.Items
 {
@@ -37,9 +38,10 @@ namespace Virtuous.Items
             int type = mod.ProjectileType<ProjCrusherPillar>();
             int offset = ProjCrusherPillar.TargetDistance; //How far from the target the pillars should spawn
             float shootSpeed = !crit ? 5 : 10; //Pillars crush twice as fast if it's a critical hit
+            int appearance = RandomInt(Main.projFrames[type]);
 
-            Projectile.NewProjectile(new Vector2(target.Center.X+offset, target.Center.Y), new Vector2(-shootSpeed, 0f), type, damage * 2, knockBack*0f, player.whoAmI, 0, crit ? 1 : 0); //Right pillar
-            Projectile.NewProjectile(new Vector2(target.Center.X-offset, target.Center.Y), new Vector2(+shootSpeed, 0f), type, damage * 2, knockBack*0f, player.whoAmI, 0, crit ? 1 : 0); //Left pillar
+            Projectile.NewProjectile(new Vector2(target.Center.X+offset, target.Center.Y), new Vector2(-shootSpeed, 0f), type, damage * 2, knockBack*0f, player.whoAmI, appearance, crit ? 1 : 0); //Right pillar
+            Projectile.NewProjectile(new Vector2(target.Center.X-offset, target.Center.Y), new Vector2(+shootSpeed, 0f), type, damage * 2, knockBack*0f, player.whoAmI, appearance, crit ? 1 : 0); //Left pillar
         }
 
         public override void AddRecipes()
@@ -48,7 +50,7 @@ namespace Virtuous.Items
             recipe.AddIngredient(ItemID.StaffofEarth);
             recipe.AddIngredient(ItemID.ChlorophyteWarhammer);
             recipe.AddIngredient(ItemID.Marble, 20);
-            recipe.AddTile(TileID.WorkBenches);
+            recipe.AddTile(TileID.MythrilAnvil);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

@@ -16,3 +16,5 @@ obj/Debug/Virtuous.dll
 *.pdb
 *.cache
 *.pdn
+*.sqlite
+*.json

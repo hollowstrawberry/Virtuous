@@ -24,7 +24,7 @@ namespace Virtuous.Orbitals
             item.UseSound = SoundID.Item8;
             item.damage = 100;
             item.crit = 0;
-            item.knockBack = 4f;
+            item.knockBack = 3f;
             item.shoot = 1;
             item.mana = 60;
             item.noMelee = true;

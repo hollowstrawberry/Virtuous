@@ -36,17 +36,20 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
+            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
+			projectile.netUpdate = true;
+
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (!orbitalPlayer.active[OrbitalID.Sailspike]) //Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalID.Sailspike] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
             {
                 projectile.Kill();
             }
             else
             {
                 //Before it shoots out and dies
-                if (orbitalPlayer.time > DyingTime)
+                if (orbitalPlayer.time > DyingTime || projectile.owner != Main.myPlayer)
                 {
                     projectile.timeLeft = DyingTime; //Keep it from dying naturally
 
@@ -70,7 +73,7 @@ namespace Virtuous.Orbitals
                 else //timeLeft actually starts going down from dyingTime while it flies away
                 {
                     if (orbitalPlayer.time == DyingTime) projectile.damage *= 2; //Sets it to deal more damage while shooting out
-                    projectile.Center += relativePos.SafeNormalize(Vector2.UnitY) * curShootSpeed; //Projectile moves forward in the direction of its rotation
+                    projectile.Center += relativePos.OfLength(curShootSpeed); //Projectile moves forward in the direction of its rotation
                     curShootSpeed -= ShootSpeed/20; //Slows down to a halt
                     if(projectile.timeLeft <= 20) projectile.alpha += (int)Math.Ceiling((255f-OriginalAlpha) / 20); //Fades away completely
                 }

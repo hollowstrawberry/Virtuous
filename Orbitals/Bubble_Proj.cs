@@ -33,10 +33,13 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
+            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
+			projectile.netUpdate = true;
+
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (!orbitalPlayer.active[OrbitalID.Bubble]) //Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalID.Bubble] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
             {
                 projectile.Kill();
             }
@@ -45,11 +48,12 @@ namespace Virtuous.Orbitals
                 projectile.Center = player.MountedCenter; //Keep it on the player
                 projectile.timeLeft = 2; //Keep it from dying naturally
 
-                if (firstTick) //Spawns some dust
+                if (firstTick) //Spawns some dust and sets defaults
                 {
                     firstTick = false;
 
                     projectile.damage = 1;
+                    projectile.knockBack = 2.4f;
 
                     for (int i = 0; i < 40; i++)
                     {
@@ -59,7 +63,7 @@ namespace Virtuous.Orbitals
                     }
                 }
 
-                if (orbitalPlayer.time <= FadeTime)
+                if (orbitalPlayer.time <= FadeTime && projectile.owner == Main.myPlayer)
                 {
                     projectile.alpha += (int)Math.Ceiling((255f-OriginalAlpha) / FadeTime); //Fades away completely over fadeTime
                 }

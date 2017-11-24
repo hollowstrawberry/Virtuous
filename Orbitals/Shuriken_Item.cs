@@ -22,9 +22,9 @@ namespace Virtuous.Orbitals
             item.useTime = 40;
             item.useAnimation = item.useTime;
             item.UseSound = SoundID.Item8;
-            item.damage = 170;
+            item.damage = 190;
             item.crit = 0;
-            item.knockBack = 5f;
+            item.knockBack = 6.2f;
             item.shoot = 1;
             item.mana = 70;
             item.noMelee = true;

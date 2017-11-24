@@ -63,15 +63,15 @@ namespace Virtuous.Items.Accessories
 
         public override void AddRecipes()
 		{
-			ModRecipe recipe = new ModRecipe(mod);
-			recipe.AddIngredient(null, "AstroBoots");
-			recipe.AddRecipeGroup("Virtuous:CelestialWings");
-			recipe.AddIngredient(ItemID.FishronWings);
-			recipe.AddIngredient(ItemID.BetsyWings);
-			recipe.AddIngredient(ItemID.GravityGlobe);
-			recipe.AddTile(TileID.LunarCraftingStation);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			//ModRecipe recipe = new ModRecipe(mod);
+			//recipe.AddIngredient(null, "AstroBoots");
+			//recipe.AddRecipeGroup("Virtuous:CelestialWings");
+			//recipe.AddIngredient(ItemID.FishronWings);
+			//recipe.AddIngredient(ItemID.BetsyWings);
+			//recipe.AddIngredient(ItemID.GravityGlobe);
+			//recipe.AddTile(TileID.LunarCraftingStation);
+			//recipe.SetResult(this);
+			//recipe.AddRecipe();
 		}
 		
 	}

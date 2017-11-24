@@ -26,9 +26,9 @@ namespace Virtuous.Orbitals
             item.useTime = 35;
             item.useAnimation = item.useTime;
             item.UseSound = SoundID.Item8;
-            item.damage = 200;
+            item.damage = 250;
             item.crit = 0;
-            item.knockBack = 4f;
+            item.knockBack = 5f;
             item.shoot = 1;
             item.mana = ManaCost; //Overwritten by CanUseItem
             item.noMelee = true;
@@ -74,7 +74,7 @@ namespace Virtuous.Orbitals
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.LunarBar, 8);
+            recipe.AddIngredient(ItemID.LunarBar, 12);
             recipe.AddIngredient(ItemID.Ectoplasm, 20);
             recipe.AddIngredient(ItemID.SoulofMight, 50);
             recipe.AddTile(TileID.LunarCraftingStation);

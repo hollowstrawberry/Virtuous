@@ -9,15 +9,8 @@ namespace Virtuous
 {
     public class VirtuousItem : GlobalItem
     {
-        public override bool InstancePerEntity
-        {
-            get { return true; }
-        }
-
-        public override bool CloneNewInstances
-        {
-            get { return true; }
-        }
+        public override bool InstancePerEntity => true;
+        public override bool CloneNewInstances => true;
 
         //Gobbler
 
@@ -28,6 +21,11 @@ namespace Virtuous
             if (beingGobbled) return false;
 
             else return base.CanPickup(item, player);
+        }
+
+        public override void Update(Item item, ref float gravity, ref float maxFallSpeed)
+        {
+            base.Update(item, ref gravity, ref maxFallSpeed);
         }
     }
 }

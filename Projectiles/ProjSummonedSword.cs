@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Virtuous.Tools;
 
 namespace Virtuous.Projectiles
 {
@@ -29,8 +30,9 @@ namespace Virtuous.Projectiles
 
         public override void SetDefaults()
         {
-            projectile.width = 10;
-            projectile.height = 10;
+            projectile.width = 15;
+            projectile.height = 15;
+            projectile.scale = 0.6f;
             projectile.friendly = true;
             projectile.alpha = 0;
             projectile.penetrate = -1;
@@ -63,12 +65,12 @@ namespace Virtuous.Projectiles
                 const int DustAmount = 16;
                 for (int i = 0; i < DustAmount; i++) //We create 16 dusts in an ellipse
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i/DustAmount); //Divides a circle into 16 points and picks the current one in the loop
+                    Vector2 rotation = Vector2.UnitY.RotatedBy(FullCircle * i/DustAmount); //Divides a circle into 16 points and picks the current one in the loop
                     rotation *= new Vector2(1,4); // Multiplies the points by a vertical squish factor so the circle becomes an ellipse
                     rotation = rotation.RotatedBy(projectile.velocity.ToRotation()); //Rotates the resulting ellipse to align with the projectile's rotation
                     
                     Dust newDust = Dust.NewDustDirect(projectile.Center + rotation, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/0, default(Color), /*Scale*/1.5f);
-                    newDust.velocity = rotation.SafeNormalize(Vector2.UnitY); //Shoots outwards
+                    newDust.velocity = rotation.Normalized(); //Shoots outwards
                     newDust.noGravity = true;
                 }
                 firstTick = false;
@@ -98,11 +100,11 @@ namespace Virtuous.Projectiles
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
             Main.PlaySound(SoundID.Item27, projectile.position);
 
-            int dustAmount = Main.rand.Next(4,10+1);
+            int dustAmount = RandomInt(4,10);
             for (int i = 1; i <= dustAmount; i++)
             {
                 Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/2f);
-                newDust.velocity -= projectile.velocity*0.5f * (Main.rand.NextFloat()*2f - 1f); //Random direction, mostly aligns with the projectile's
+                newDust.velocity -= projectile.velocity*0.5f * (RandomFloat(-1, +1)); //Random direction, mostly aligns with the projectile's
                 newDust.fadeIn = 0.5f;
                 newDust.noGravity = true;
             }
@@ -125,7 +127,7 @@ namespace Virtuous.Projectiles
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(50, 255, 255, 10) * projectile.Opacity;
+            return new Color(100, 255, 255, 25) * projectile.Opacity;
         }
 
     }

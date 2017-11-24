@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Items.Accessories
 {
-    //[AutoloadEquip(EquipType.Legs)]
+    [AutoloadEquip(EquipType.Shoes)]
     public class TerraWalkers : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -38,15 +38,15 @@ namespace Virtuous.Items.Accessories
 
 		public override void AddRecipes()
 		{
-			ModRecipe recipe = new ModRecipe(mod);
-			recipe.AddIngredient(ItemID.FrostsparkBoots);
-			recipe.AddIngredient(ItemID.LavaWaders);
-			recipe.AddIngredient(ItemID.SoulofMight, 1);
-			recipe.AddIngredient(ItemID.SoulofSight, 1);
-			recipe.AddIngredient(ItemID.SoulofFright, 1);
-			recipe.AddTile(TileID.MythrilAnvil);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			//ModRecipe recipe = new ModRecipe(mod);
+			//recipe.AddIngredient(ItemID.FrostsparkBoots);
+			//recipe.AddIngredient(ItemID.LavaWaders);
+			//recipe.AddIngredient(ItemID.SoulofMight, 1);
+			//recipe.AddIngredient(ItemID.SoulofSight, 1);
+			//recipe.AddIngredient(ItemID.SoulofFright, 1);
+			//recipe.AddTile(TileID.MythrilAnvil);
+			//recipe.SetResult(this);
+			//recipe.AddRecipe();
 		}
 		
 	}

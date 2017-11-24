@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Items.Accessories
 {
-	[AutoloadEquip(EquipType.Wings)]
+	[AutoloadEquip(EquipType.Wings, EquipType.Shoes)]
 	public class AstroBoots : ModItem
 	{
 		public override void SetStaticDefaults()
@@ -36,8 +36,7 @@ namespace Virtuous.Items.Accessories
 			modPlayer.accessoryAstroBoots = !hideVisual;
 		}
 
-		public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
-			ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
+		public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising, ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
 		{
 			ascentWhenFalling = 0.85f;
 			ascentWhenRising = 0.15f;
@@ -54,22 +53,22 @@ namespace Virtuous.Items.Accessories
 		
 		/*public override bool WingUpdate(Player player, bool inUse)
 		{
-			if (inUse) Dust.NewDust(player.position, player.width, player.height, 107, 0, 0, 0, Color.Green);
+			if (inUse) Dust.NewDust(player.position, player.width, player.height, 107, 0, 0, 0, Color.Cyan);
 			base.WingUpdate(player, inUse);
 			return false;
 		}*/
 
 		public override void AddRecipes()
 		{
-			ModRecipe recipe = new ModRecipe(mod);
-			recipe.AddIngredient(null, "TerraWalkers");
-			recipe.AddRecipeGroup("Virtuous:Wings");
-			recipe.AddIngredient(ItemID.Ectoplasm, 20);
-			recipe.AddIngredient(ItemID.LifeFruit, 5);
-			recipe.AddIngredient(ItemID.MartianConduitPlating, 100);
-			recipe.AddTile(TileID.MythrilAnvil);
-			recipe.SetResult(this);
-			recipe.AddRecipe();
+			//ModRecipe recipe = new ModRecipe(mod);
+			//recipe.AddIngredient(null, "TerraWalkers");
+			//recipe.AddRecipeGroup("Virtuous:Wings");
+			//recipe.AddIngredient(ItemID.Ectoplasm, 20);
+			//recipe.AddIngredient(ItemID.LifeFruit, 5);
+			//recipe.AddIngredient(ItemID.MartianConduitPlating, 100);
+			//recipe.AddTile(TileID.MythrilAnvil);
+			//recipe.SetResult(this);
+			//recipe.AddRecipe();
 		}
 		
 	}

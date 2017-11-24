@@ -35,10 +35,13 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
+            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
+			projectile.netUpdate = true;
+			
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (!orbitalPlayer.active[OrbitalID.Bullseye]) //Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalID.Bullseye] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
             {
                 projectile.Kill();
             }
@@ -68,7 +71,6 @@ namespace Virtuous.Orbitals
                 {
                     projectile.alpha = OriginalAlpha;
                 }
-
             }
         }
 
@@ -81,6 +83,5 @@ namespace Virtuous.Orbitals
         {
             return new Color(255, 130, 20, 200) * projectile.Opacity;
         }
-
     }
 }

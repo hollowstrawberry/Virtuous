@@ -38,15 +38,6 @@ namespace Virtuous.Orbitals
             orbitalItem.duration = 15 * 60;
             orbitalItem.amount = 4;
         }
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.DirtBlock);
-            recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-        }
     }
 }
 

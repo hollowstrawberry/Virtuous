@@ -34,6 +34,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Dusts\RainbowDust.cs" />
+    <Compile Include="Items\ArtOfWar.cs" />
+    <Compile Include="Projectiles\WarArrow.cs" />
     <Compile Include="VirtuousItem.cs" />
     <Compile Include="Items\Accessories\Archangel.cs" />
     <Compile Include="Items\Accessories\AstroBoots.cs" />
@@ -41,7 +43,7 @@
     <Compile Include="Items\CrusherMace.cs" />
     <Compile Include="Items\EtherSlit.cs" />
     <Compile Include="Items\Fireplower.cs" />
-    <Compile Include="Items\FlurryFist.cs" />
+    <Compile Include="Items\FlurryNova.cs" />
     <Compile Include="Items\LionsMane.cs" />
     <Compile Include="Orbitals\SpiralSword_Item.cs" />
     <Compile Include="Orbitals\Bubble_Item.cs" />
@@ -56,7 +58,6 @@
     <Compile Include="Items\StaffOfFlinging.cs" />
     <Compile Include="Items\TheGobbler.cs" />
     <Compile Include="Items\TitanShield.cs" />
-    <Content Include="Orbital.txt" />
     <Compile Include="Projectiles\ProjGelFire.cs" />
     <Compile Include="Projectiles\ProjGobblerItem.cs" />
     <Compile Include="Projectiles\ProjLionsMane.cs" />

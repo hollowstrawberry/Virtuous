@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Items;
+using static Virtuous.Tools;
 
 namespace Virtuous.Projectiles
 {
@@ -23,6 +24,7 @@ namespace Virtuous.Projectiles
             projectile.penetrate = -1;
             projectile.alpha = 255; //Transparent
             projectile.timeLeft = 10;
+
             if (TitanShield.ExplosionCumulativeMode)
             {
                 projectile.usesLocalNPCImmunity = true; //Invincibility per individual projectile
@@ -42,9 +44,9 @@ namespace Virtuous.Projectiles
                 firstTick = false;
                 for(int i = 0; i < 25; i++)
                 {
-                    Vector2 gorePosition = projectile.Center + new Vector2(Main.rand.Next(-projectile.width / 2, +projectile.width / 2 + 1), Main.rand.Next(-projectile.height / 2, +projectile.height / 2 + 1));
-                    Gore.NewGore(gorePosition, new Vector2(1, 1), Main.rand.Next(61, 63 + 1), 0.2f + Main.rand.NextFloat()*1.3f);
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), Main.rand.NextFloat()*2f);
+                    Vector2 gorePosition = projectile.Center + new Vector2(RandomFloat(-projectile.width / 2, +projectile.width / 2), RandomFloat(-projectile.height / 2, +projectile.height / 2));
+                    Gore.NewGore(gorePosition, new Vector2(1, 1), RandomInt(61, 63), RandomFloat(0.2f, 1.5f));
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), RandomFloat(2f));
                 }
             }
         }

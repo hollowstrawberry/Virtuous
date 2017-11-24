@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
+using static Virtuous.Tools;
 
 namespace Virtuous.Items
 {
@@ -23,10 +24,10 @@ namespace Virtuous.Items
             item.height = 90;
             item.useStyle = 5;
             item.UseSound = SoundID.Item5;
-            item.damage = 250;
+            item.damage = 300;
             item.crit = 10;
             item.knockBack = 6f;
-            item.shoot = 1;
+            item.shoot = mod.ProjectileType<RainbowArrow>();
             item.useAmmo = AmmoID.Arrow;
             item.shootSpeed = 12f;
             item.ranged = true;
@@ -42,7 +43,7 @@ namespace Virtuous.Items
 
         private bool IsWhiteArrow(Player player)
         {
-            return (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitY).Y < -0.96f; //Direction is roughly straight up
+            return (Main.MouseWorld - player.MountedCenter).Normalized().Y < -0.96f; //Direction is roughly straight up
         }
 
         public override bool CanUseItem(Player player)
@@ -75,7 +76,7 @@ namespace Virtuous.Items
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
             type = mod.ProjectileType<RainbowArrow>(); //Replaces any arrows with the unique arrows
-
+            
             int arrowMode;
             if (IsWhiteArrow(player))
             {
@@ -101,7 +102,7 @@ namespace Virtuous.Items
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Tsunami);
+            recipe.AddIngredient(ItemID.DaedalusStormbow);
             recipe.AddIngredient(ItemID.LunarBar, 10);
             recipe.AddIngredient(ItemID.Diamond);
             recipe.AddIngredient(ItemID.Ruby);

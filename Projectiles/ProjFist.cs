@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using static Virtuous.Tools;
 
 namespace Virtuous.Projectiles
 {
@@ -9,13 +10,13 @@ namespace Virtuous.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Flurry Fist");
+            DisplayName.SetDefault("Flurry Nova");
             Main.projFrames[projectile.type] = 4;
         }
 
         private const int ShootSpeed   =  5; //Defined speed of the projectile
         private const int Lifespan     = 20; //Total projectile duration
-        private const int MoveTime     = 10; //How long it moves at constant speed for
+        private const int MoveTime     = 12; //How long it moves at constant speed for
         private const int SlowdownTime =  5; //How long it takes to slow down to a stop
         private const int FadeTime     =  5; //How long it fades away for at the end of its Lifespan
 
@@ -31,7 +32,7 @@ namespace Virtuous.Projectiles
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.usesLocalNPCImmunity = true; //Hits once per individual projectile
-            projectile.localNPCHitCooldown = 30;
+            projectile.localNPCHitCooldown = Lifespan;
         }
         
         public override void AI()
@@ -40,19 +41,19 @@ namespace Virtuous.Projectiles
             if (projectile.timeLeft == Lifespan)
             {
                 if (projectile.velocity.X < 0) projectile.spriteDirection = -1; //Facing left
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitX) * ShootSpeed + Main.player[projectile.owner].velocity; //Sets the defined speed, follows the player's movement
+                projectile.velocity = projectile.velocity.OfLength(ShootSpeed) + Main.player[projectile.owner].velocity; //Sets the defined speed, follows the player's movement
 
                 const float DustAmount = 16f;
                 for (int i = 0; i < DustAmount; i++) //We create 16 dusts in an ellipse
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / DustAmount); //Divides a circle into a set amount of points and picks the current one in the loop
+                    Vector2 rotation = Vector2.UnitY.RotatedBy(FullCircle * i / DustAmount); //Divides a circle into a set amount of points and picks the current one in the loop
                     rotation *= new Vector2(1, 4); // Multiplies the point by a vertical squish factor so the circle becomes an ellipse
                     rotation = rotation.RotatedBy(projectile.rotation); //Rotates the resulting ellipse point to align with the projectile's rotation
                     Vector2 position = projectile.Center + rotation; //The final position of the dust
                     position.X -= 10 * Main.player[projectile.owner].direction; //This line needs to change if needed to work with multidirectional fists
 
                     Dust newDust = Dust.NewDustDirect(position, 0, 0, /*Type*/127, 0f, 0f, /*Alpha*/0, new Color(255, 255, 0), /*Scale*/2.0f);
-                    newDust.velocity = rotation.SafeNormalize(Vector2.UnitY); //Shoots outwards
+                    newDust.velocity = rotation.Normalized(); //Shoots outwards
                     newDust.noGravity = true;
                 }
             }

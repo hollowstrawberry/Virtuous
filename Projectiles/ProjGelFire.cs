@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using static Virtuous.Tools;
 
 namespace Virtuous.Projectiles
 {
@@ -31,10 +31,10 @@ namespace Virtuous.Projectiles
         {
             if (projectile.wet) projectile.Kill();
 
-            int dustAmount = Main.rand.Next(1,2+1);
+            int dustAmount = RandomInt(1,2);
             for (int i = 0; i < dustAmount; i++)
             {
-                Dust newDust = Dust.NewDustDirect(projectile.Center, projectile.width, projectile.height, DustID.Fire, 0f, 0f, /*Alpha*/100, default(Color), 1.3f + Main.rand.NextFloat() * 0.5f);
+                Dust newDust = Dust.NewDustDirect(projectile.Center, projectile.width, projectile.height, DustID.Fire, 0f, 0f, /*Alpha*/100, default(Color), RandomFloat(1.3f, 1.8f));
                 newDust.noGravity = true;
                 if (i == 0) newDust.velocity.Y -= 2f;
                 else newDust.velocity.Y *= 0.1f;

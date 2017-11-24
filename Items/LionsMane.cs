@@ -28,7 +28,7 @@ namespace Virtuous.Items
             item.shootSpeed = 0f;
             item.crit = 5;
             item.knockBack = 7f;
-            item.mana = 10;
+            item.mana = 9;
             item.magic = true;
             item.noMelee = true;
             item.autoReuse = true;
@@ -61,7 +61,18 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            ModRecipe recipe;
+
+            recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.CursedFlames);
+            recipe.AddIngredient(ItemID.FragmentNebula, 8);
+            recipe.AddIngredient(ItemID.FragmentSolar, 8);
+            recipe.AddTile(TileID.LunarCraftingStation);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
+
+            recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.GoldenShower);
             recipe.AddIngredient(ItemID.FragmentNebula, 8);
             recipe.AddIngredient(ItemID.FragmentSolar, 8);
             recipe.AddTile(TileID.LunarCraftingStation);

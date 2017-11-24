@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Virtuous.Projectiles;
 
 namespace Virtuous.Items
 {
@@ -20,15 +21,15 @@ namespace Virtuous.Items
         public const int   ExplosionDelay = 10; //Ticks before consecutive explosions can ocurr
         public const int   AoEInvincibility = 8; //How many invincibility frames enemies take when being hit by explosions
         public const int   DashTime = 30; //Time spent dashing
-        public const int   CoolDown = 20;
+        public const int   CoolDown = 20; //Time before you can dash again
 
         public override void SetDefaults()
         {
-            item.width = 34;
-            item.height = 38;
+            item.width = 38;
+            item.height = 42;
             item.damage = 100;
             item.crit = 10;
-            item.knockBack = 10f;
+            item.knockBack = 12f;
             item.melee = true;
             item.rare = 10;
             item.value = Item.sellPrice(0, 50, 0, 0);

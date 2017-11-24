@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
@@ -21,7 +22,7 @@ namespace Virtuous.Orbitals
         private const int OriginalSize = 120; //Width and height dimensions in pixels
         private const int OriginalAlpha = 50; //Alpha value when spawned
         private const int ExpandedAlpha = 150; //Alpha value when fully expanded
-        private const float AngularSpeed = 1/60f * Tools.RevolutionPerSecond;
+        private const float RotationSpeed = 0 * RevolutionPerSecond; //Turned off so the sprite isn't weird
         private const float ExpandedScale = 1.5f; //Size when fully expanded
 
 
@@ -41,17 +42,20 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
+            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
+			projectile.netUpdate = true;
+
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (!orbitalPlayer.active[OrbitalID.SpikedBubble]) //Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalID.SpikedBubble] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
             {
                 projectile.Kill();
             }
             else
             {
                 projectile.Center = player.MountedCenter; //Keeps it on the player
-                projectile.rotation += AngularSpeed; //Makes it rotate slowly
+                projectile.rotation += RotationSpeed; //Makes it rotate slowly
                 projectile.timeLeft = 2; //Keep it from dying naturally
 
                 if (firstTick) //Spawns some dust
@@ -91,9 +95,8 @@ namespace Virtuous.Orbitals
                         const int DustAmount = 50;
                         for (int i = 0; i < DustAmount; i++)
                         {
-                            float rotation = Main.rand.NextFloat() * Tools.FullCircle; //Random rotation around the circle
-                            int distance = Main.rand.Next(projectile.width / 2); //Random distance from the circle center
-                            Vector2 position = projectile.Center + new Vector2(0, distance).RotatedBy(rotation);
+                            Vector2 offset = Vector2.UnitY.RotatedBy(RandomFloat(FullCircle)).OfLength(RandomInt(projectile.width / 2)); //Random rotation, random distance from the center
+                            Vector2 position = projectile.Center + offset;
                             Dust newDust = Dust.NewDustDirect(position, 0, 0, /*Type*/16, 0, 0, /*Alpha*/100, new Color(255, 200, 245, 150), /*Scale*/1.2f);
                             newDust.velocity *= 2;
                         }

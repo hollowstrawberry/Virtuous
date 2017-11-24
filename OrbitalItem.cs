@@ -4,30 +4,24 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
+using static Virtuous.Tools;
 
 namespace Virtuous
 {
     public class OrbitalItem : GlobalItem
     {
-        public override bool InstancePerEntity
-        {
-            get { return true; }
-        }
-
-        public override bool CloneNewInstances
-        {
-            get { return true; }
-        }
+        public override bool InstancePerEntity => true;
+        public override bool CloneNewInstances => true;
 
 
         public int type = OrbitalID.None; //The orbital this item spawns
-        public int duration = 5 * 60; //How long the summoned orbital will last
+        public int duration = 5 * 60; //How long the summoned orbital will last, in ticks
         public int amount = 1; //The amount of orbitals that will be spawned in a circle
 
         public const int SpecialNone = 0;
         public const int SpecialReuse = 1;
         public const int SpecialRightClick = 2;
-        public int specialFunctionType = SpecialNone;
+        public int specialFunctionType = SpecialNone; //Whether this orbital has a special effect, and whether it triggers by reusing it or by right-clicking
 
 
         public static int GetOrbitalType(Mod mod, int type) //Returns a corresponding projectile type to the given OrbitalItem.type value
@@ -87,7 +81,7 @@ namespace Virtuous
                     for (int i = 0; i < amount; i++)
                     {
                         Vector2 rotation; //We will pass this as the velocity of the projectile, which will be stored then set to 0
-                        rotation = Vector2.UnitX.RotatedBy(Tools.FullCircle * i / amount); //Divides the circle into a set amount of points and picks the current one in the loop
+                        rotation = Vector2.UnitX.RotatedBy(FullCircle * i / amount); //Divides the circle into a set amount of points and picks the current one in the loop
                         Projectile.NewProjectile(position, rotation, GetOrbitalType(mod, this.type), damage, knockBack, player.whoAmI);
                     }
                 }

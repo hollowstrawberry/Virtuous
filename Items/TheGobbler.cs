@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
+using static Virtuous.Tools;
 
 namespace Virtuous.Items
 {
@@ -52,7 +54,7 @@ namespace Virtuous.Items
             if (player.altFunctionUse == 2) //Right click
             {
                 item.useTime = 1; //Code for the gun runs once per tick, but the animation is longer so I can control when and how to do things
-                item.useAnimation = 30;
+                item.useAnimation = 30; //About right for the looping sound
             }
             else //Left click
             {
@@ -170,7 +172,7 @@ namespace Virtuous.Items
                     line.text += "\nPress Throw" + (item.favorited ? (" ") : (" while favorited ")) + "to release the storage";
                     line.text += "\nProjectile damage, properties and behavior vary on the item";
                     line.text += "\nNon-consumable items always drop after being spent, though they may be damaged";
-                    line.text += "\n[Warning]: Experimental technology. May carry unintended consequences";
+                    line.text += "\n[Warning]: Experimental technology. May carry unintended and hilarious consequences";
                 }
             }
         }
@@ -196,6 +198,7 @@ namespace Virtuous.Items
             if (item.accessory || item.defense > 0 || item.vanity || item.damage > 0) chance *= 0.5f; //Weapon or equipable
 
             if (item.type == ItemID.EndlessMusketPouch || item.type == ItemID.EndlessQuiver) chance = 0f;
+            if (item.type == ItemID.Arkhalis) chance *= 0.5f;
 
             return chance;
         }
@@ -209,14 +212,25 @@ namespace Virtuous.Items
         {
             VirtuousPlayer modPlayer = player.GetModPlayer<VirtuousPlayer>();
 
-            position = player.Center + (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX) * item.width; //The nozzle
-            position += new Vector2(position.Y, -position.X).SafeNormalize(Vector2.UnitX) * 10; //Moves it up to be centered
+            position = player.Center + (Main.MouseWorld - player.Center).OfLength(item.width); //The nozzle
+            position += position.Perpendicular(10); //Moves it up to be centered
             if (!Collision.CanHit(player.Center, 0, 0, position, 0, 0)) position = player.Center; //Resets to the player center if the nozzle is unreachable
 
 
             if (player.altFunctionUse == 2) //Right click, absorb
             {
-                if(player.itemAnimation == item.useAnimation-1) Main.PlaySound(SoundID.Item22, position); //Once every animation
+                //A little hack to stop the bugged 1-tick delay between consecutive alternate-uses of a weapon
+                if (player.itemAnimation == 1) //Resets the animation so it doesn't return to resting position
+                {
+                    player.itemAnimation = item.useAnimation;
+                }
+                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the item use manually. Has the secondary effect of only sucking while you're actually clicking
+                {
+                    player.itemAnimation = 0;
+                    return false;
+                }
+
+                if (player.itemAnimation == item.useAnimation - 1) Main.PlaySound(SoundID.Item22, position); //Once at the beginning of the animation
 
                 bool sucked = false; //Whether an item has been sucked in this tick
 
@@ -229,7 +243,7 @@ namespace Virtuous.Items
 
                         if (targetItem.WithinRange(position, 250)) //Within sucking range
                         {
-                            targetItem.velocity -= (targetItem.Center - position).SafeNormalize(Vector2.UnitY) * 0.5f; //Attracts item towards the nozzle
+                            targetItem.velocity -= (targetItem.Center - position).OfLength(0.5f); //Attracts item towards the nozzle
                             targetModItem.beingGobbled = true; //So it can't be picked up
 
                             if (targetItem.WithinRange(position, 15)) //Absorb range
@@ -255,8 +269,12 @@ namespace Virtuous.Items
                                     }
                                 }
                             }
+
+                            if (Main.netMode == NetmodeID.MultiplayerClient) //Syncs to multiplayer
+                            {
+                                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, targetItem.whoAmI);
+                            }
                         }
-                        else targetModItem.beingGobbled = false; //Not within sucking range
                     }
                 }
             }
@@ -271,17 +289,12 @@ namespace Virtuous.Items
 
                         Main.PlaySound(SoundID.Item5, position);
 
-                        bool consume = Main.rand.NextFloat() < ConsumeChance(modPlayer.GobblerItem(BaseSlot));
+                        bool consume = RandomFloat() < ConsumeChance(modPlayer.GobblerItem(BaseSlot));
 
                         if (shotItem.ammo == AmmoID.Arrow)  //Arrows are shot just fine
                         {
                             Projectile newProj = Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), shotItem.shoot, ProjGobblerItem.ShotDamage(shotItem, player), ProjGobblerItem.ShotKnockBack(shotItem, player), player.whoAmI);
-                            if (newProj.type == ProjectileID.WoodenArrowFriendly) //So the arrows don't drop and make a mess...
-                            {
-                                newProj.type = ProjectileID.WoodenArrowHostile;
-                                newProj.hostile = false;
-                                newProj.friendly = true;
-                            }
+                            newProj.noDropItem = true; //So the arrows don't drop and make a mess...
                         }
                         else //Shooting the custom projectile that takes the form of any item
                         {
@@ -289,6 +302,14 @@ namespace Virtuous.Items
                             if (itemType == ItemID.EndlessMusketPouch) itemType = ItemID.MusketBall; //Exception
 
                             Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI, consume ? 1f : 0f, itemType); //Shoots the item
+                            
+                            if(itemType == ItemID.Arkhalis) //Ridiculous effect for ridiculous weapon
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY) * RandomFloat(), type, damage, knockBack, player.whoAmI, 0f, itemType);
+                                }
+                            }
                         }
 
                         if (consume)
@@ -319,7 +340,7 @@ namespace Virtuous.Items
 
         public override Vector2? HoldoutOffset()
 		{
-			return new Vector2(Main.rand.Next(2), Main.rand.Next(2) - 8); //Shakes
+			return new Vector2(RandomFloat(0, 2), RandomFloat(-8, -6)); //Shakes
 		}
     }
 }

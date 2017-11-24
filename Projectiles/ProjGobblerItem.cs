@@ -3,16 +3,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Items;
+using static Virtuous.Tools;
 
 namespace Virtuous.Projectiles
 {
     public class ProjGobblerItem : ModProjectile
     {
         ///* Private projectile fields and properties *///
-        private const float RotationSpeed = 1 * Tools.RevolutionPerSecond;
+
+        private const float RotationSpeed = 1 * RevolutionPerSecond;
         private const int Lifespan = 10 * 60;
 
         private bool Consumed //Whether the item was consumed and will drop from this projectile. Passed as ai[0]
@@ -38,6 +41,15 @@ namespace Virtuous.Projectiles
             return (float)Math.Sqrt((double)item.width * item.width + (double)item.height * item.height);
         }
 
+        public static void ApplyClassDamage(ref float damage, Item item, Player player) //Modifies the given ref damage to apply class damage bonuses based on the given item and player
+        {
+            if      (item.melee ) damage *= player.meleeDamage;
+            else if (item.ranged) damage *= player.rangedDamage;
+            else if (item.magic ) damage *= player.magicDamage;
+            else if (item.summon) damage *= player.minionDamage;
+            else if (item.thrown) damage *= player.thrownDamage;
+        }
+
         public static int ShotDamage(Item item, Player player) //Returns the final damage of the specified item when being shot by the specified player
         {
             //Adds:
@@ -47,13 +59,7 @@ namespace Virtuous.Projectiles
             //10 damage per rarity point
             //5 damage per pixel across the sprite size
             float damage = TheGobbler.BaseDamage + item.damage + item.defense * 3f + item.value / 5000f + ItemDiagonalSize(item) * 5f + (item.rare > 0 ? item.rare * 10 : 0);
-
-            if      (item.melee ) damage *= player.meleeDamage;
-            else if (item.ranged) damage *= player.rangedDamage;
-            else if (item.magic ) damage *= player.magicDamage;
-            else if (item.summon) damage *= player.minionDamage;
-            else if (item.thrown) damage *= player.thrownDamage;
-
+            ApplyClassDamage(ref damage, item, player);
             return (int)damage;
         }
 
@@ -72,9 +78,18 @@ namespace Virtuous.Projectiles
             return knockBack;
         }
 
-        public static bool IsWeapon(Item item) //Whether the specified item can probably be reforged
+        public static bool IsReforgeableWeapon(Item item)
         {
-            if (item.damage > 0 && item.useStyle > 0 && !item.consumable && item.GetGlobalItem<OrbitalItem>().type == OrbitalID.None)
+            if (item.Prefix(-3) && !item.accessory)
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        public static bool IsTool(Item item)
+        {
+            if (item.pick > 0 || item.axe > 0 || item.hammer > 0)
             {
                 return true;
             }
@@ -108,6 +123,7 @@ namespace Virtuous.Projectiles
         }
 
 
+
         ///* Private methods run by the projectile for easy access and utility *///
 
         private void ChangeSize(int newWidth, int newHeight) //Change the projectile's size but keep its center
@@ -121,26 +137,162 @@ namespace Virtuous.Projectiles
         private bool ToolBounce() //If the item is a tool, it will bounce off in the direction it came from when specified
         {
             Item storedItem = StoredItem;
-            if (storedItem.pick > 0 || storedItem.axe > 0 || storedItem.hammer > 0)
+            if (IsTool(storedItem))
             {
                 if (projectile.penetrate > 1)
                 {
                     if (storedItem.UseSound != null) Main.PlaySound(storedItem.UseSound, projectile.Center);
                     projectile.penetrate--;
                     projectile.velocity *= new Vector2(-0.5f, -0.5f);
+                    projectile.netUpdate = true; //Syncs to multiplayer
                     return true;
                 }
                 else projectile.Kill();
             }
+
             return false;
         }
+
+        private void MagicExplode() //If the item is a magic weapon it will explode when the projectile dies
+        {
+            Item storedItem = StoredItem;
+            if (storedItem.magic)
+            {
+                ChangeSize(projectile.width + 50, projectile.height + 50);
+                projectile.Damage(); //Applies damage in the area
+
+                Main.PlaySound(SoundID.Item14, projectile.Center);
+                for (int i = 0; i < Math.Max(4, (int)ItemDiagonalSize(storedItem) / 4); i++) //More dust the higher the size
+                {
+                    Gore.NewGore(projectile.position + new Vector2(RandomFloat(projectile.width), RandomFloat(projectile.height)), Vector2.Zero, RandomInt(61, 63), RandomFloat(0.2f, 1.2f));
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), RandomFloat(2));
+                }
+            }
+        }
+
+        private void ItemConsume() //When the projectile dies and the stored item was set to consumed
+        {
+            Item storedItem = StoredItem;
+            Player player = Main.player[projectile.owner];
+
+            if (IsDepletable(storedItem)) //Item won't be returned
+            {
+                if (storedItem.buffTime != 0) //Buff-giving consumables
+                {
+                    player.AddBuff(storedItem.buffType, storedItem.buffTime);
+                }
+                if (storedItem.makeNPC != 0 && Main.netMode != NetmodeID.MultiplayerClient) //Critter consumables. In multiplayer it only spawns the mob server-side
+                {
+                    NPC.NewNPC((int)(projectile.Center.X), (int)(projectile.Center.Y), storedItem.makeNPC);
+                }
+            }
+            else //Drops the stored item
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient) //In multiplayer it only spawns the item server-side
+                {
+                    Item.NewItem(projectile.Center, storedItem.type, 1, false, IsReforgeableWeapon(storedItem) ? PrefixID.Broken : 0);
+                }
+            }
+        }
+
+        private void ItemShoot() //When this projectile dies it can shoot out what the stored item would shoot
+        {
+            Item storedItem = StoredItem;
+            Player player = Main.player[projectile.owner];
+
+            //Orbital behavior
+            if (storedItem.GetGlobalItem<OrbitalItem>().type != OrbitalID.None)
+            {
+                OrbitalItem orbitalItem = storedItem.GetGlobalItem<OrbitalItem>();
+                Vector2 position = player.Center;
+                Vector2 velocity = Vector2.Zero;
+                int type = 0;
+                int damage = storedItem.damage;
+                orbitalItem.GetWeaponDamage(storedItem, player, ref damage);
+
+                orbitalItem.Shoot(storedItem, player, ref position, ref velocity.X, ref velocity.Y, ref type, ref damage, ref storedItem.knockBack);
+                return;
+            }
+
+            //Shooting exceptions
+            else if (storedItem.type == ItemID.ExplosiveBunny) //I love these, alright? And they don't normally have a value for shoot
+            {
+                Projectile newProj = Projectile.NewProjectileDirect(projectile.Center, Vector2.Zero, ProjectileID.ExplosiveBunny, storedItem.damage, projectile.knockBack, player.whoAmI);
+                newProj.timeLeft = 3;
+            }
+
+            //General shooting behavior
+            else if (storedItem.shoot > 0 && storedItem.ammo == 0 && storedItem.type != ItemID.StardustDragonStaff) //Stardust dragon is very buggy
+            {
+                //Summon and pet behavior
+                if (storedItem.buffType != 0)
+                {
+                    if (player.FindBuffIndex(storedItem.buffType) < 0)
+                    {
+                        player.AddBuff(storedItem.buffType, 60); //Player doesn't have the buff active, adds it
+                    }
+                    else //Player has the corresponding  buff active
+                    {
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            if (Main.projectile[i].type == storedItem.shoot && Main.projectile[i].owner == projectile.owner) //Finds the pet or summon among all projectiles
+                            {
+                                Main.projectile[i].Center = projectile.Center; //Teleports the pet or summon to this projectile
+                                if (storedItem.damage <= 0) return; //If it's a pet, stops the method and doesn't shoot anything
+                            }
+                        }
+                    }
+                }
+
+                //Shot projectile amount
+                int projAmount = 1;
+                if (storedItem.damage > 0 && !storedItem.consumable && (!storedItem.melee || storedItem.useStyle == 1) || storedItem.type == ItemID.Clentaminator)
+                {
+                    projAmount = RandomInt(4, 6); //Weapons excluding non-swingable melee weapons shoot a random amount of projectiles
+                }
+                if (storedItem.ranged)
+                {
+                    projAmount += projAmount / 2 + (int)(60f / storedItem.useAnimation); //Ranged weapons shoot a lot more based on their speed
+                }
+
+                //Shot projectile type
+                int projType = storedItem.shoot;
+                if      (projType == ProjectileID.WoodenArrowFriendly) projType = ProjectileID.WoodenArrowHostile; //So it doesn't drop the item. We will reverse the friendly and hostile later
+                else if (projType == 10 && storedItem.useAmmo == AmmoID.Bullet) projType = ProjectileID.Bullet; //For some reasons some guns have 10
+                else if (storedItem.useAmmo == AmmoID.Dart) projType = ProjectileID.PoisonDart; //Manually makes dart guns shoot darts
+
+                //Shot projectile damage
+                float damage = storedItem.damage; //The normal item's damage
+                ApplyClassDamage(ref damage, storedItem, player);
+
+                //Spawning the projectiles
+                for (int i = 0; i < projAmount; i++)
+                {
+                    Vector2 rotation = projAmount == 1 ? Vector2.UnitY.RotatedByRandom(FullCircle) : Vector2.UnitY.RotatedBy(FullCircle * i / projAmount); //Weapons shoot in a circle, others shot in a random direction
+                    Vector2 position = projectile.Center + rotation;
+                    Vector2 velocity = rotation * storedItem.shootSpeed;
+
+                    Projectile newProj = Projectile.NewProjectileDirect(position, velocity, projType, (int)damage, storedItem.knockBack, player.whoAmI);
+                    if (IsExplosive(storedItem)) newProj.timeLeft = 3; //Explodes instantly
+                    if (storedItem.sentry)
+                    {
+                        newProj.position.Y -= 20; //So it doesn't sink into the ground
+                        newProj.position.X += RandomInt(-20, +20);
+                        player.UpdateMaxTurrets();
+                    }
+                    newProj.friendly = true;
+                    newProj.hostile = false;
+                }
+            }
+        }
+
 
 
         ///* tModLoader methods and projectile behavior *///
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shot Item");
+            DisplayName.SetDefault("Item");
         }
 
         public override void SetDefaults()
@@ -154,44 +306,49 @@ namespace Virtuous.Projectiles
             projectile.friendly = true;
             projectile.tileCollide = true;
             projectile.ignoreWater = false;
-            projectile.usesLocalNPCImmunity = true; //Hits once per individual projectile
+            projectile.usesLocalNPCImmunity = true; //Hits per individual projectile
             projectile.localNPCHitCooldown = 10;
         }
 
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            Item storedItem = StoredItem; //We make a single copy to utilize
+            Item storedItem = StoredItem; //It's important that we make a single copy to utilize so that a new item instance isn't created every time we access the property
 
-            if (projectile.timeLeft == Lifespan && storedItem.type != ItemID.None) //First tick
+            //First tick
+            if (projectile.timeLeft == Lifespan && storedItem.type != ItemID.None)
             {
                 //Inherit properties from the stored item
                 ChangeSize(storedItem.width, storedItem.height);
                 projectile.damage = ShotDamage(storedItem, player);
                 projectile.knockBack = ShotKnockBack(storedItem, player);
-                projectile.melee = storedItem.melee;
-                projectile.magic = storedItem.magic;
+                projectile.melee  = storedItem.melee;
+                projectile.magic  = storedItem.magic;
                 projectile.ranged = storedItem.ranged;
 
-                if (!Consumed && (!IsDepletable(storedItem) || storedItem.makeNPC > 0))
+                //Transparency
+                if (!Consumed && !IsDepletable(storedItem))
                 {
-                    projectile.alpha = 135; //Copies appear translucent, unless they're a non-critter consumable
+                    projectile.alpha = 120; //Copies appear translucent, unless they're depleted after used
                 }
 
-                if (ItemID.Sets.ItemNoGravity[storedItem.type]) //Items without gravity
+                //Items without gravity
+                if (ItemID.Sets.ItemNoGravity[storedItem.type]) 
                 {
                     projectile.timeLeft = 2 * 60;
                     projectile.penetrate = -1;
                 }
 
+                //Penetration
                 if (storedItem.melee) projectile.penetrate = -1; //Melee weapons penetrate infinitely
-                if (storedItem.pick > 0 || storedItem.axe > 0 || storedItem.hammer > 0) projectile.penetrate = 3; //Tools penetrate only a bit
+                if (IsTool(storedItem)) projectile.penetrate = 3; //But tools penetrate only a bit
                 else if (storedItem.accessory) projectile.penetrate = 2;
 
-                projectile.netUpdate = true; //Sync to multiplayer;
+                projectile.netUpdate = true; //Sync to multiplayer
             }
 
-            if (!ItemID.Sets.ItemNoGravity[storedItem.type]) //Movement and rotation is ignored by items that don't have gravity
+            //Every tick: Projectile rotation and movement
+            if (!ItemID.Sets.ItemNoGravity[storedItem.type])
             {
                 projectile.velocity.Y += ItemDiagonalSize(storedItem) / 200f; //How fast they fall down depends on their size
 
@@ -202,7 +359,7 @@ namespace Virtuous.Projectiles
                 else if (storedItem.ammo > 0) //Projectiles point to where they're going
                 {
                     projectile.rotation = projectile.velocity.ToRotation();
-                    if (storedItem.ammo == AmmoID.Arrow) projectile.rotation -= -90.ToRadians(); //Sprite pointing down
+                    if (storedItem.ammo == AmmoID.Arrow) projectile.rotation += -90.ToRadians(); //Sprite pointing down
                     else if (storedItem.ammo == AmmoID.Bullet || storedItem.ammo == AmmoID.Dart) projectile.rotation += 90.ToRadians(); //Sprite pointing up
                     else if (storedItem.ammo == AmmoID.StyngerBolt || storedItem.ammo == AmmoID.CandyCorn) projectile.rotation += 45.ToRadians(); //Sprite pointing diagonally
                 }
@@ -213,91 +370,41 @@ namespace Virtuous.Projectiles
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
-            projectile.penetrate--;
-            if (ToolBounce()) return false;
-            return base.OnTileCollide(oldVelocity);
+
+            if (ToolBounce()) //Tools bounce
+            {
+                return false;
+            }
+            else //Other items die
+            {
+                return base.OnTileCollide(oldVelocity); 
+            }
         }
 
-        public override bool PreKill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
-            Item storedItem = StoredItem; //We make a single copy to utilize
+            Item storedItem = StoredItem; //A single copy
             Player player = Main.player[projectile.owner];
 
-            if (Consumed && !IsDepletable(storedItem)) Item.NewItem(projectile.Center, storedItem.type, 1, false, IsWeapon(storedItem) ? PrefixID.Broken : 0); //Drops the item, applies the Broken modifier if it's a weapon.
+            if (projectile.owner == Main.myPlayer) //So it doesn't repeat the code for everyone in a server
+            {
+                ItemShoot();
+                MagicExplode();
+            }
+
+            if (Consumed) ItemConsume();
+
             if (storedItem.UseSound != null) Main.PlaySound(storedItem.UseSound, projectile.Center);
+        }
 
 
-            if (storedItem.shoot > 0 && storedItem.ammo == 0 && storedItem.GetGlobalItem<OrbitalItem>().type == OrbitalID.None) //Shoots whatever projectile this item shoots, unless it's an ammo
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (target.type == StoredItem.makeNPC) //Critters can't damage themselves
             {
-                int projAmount = 1;
-                if (storedItem.damage > 0 && !storedItem.consumable && !storedItem.summon && (!storedItem.melee || storedItem.useStyle == 1)
-                    || storedItem.type == ItemID.Clentaminator
-                )
-                {
-                    projAmount = Main.rand.Next(4, 6 + 1); //Weapons excluding non-swingable melee weapons and summons shoot a random amount of projectiles
-                }
-                if (storedItem.ranged) projAmount *= 2; //Ranged weapons shoot twice as many projectiles
-
-                int projType = storedItem.shoot;
-                if (projType == ProjectileID.WoodenArrowFriendly) projType = ProjectileID.WoodenArrowHostile; //So it doesn't drop the item
-                else if (projType == 10) projType = ProjectileID.Bullet; //For some reasons some guns have 10
-
-                int damage = storedItem.damage; //Deals the normal item's damage
-                if      (storedItem.melee ) damage = (int)(damage * player.meleeDamage);
-                else if (storedItem.ranged) damage = (int)(damage * player.rangedDamage);
-                else if (storedItem.magic ) damage = (int)(damage * player.magicDamage);
-                else if (storedItem.summon) damage = (int)(damage * player.minionDamage);
-                else if (storedItem.thrown) damage = (int)(damage * player.thrownDamage);
-
-                for (int i = 0; i < projAmount; i++)
-                {
-                    Vector2 rotation = projAmount == 1 ? Vector2.UnitY.RotatedByRandom(Tools.FullCircle) : Vector2.UnitY.RotatedBy(Tools.FullCircle * i / projAmount); //Weapons shoot in a circle, others shot in a random direction
-                    Vector2 position = projectile.Center + rotation;
-                    Vector2 velocity = rotation * storedItem.shootSpeed;
-
-                    Projectile newProj = Projectile.NewProjectileDirect(position, velocity, projType, damage, storedItem.knockBack, player.whoAmI);
-                    newProj.friendly = true;
-                    newProj.hostile = false;
-                    if (IsExplosive(storedItem)) newProj.timeLeft = 3; //Explodes instantly
-                }
+                return false;
             }
-            else if (storedItem.type == ItemID.ExplosiveBunny) //I love these, alright? And they don't normally have a value for shoot
-            {
-                Projectile newProj = Projectile.NewProjectileDirect(projectile.Center, Vector2.Zero, ProjectileID.ExplosiveBunny, storedItem.damage, projectile.knockBack, player.whoAmI);
-                newProj.timeLeft = 3;
-            }
-            else if (storedItem.GetGlobalItem<OrbitalItem>().type != OrbitalID.None) //Orbitals activate themselves
-            {
-                OrbitalItem orbitalItem = storedItem.GetGlobalItem<OrbitalItem>();
-                Vector2 position = player.Center;
-                Vector2 velocity = Vector2.Zero;
-                int type = 0;
-                int damage = storedItem.damage;
-                orbitalItem.GetWeaponDamage(storedItem, player, ref damage);
-
-                orbitalItem.Shoot(storedItem, player, ref position, ref velocity.X, ref velocity.Y, ref type, ref damage, ref storedItem.knockBack);
-            }
-
-
-            if (storedItem.magic) //Magic weapons make an explosion
-            {
-                ChangeSize(projectile.width + 50, projectile.height + 50);
-                if (projectile.owner == Main.myPlayer) projectile.Damage(); //Applies damage in the area
-
-                Main.PlaySound(SoundID.Item14, projectile.Center);
-                for (int i = 0; i < Math.Max(4, (int)ItemDiagonalSize(storedItem) / 4); i++) //More dust the higher the size
-                {
-                    Gore.NewGore(projectile.position + new Vector2(Main.rand.Next(projectile.width), Main.rand.Next(projectile.height)), Vector2.Zero, Main.rand.Next(61, 63 + 1), 0.2f + Main.rand.NextFloat());
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), Main.rand.NextFloat() * 2f);
-                }
-            }
-
-            if (storedItem.makeNPC != 0 && Consumed) //If the item spawns an NPC, it spawns it when the item is consumed
-            {
-                NPC.NewNPC((int)(projectile.Center.X), (int)(projectile.Center.Y), storedItem.makeNPC);
-            }
-
-            return base.PreKill(timeLeft);
+            else return base.CanHitNPC(target);
         }
 
 
@@ -318,7 +425,6 @@ namespace Virtuous.Projectiles
                 if (storedItem.Name.ToUpper().Contains("CURSED")) target.AddBuff(BuffID.CursedInferno, 120);
                 if (storedItem.Name.ToUpper().Contains("SHADOWFLAME")) target.AddBuff(BuffID.ShadowFlame, 120);
             }
-            if (storedItem.vanity) target.AddBuff(BuffID.Slow, 120);
             //More?
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
@@ -327,7 +433,7 @@ namespace Virtuous.Projectiles
 
             ToolBounce();
 
-            if (!storedItem.Name.ToUpper().Contains("BANNER"))
+            if (!storedItem.Name.ToUpper().Contains("BANNER")) //Generic effects based on keywords
             {
                 if (storedItem.Name.ToUpper().Contains("SLIME") || storedItem.Name.ToUpper().Contains("GEL")) target.AddBuff(BuffID.Slimed, 120);
                 if (storedItem.Name.ToUpper().Contains("WATER")) target.AddBuff(BuffID.Wet, 120);
@@ -345,7 +451,8 @@ namespace Virtuous.Projectiles
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //Draws the stored item's texture as the projectile's
         {
-            Item storedItem = StoredItem;
+            Item storedItem = StoredItem; //A single copy
+
             if (storedItem.type != ItemID.None) 
             {
                 Texture2D texture = Main.itemTexture[storedItem.type];
@@ -359,6 +466,11 @@ namespace Virtuous.Projectiles
                     int currentFrame = (int)(Main.GameUpdateCount / frameDelay) % frameCount; //This code cycles through the frames at a constant pace
                     frame = texture.Frame(1, frameCount, 0, currentFrame);
                     frameHeight /= frameCount;
+                }
+
+                if (storedItem.color != default(Color))
+                {
+                    lightColor = Color.Lerp(lightColor, storedItem.color, 0.75f); //Gel gains its blue, etc.
                 }
 
                 Vector2 position = projectile.Center - Main.screenPosition + new Vector2(0, texture.Height / 2 - frameHeight / 2); //Adds the difference between the spritesheet's center and the frame's center
