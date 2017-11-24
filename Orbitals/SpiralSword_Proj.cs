@@ -50,13 +50,12 @@ namespace Virtuous.Orbitals
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.usesIDStaticNPCImmunity = true;
-            projectile.idStaticNPCHitCooldown = 10;
+            projectile.idStaticNPCHitCooldown = 10; //Replaced when right-clicking
         }
 
         public override void AI()
         {
-            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
-			projectile.netUpdate = true;
+			projectile.netUpdate = true; //Temporary cover for multiplayer acting strange
 
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
@@ -89,6 +88,7 @@ namespace Virtuous.Orbitals
                         if (rightClickTimer == 0) outwards = true; //Sets the starting direction
 
                         projectile.damage = originalDamage * 2; //Deals more damage when thrown
+                        projectile.idStaticNPCHitCooldown = 5; //Deals damage more rapidly
                         distanceSpeed = ThrowSpeed; //How quickly the distance changes
                         if (!outwards) distanceSpeed *= -1; //Moves in reverse direction if returning
                         rightClickTimer++;
@@ -106,6 +106,7 @@ namespace Virtuous.Orbitals
                             distance = DistanceAvg;
                             distanceSpeed = -OscSpeedMax;
                             projectile.damage = originalDamage;
+                            projectile.idStaticNPCHitCooldown = 10;
                         }
 
                     }

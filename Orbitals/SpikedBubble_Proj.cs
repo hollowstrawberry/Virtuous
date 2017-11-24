@@ -42,8 +42,7 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
-            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
-			projectile.netUpdate = true;
+            projectile.netUpdate = true; //Temporary cover for multiplayer acting strange
 
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();

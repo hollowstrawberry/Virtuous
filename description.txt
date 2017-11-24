@@ -7,6 +7,7 @@ Featuring:
  - A completely new weapon type: Orbitals. These 9 items spread throughout the game choose the player's highest damage between magic and melee, and while active they stay near the caster as they deal damage to enemies and provide boosts and effects. The orbitals don't occupy buff slots and their damage doesn't interfere with other piercing weapons!
  - 3 melee weapons, 3 ranged weapons, and 3 magic weapons, all unique and finetuned, with new mechanics.
 
-If you'd like a full list of the weapons and the recipes, check the Discord and forum thread (Recipe Browser will also help)
-Discord server: https://discord.gg/ymCRQZr or click the website button below
-The entire source code is available on GitHub.
+Changelog:
+ - Patch 1.0.1 - 1.0.2: Minor tweaks and bugfixes, added mod icon
+
+If you go to the Discord server through the homepage button below, you will find a link to the forum thread and github, along with access to more detailed info such as recipes.

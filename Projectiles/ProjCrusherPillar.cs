@@ -20,8 +20,8 @@ namespace Virtuous.Projectiles
         private const int Lifespan = 40; //Total duration of the projectile
         private const int FadeTime = 20; //How long it fades away for
         private int moveTime; //How long the projectile will move for
-        private int appearance { get { return (int)projectile.ai[0]; } set { projectile.ai[0] = value; } } //How long it moves for before stopping. Stored as the projectile's native ai[0]
-        private bool crit { get { return projectile.ai[1] > 0; } } //Whether the original hit was a critical hit or not, passed as ai[1]
+        private int Appearance { get { return (int)projectile.ai[0]; } set { projectile.ai[0] = value; } } //How long it moves for before stopping. Stored as the projectile's native ai[0]
+        private bool Crit { get { return projectile.ai[1] > 0; } } //Whether the original hit was a critical hit or not, passed as ai[1]
 
         public override void SetDefaults()
         {
@@ -45,12 +45,12 @@ namespace Virtuous.Projectiles
                 moveTime = (int)Math.Ceiling((TargetDistance-projectile.width/2) / projectile.velocity.Length()); //It'll move until its edge reaches the edge of the opposite pillar
                 moveTime += 1; //Overshoot as the sprites are irregular
                 if (projectile.velocity.X < 0) projectile.spriteDirection = -1; //Going left
-                projectile.frame = appearance;
+                projectile.frame = Appearance;
                 projectile.netUpdate = true; //Syncs to multiplayer
             }
             else if (projectile.timeLeft == Lifespan - moveTime) //Movetime is over, and the pillars have contacted
             {
-                int dustAmount = crit ? RandomInt(6,9) : RandomInt(12,14); //More dust if it's a crit
+                int dustAmount = Crit ? RandomInt(6,9) : RandomInt(12,14); //More dust if it's a crit
                 Vector2 dustoffset; //How far from the projectile center the dust should spawn
                 dustoffset.X = projectile.velocity.X>0 ? +projectile.width/2 : -projectile.width/2; //To the left or right of the pillar depending on where it's coming from
                 for (int i = 1; i <= dustAmount; i++)
@@ -75,7 +75,7 @@ namespace Virtuous.Projectiles
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (crit)
+            if (Crit) //The critical hit depends on the hammer's critical hit
             {
                 damage /= 2;
                 crit = true;
@@ -87,7 +87,7 @@ namespace Virtuous.Projectiles
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (crit)
+            if (Crit)
             {
                 damage /= 2;
                 crit = true;

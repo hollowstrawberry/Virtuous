@@ -55,8 +55,7 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
-            //if (projectile.owner != Main.myPlayer) return; //Only runs AI for the client
-			projectile.netUpdate = true;
+            projectile.netUpdate = true; //Temporary cover for multiplayer acting strange
 
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
@@ -106,7 +105,7 @@ namespace Virtuous.Orbitals
                         {
                             if (rightClickTimer == 0) //Sets the spinning direction on the first tick
                             {
-                                projectile.damage = (int)(originalDamage * 1.2); //Higher damage when spinning
+                                projectile.damage = (int)(originalDamage * 1.5); //Higher damage when spinning
                                 curAngularSpeed = player.direction * AngularSpeed; //Spinning direction changes on player orientation
                                 projectile.netUpdate = true; //Syncs to multiplayer
                             }
@@ -134,12 +133,14 @@ namespace Virtuous.Orbitals
         }
 
 
-        private void LifeSteal(Vector2 position) //Spawns vampire heal projectiles depending on damage dealt and player's lifesteal status
+        private void LifeSteal(Vector2 position, int damage) //Spawns vampire heal projectiles depending on damage dealt and player's lifesteal status
         {
-            float heal = projectile.damage / 50f;
-            if (heal != 0 && Main.player[projectile.owner].lifeSteal > 0)
+            Player player = Main.player[projectile.owner];
+
+            float heal = Math.Min(damage / 20f, player.statLifeMax - player.statLife); //Caps at the life missing
+            if (heal > 0 && player.lifeSteal > 0) 
             {
-                Main.player[projectile.owner].lifeSteal -= heal;
+                player.lifeSteal -= heal; //Limits how much you can heal at once
                 Projectile.NewProjectile(position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
             }
         }
@@ -148,13 +149,13 @@ namespace Virtuous.Orbitals
         {
             if (target.lifeMax > 5 && !Main.player[projectile.owner].moonLeech && !target.immortal)
             {
-                LifeSteal(target.Center);
+                LifeSteal(target.Center, damage);
             }
         }
 
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            LifeSteal(target.Center);
+            LifeSteal(target.Center, damage);
         }
 
 

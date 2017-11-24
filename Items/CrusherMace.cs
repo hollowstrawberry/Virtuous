@@ -18,8 +18,8 @@ namespace Virtuous.Items
         public override void SetDefaults()
         {
             item.width = 86;
-            item.height = 90;
-            item.scale = 2.0f;
+            item.height = 74;
+            item.scale = 1.2f;
             item.useStyle = 1;
             item.useTime = 40;
             item.useAnimation = item.useTime;
