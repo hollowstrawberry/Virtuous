@@ -16,7 +16,7 @@ namespace Virtuous.Orbitals
 
         private bool firstTick { get { return projectile.ai[0] == 0; } set { projectile.ai[0] = value ? 0 : 1; } } //Stores into the projectile's built-in ai[0], which is 0 by default (true in this case)
 
-        public  const float DamageBoost = 0.1f; //Damage boost while the orbital is active. Used by VirtuousPlayer and VirtuousItem
+        public  const float DamageBoost = 0.1f; //Damage boost while the orbital is active. Used by OrbitalPlayer and OrbitalItem
         public  const int DyingTime = 30; //Time it spends expanding before dying
         private const int PopTime = 10; //Part of dyingTime where it keeps its size before popping
         private const int OriginalSize = 120; //Width and height dimensions in pixels

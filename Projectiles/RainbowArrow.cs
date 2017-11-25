@@ -67,35 +67,35 @@ namespace Virtuous.Projectiles
 
         private void SpawnRainbowDust(bool Burst=false)
         {
-			int type=0;
-			float scale=0;
-			Vector2 velocity = Vector2.Zero; //Changed if we want the dust to have a special velocity
+            int type=0;
+            float scale=0;
+            Vector2 velocity = Vector2.Zero; //Changed if we want the dust to have a special velocity
 
-			switch(arrowMode)
-			{
-				case Normal:
-					type = 16; //Cloud
-					if(Burst) scale = 1.2f;
+            switch(arrowMode)
+            {
+                case Normal:
+                    type = 16; //Cloud
+                    if(Burst) scale = 1.2f;
                     else scale = 0.8f;
-					break;
+                    break;
 
-				case White:
-					type = 16; //Cloud
+                case White:
+                    type = 16; //Cloud
                     scale = 1.3f;
-					break;
+                    break;
 
-				case Rain:
+                case Rain:
                     type = mod.DustType<RainbowDust>();
                     scale = Burst ? 1.5f : 1.2f; //Bigger size if it's a burst of dust
-					if (!Burst) velocity = new Vector2(RandomFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is random, Y follows the arrow
+                    if (!Burst) velocity = new Vector2(RandomFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is random, Y follows the arrow
                     break;
-			}
+            }
 
             int dustAmount = Burst ? 10 : 1;
             for (int i = 0; i < dustAmount; i++)
             {
                 Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, type, 0f, 0f, /*Alpha*/0, projectileColor, scale);
-			    if (velocity != Vector2.Zero) newDust.velocity = velocity; //If a special velocity was defined, apply it
+                if (velocity != Vector2.Zero) newDust.velocity = velocity; //If a special velocity was defined, apply it
                 if (arrowMode == Rain) newDust.position.Y -= projectile.height/2; //Trails behind
             }
         }

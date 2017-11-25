@@ -34,8 +34,8 @@ namespace Virtuous
             {
                 //I had to make a few eye-guesses for the hand position so it's centered more or less perfectly
                 Vector2 handPosition = Main.OffsetsPlayerOnhand[player.bodyFrame.Y / 56] * 2f; //Vanilla code
-                if (player.direction == -1) handPosition.X = player.bodyFrame.Width  - handPosition.X - 2; //Facing left
-                if (player.gravDir   == -1) handPosition.Y = player.bodyFrame.Height - handPosition.Y; //Upside down
+                if (player.direction == -1) handPosition.X = player.bodyFrame.Width - handPosition.X - 2; //Facing left
+                if (player.gravDir == -1) handPosition.Y = player.bodyFrame.Height - handPosition.Y; //Upside down
                 handPosition -= new Vector2(player.bodyFrame.Width - player.width + 8, player.bodyFrame.Height - 30f) / 2f;
 
                 Vector2 position = player.position + handPosition;

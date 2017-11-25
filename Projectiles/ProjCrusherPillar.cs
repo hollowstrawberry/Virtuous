@@ -16,7 +16,7 @@ namespace Virtuous.Projectiles
             Main.projFrames[projectile.type] = 3;
         }
 
-        public  const int TargetDistance = 100; //How far from the target the projectile spawns. Used by the item class
+        public  const int TargetDistance = 100; //How far from the target the projectile spawns. Used by the item's class
         private const int Lifespan = 40; //Total duration of the projectile
         private const int FadeTime = 20; //How long it fades away for
         private int moveTime; //How long the projectile will move for

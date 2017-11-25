@@ -14,7 +14,7 @@ namespace Virtuous.Orbitals
         }
 
         //Passive
-        public  const float DamageBoost = 0.2f; //Damage boost while the orbital is active. Used by VirtuousPlayer and VirtuousItem
+        public  const float DamageBoost = 0.2f; //Damage boost while the orbital is active. Used by OrbitalPlayer and OrbitalItem
         private const float DistanceAvg = 90f; //Average distance to the player when passive
         private const float OscSpeedMax = 0.4f; //How fast it can move in and out, which is to say, how far it can go before changing direction
         private const float OscAcc = OscSpeedMax / 40; //How quickly it changes oscillation speed, which is to say, how quickly it reaches the point of direction change
@@ -55,7 +55,7 @@ namespace Virtuous.Orbitals
 
         public override void AI()
         {
-			projectile.netUpdate = true; //Temporary cover for multiplayer acting strange
+            projectile.netUpdate = true; //Temporary cover for multiplayer acting strange
 
             Player player = Main.player[projectile.owner];
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();

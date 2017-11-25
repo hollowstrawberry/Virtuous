@@ -397,16 +397,20 @@ namespace Virtuous.Projectiles
             if (storedItem.UseSound != null) Main.PlaySound(storedItem.UseSound, projectile.Center);
         }
 
-
         public override bool? CanHitNPC(NPC target)
         {
-            if (target.type == StoredItem.makeNPC) //Critters can't damage themselves
-            {
-                return false;
-            }
-            else return base.CanHitNPC(target);
-        }
+            //Checking a new stored item instance once per tick per NPC in the world caused a lot of lag
+            //Instead I narrow down the check, only checking the stored item after checking that the target was close after checking that it was available for hit
 
+            bool canHit = projectile.CanHit(target);
+
+            if (canHit && (target.Center - projectile.Center).Length() < 50 && target.type == StoredItem.makeNPC)
+            {
+                return false; //Critters can't hit themselves
+            }
+
+            return null;
+        }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {

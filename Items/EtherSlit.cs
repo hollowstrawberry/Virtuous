@@ -40,12 +40,12 @@ namespace Virtuous.Items
             item.shootSpeed = 16f;
             item.crit = 15;
         }
-		
+        
         public override bool AltFunctionUse(Player player)
         {
             return true;
         }
-		
+        
         public override bool CanUseItem(Player player)
         {
             //Left Click
@@ -65,18 +65,6 @@ namespace Virtuous.Items
                 item.useAnimation = item.useTime;
                 item.shootSpeed = 20f;
                 item.crit = 30;
-
-                //A little hack to stop the bugged 1-tick delay between consecutive alternate-uses of a weapon
-                if (player.itemAnimation == 1) //Resets the animation so it doesn't let the hand return to resting position
-                {
-                    player.itemAnimation = item.useAnimation;
-                    Main.PlaySound(item.UseSound, player.Center);
-                }
-                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually
-                {
-                    player.itemAnimation = 0;
-                    return false;
-                }
             }
 
             return base.CanUseItem(player);
@@ -86,6 +74,21 @@ namespace Virtuous.Items
         {
             //So it always displays the left-click values when not using the weapon
             CanUseItem(player);
+
+            //A little hack to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            if (player.altFunctionUse == 2)
+            {
+                if (player.itemAnimation == 1) //Resets the animation so it doesn't let the hand return to resting position
+                {
+                    player.itemAnimation = item.useAnimation;
+                    Main.PlaySound(item.UseSound, player.Center);
+                }
+                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually
+                {
+                    player.itemAnimation = 0;
+                }
+            }
+
 
             base.GetWeaponDamage(player, ref damage);
         }
@@ -102,8 +105,8 @@ namespace Virtuous.Items
 
                 if (Collision.CanHit(center, 0, 0, position + (position - center).OfLength(8f), 0, 0)) break;
             }
-			
-			Vector2 direction = player.altFunctionUse!=2 ? new Vector2(Main.mouseX + Main.screenPosition.X - center.X, Main.mouseY + Main.screenPosition.Y - center.Y) : new Vector2(player.direction, 0); //The direction to shoot at. In the direction of the mouse with left click, in the direction the player is facing with right click.
+            
+            Vector2 direction = player.altFunctionUse!=2 ? new Vector2(Main.mouseX + Main.screenPosition.X - center.X, Main.mouseY + Main.screenPosition.Y - center.Y) : new Vector2(player.direction, 0); //The direction to shoot at. In the direction of the mouse with left click, in the direction the player is facing with right click.
             Vector2 straightVelocity =  direction.OfLength(item.shootSpeed); //Swords shoot parallel to each other in the set direction
             Vector2 cursorVelocity   = (Main.MouseWorld - position).SafeNormalize(straightVelocity) * item.shootSpeed; //Swords shoot directly at the mouse
             Vector2 finalVelocity    = player.altFunctionUse!=2 ? Vector2.Lerp(cursorVelocity, straightVelocity, 0.4f) : straightVelocity; //Middlepoint of both with left click, straight with right click

@@ -14,7 +14,7 @@ namespace Virtuous.Projectiles
             DisplayName.SetDefault("Lion's Mane");
         }
 
-		private const int Updates = 2; //How many updates it makes per tick
+        private const int Updates = 2; //How many updates it makes per tick
         private const int Lifespan = 90 * Updates; //Total timeLeft in ticks of the projectile
         private const int OriginalAlpha = 200;
         private const float OrbitingSpeed = FullCircle / (Lifespan / 3f); //Last number is the revolutions over its Lifespan
@@ -66,8 +66,8 @@ namespace Virtuous.Projectiles
             projectile.magic = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
-			projectile.MaxUpdates = Updates;
-			projectile.timeLeft = Lifespan;
+            projectile.MaxUpdates = Updates;
+            projectile.timeLeft = Lifespan;
         }
 
         public override void AI()

@@ -339,8 +339,8 @@ namespace Virtuous.Items
         }
 
         public override Vector2? HoldoutOffset()
-		{
-			return new Vector2(RandomFloat(0, 2), RandomFloat(-8, -6)); //Shakes
-		}
+        {
+            return new Vector2(RandomFloat(0, 2), RandomFloat(-8, -6)); //Shakes
+        }
     }
 }

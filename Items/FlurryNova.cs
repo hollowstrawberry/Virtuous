@@ -45,7 +45,7 @@ namespace Virtuous.Items
         {
             return true;
         }
-		
+        
         public override bool CanUseItem(Player player)
         {
             //Left Click
@@ -53,7 +53,7 @@ namespace Virtuous.Items
             {
                 item.useStyle = 1;
                 item.useTime = 6;
-				item.useAnimation = item.useTime;
+                item.useAnimation = item.useTime;
                 item.damage = 300;
                 item.shoot = mod.ProjectileType<ProjFist>();
                 item.noMelee = true;
@@ -66,7 +66,7 @@ namespace Virtuous.Items
 
                 item.useStyle = 3;
                 item.useTime = 10;
-				item.useAnimation = item.useTime;
+                item.useAnimation = item.useTime;
                 item.shoot = 0;
                 item.damage = 900;
                 item.noMelee = false;
@@ -93,25 +93,25 @@ namespace Virtuous.Items
 
             int nextFist = -1;
             for (int i = 0; i < 20; i++) //Makes x attempts at creating a projectile that the player can reach. Gives up otherwise.
-			{
+            {
                 do {nextFist = RandomInt(9);
                 } while (nextFist == previousFist); //Can't match the position of the previous one
 
                 switch (nextFist) //One of 9 different spawn points
-				{
-					case 0: offset = new Vector2(D+17,  0); break;
-					case 1: offset = new Vector2(D+14,+10); break;
-					case 2: offset = new Vector2(D+ 8,+20); break;
-					case 3: offset = new Vector2(D+ 4,+30); break;
-					case 4: offset = new Vector2(D+ 0,+40); break;
+                {
+                    case 0: offset = new Vector2(D+17,  0); break;
+                    case 1: offset = new Vector2(D+14,+10); break;
+                    case 2: offset = new Vector2(D+ 8,+20); break;
+                    case 3: offset = new Vector2(D+ 4,+30); break;
+                    case 4: offset = new Vector2(D+ 0,+40); break;
                     case 5: offset = new Vector2(D+14,-10); break;
                     case 6: offset = new Vector2(D+ 8,-20); break;
                     case 7: offset = new Vector2(D+ 4,-30); break;
                     case 8: offset = new Vector2(D+ 0,-40); break;
                 }
-				offset.X *= player.direction;
+                offset.X *= player.direction;
 
-				position = center + offset; //Final position of the to-be-spawned fist
+                position = center + offset; //Final position of the to-be-spawned fist
                 if (Collision.CanHit(center, 0, 0, position, 0, 0)) break;
             }
 

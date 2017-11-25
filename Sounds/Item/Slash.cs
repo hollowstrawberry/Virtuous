@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Sounds.Item
 {
-	public class Slash : ModSound
-	{
+    public class Slash : ModSound
+    {
         public override SoundEffectInstance PlaySound(ref SoundEffectInstance soundInstance, float volume, float pan, SoundType type)
         {
             soundInstance = sound.CreateInstance();

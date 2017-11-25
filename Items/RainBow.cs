@@ -93,12 +93,12 @@ namespace Virtuous.Items
                 
             return false; //Doesn't shoot normally
         }
-		
-		public override Vector2? HoldoutOffset()
-		{
-			return new Vector2(-4, 0);
-		}
-		
+        
+        public override Vector2? HoldoutOffset()
+        {
+            return new Vector2(-4, 0);
+        }
+        
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);

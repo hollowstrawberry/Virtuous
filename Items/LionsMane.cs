@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
@@ -40,6 +41,25 @@ namespace Virtuous.Items
         public override bool AltFunctionUse(Player player)
         {
             return true;
+        }
+
+        public override void GetWeaponDamage(Player player, ref int damage)
+        {
+            //A little hack to stop the bugged 1-tick delay between consecutive right click uses of a weapon
+            if (player.altFunctionUse == 2)
+            {
+                if (player.itemAnimation == 1) //Resets the animation so it doesn't let the hand return to resting position
+                {
+                    player.itemAnimation = item.useAnimation;
+                    Main.PlaySound(item.UseSound, player.Center);
+                }
+                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually
+                {
+                    player.itemAnimation = 0;
+                }
+            }
+
+            base.GetWeaponDamage(player, ref damage);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

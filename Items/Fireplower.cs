@@ -67,9 +67,9 @@ namespace Virtuous.Items
         }
 
         /*public override Vector2? HoldoutOffset()
-		{
-			return new Vector2(10, 0);
-		}*/
+        {
+            return new Vector2(10, 0);
+        }*/
 
         public override void AddRecipes()
         {
