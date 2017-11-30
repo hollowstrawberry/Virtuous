@@ -7,145 +7,89 @@ using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
-    public class SacDagger_Proj : ModProjectile
+    public class SacDagger_Proj : OrbitalProjectile
     {
+        public override int Type => OrbitalID.SacDagger;
+        public override int DyingTime => 30;
+        public override int FadeTime => DyingTime;
+        public override float BaseDistance => 105;
+        public override float ShootSpeed => 30;
+        public override float OscillationSpeedMax => 0.4f;
+        public override float OscillationAcc => OscillationSpeedMax / 40;
+
+        private const int SpecialSpinTime = 15; //Ticks it spends doing a half-orbit when spinning. Needs to be a divisor or multiple of 60
+        private const float SpecialSpinSpeed = (30 / SpecialSpinTime) * RevolutionPerSecond; //Speed at which it will orbit while spinning
+        private const float SpecialDamageMultiplier = 1.5f; //Damage it deals while spinning
+
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sacrificial Dagger");
         }
 
-        //Passive
-        private const float DistanceAvg = 105f; //Average distance to the player when passive
-        private const float OscSpeedMax = 0.4f; //How fast it can move in and out, which is to say, how far it can go before changing direction
-        private const float OscAcc = OscSpeedMax / 40; //How quickly it changes oscillation speed, which is to say, how quickly it reaches the point of direction change
-        private float oscillationSpeed = OscSpeedMax; //How fast it's currently oscillating
-        private bool  outwards { get { return projectile.ai[1] == 0; } set { projectile.ai[1] = value ? 0 : 1; } } //Direction it's currently moving in (away or into the player). Stores into the projectile's built-in ai[1], which is 0 by default (true in this case)
-        private float distance = DistanceAvg; //Current distance away from the player
-
-        //Right-click
-        private const float AngularSpeed = 2 * RevolutionPerSecond; //Spinning speed
-        private float curAngularSpeed = AngularSpeed; //Current spinning speed
-        private int rightClickTimer = 0; //How long it's been since the right click effect activated
-
-        //Shooting out
-        public  const int DyingTime = 30; //Time it spends flying outward before dying
-        private const int OriginalAlpha = 50; //Alpha value before flying outward
-        private const float ShootSpeed = 30; //Speed it starts with when flying outward
-        private float curShootSpeed = ShootSpeed; //Current speed when it's flying outward
-
-        //Main
-        private bool firstTick { get { return projectile.ai[0] == 0; } set { projectile.ai[0] = value ? 0 : 1; } } //Stores into the projectile's built-in ai[0], which is 0 by default (true in this case)
-        private Vector2 relativePos; //Relative position to the player
-        private int originalDamage; //Stores the original damage so it can be changed later
-
-
-        public override void SetDefaults()
+        public override void SetOrbitalDefaults()
         {
             projectile.width = 48;
             projectile.height = 54;
-            projectile.alpha = OriginalAlpha;
-            projectile.timeLeft = DyingTime;
-            projectile.penetrate = -1;
-            projectile.friendly = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.usesIDStaticNPCImmunity = true;
-            projectile.idStaticNPCHitCooldown = 10;
         }
 
-        public override void AI()
+        public override void FirstTick()
         {
-            projectile.netUpdate = true; //Temporary cover for multiplayer acting strange
+            base.FirstTick();
+            projectile.rotation += 45.ToRadians(); //45 degrees because of the sprite
+        }
 
-            Player player = Main.player[projectile.owner];
-            OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
+        public override void PostMovement()
+        {
+            base.PostMovement();
+            Lighting.AddLight(projectile.Center, 1.8f, 0f, 0f);
+        }
 
-            if (!orbitalPlayer.active[OrbitalID.SacDagger] && projectile.owner == Main.myPlayer) //Keep it alive only while the summon is active
+        public override void SpecialEffect()
+        {
+            int spinDirection = specialEffectTimer > 0 ? +1 : -1; //Positive for clockwise, negative for counterclockwise
+
+            if (specialEffectTimer == 0) //First tick
             {
-                projectile.Kill();
+                spinDirection = player.direction;
+                projectile.damage = (int)(projectile.damage * SpecialDamageMultiplier); //Higher damage when spinning
+                projectile.netUpdate = true; //Syncs to multiplayer
             }
-            else
+            else if (Math.Abs(specialEffectTimer) == SpecialSpinTime - 1) //Last tick
             {
-                if (firstTick)
-                {
-                    firstTick = false;
-                    //The projectile's desired rotation was passed as its velocity, so we utilize it then set it to 0 so it doesn't move
-                    projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians(); //45 degrees because of the sprite
-                    relativePos = projectile.velocity.OfLength(distance);
-                    projectile.velocity = Vector2.Zero;
-                    originalDamage = projectile.damage;
-
-                }
-
-                //Before it shoots out and dies
-                if (orbitalPlayer.time > DyingTime || projectile.owner != Main.myPlayer)
-                {
-                    projectile.timeLeft = DyingTime; //Keep it from dying naturally
-
-                    //Alters the distance from the player
-                    if (!orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn])
-                    {
-                        if (oscillationSpeed >= OscSpeedMax) outwards = false; //If it has reached the outwards speed limit, begin to switch direction
-                        else if (oscillationSpeed <= -OscSpeedMax) outwards = true; //If it has reached the inwards speed limit, begin to switch direction
-                        oscillationSpeed += outwards ? +OscAcc : -OscAcc; //Accelerate innards or outwards
-                        distance += oscillationSpeed; //Apply the change in distance
-                    }
-
-                    //Right click effect of switching positions
-                    if (orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn])
-                    {
-                        if (rightClickTimer == 15) //Magic number for a half-rotation
-                        {
-                            orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff] = true; //Initiate shutdown of the right click effect
-                            rightClickTimer = 0;
-                            projectile.damage = originalDamage;
-                            projectile.netUpdate = true; //Syncs to multiplayer
-                        }
-                        else
-                        {
-                            if (rightClickTimer == 0) //Sets the spinning direction on the first tick
-                            {
-                                projectile.damage = (int)(originalDamage * 1.5); //Higher damage when spinning
-                                curAngularSpeed = player.direction * AngularSpeed; //Spinning direction changes on player orientation
-                                projectile.netUpdate = true; //Syncs to multiplayer
-                            }
-                            relativePos = relativePos.RotatedBy(curAngularSpeed); //Rotates the dagger around the player
-                            projectile.rotation += curAngularSpeed; //Rotates the sprite accordingly
-                            rightClickTimer++;
-                        }
-                    }
-
-                    relativePos = relativePos.OfLength(distance); //Resets the distance
-                    projectile.Center = player.MountedCenter + relativePos; //Moves the sword to the defined position around the player
-
-                }
-                else //timeLeft actually starts going down from dyingTime while it flies away
-                {
-                    if (orbitalPlayer.time == DyingTime) projectile.damage *= 3; //Deals more damage when shooting out
-                    projectile.Center += relativePos.OfLength(curShootSpeed); //Projectile moves forward in the direction of its rotation
-                    curShootSpeed -= ShootSpeed / DyingTime; //Slows down to a halt over dyingTime
-                    projectile.alpha += (int)Math.Ceiling((255f - OriginalAlpha) / DyingTime); //Fades away over dyingTime
-                }
-
-                Lighting.AddLight(projectile.Center, 1.8f, 0f, 0f);
-
+                specialEffectTimer = -spinDirection; //Gets set to 0 at the end of the method
+                specialEffectActive = false; //Turns off the special effect for all daggers
+                projectile.damage = (int)(projectile.damage / SpecialDamageMultiplier); //Returns the damage to its original
+                projectile.netUpdate = true; //Syncs to multiplayer
             }
+
+            relativePosition = relativePosition.RotatedBy(SpecialSpinSpeed * spinDirection); //Rotates the daggers
+            projectile.rotation += SpecialSpinSpeed * spinDirection; //Points the sprite outwards
+            projectile.Center = player.MountedCenter + relativePosition; //Keeps the orbital on the player
+
+            specialEffectTimer += spinDirection;
+        }
+
+        public override void DyingFirstTick()
+        {
+            projectile.damage *= 3;
+            base.DyingFirstTick(); //Shoots out
         }
 
 
-        private void LifeSteal(Vector2 position, int damage) //Spawns vampire heal projectiles depending on damage dealt and player's lifesteal status
+        private void LifeSteal(Vector2 position, int damage) //Spawns vampire heal projectiles
         {
             Player player = Main.player[projectile.owner];
 
-            float heal = Math.Min(damage / 20f, player.statLifeMax - player.statLife); //Caps at the life missing
-            if (heal > 0 && player.lifeSteal > 0) 
+            float heal = Math.Min(damage / 30f, player.statLifeMax - player.statLife); //Caps at the life missing
+            if (heal > 0 /*&& player.lifeSteal > 0*/) 
             {
-                player.lifeSteal -= heal; //Limits how much you can heal at once
+                //player.lifeSteal -= heal; //Limits how much you can heal at once
                 Projectile.NewProjectile(position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
             }
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             if (target.lifeMax > 5 && !Main.player[projectile.owner].moonLeech && !target.immortal)
             {
@@ -153,15 +97,14 @@ namespace Virtuous.Orbitals
             }
         }
 
-        public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
+        public override void OnHitPvp(Player target, int damage, bool crit)
         {
             LifeSteal(target.Center, damage);
         }
 
-
         public override bool? CanCutTiles()
         {
-            return rightClickTimer > 0; //Only while spinning
+            return orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn]; //Only while spinning
         }
 
         public override Color? GetAlpha(Color newColor) //Fullbright

@@ -51,6 +51,7 @@ namespace Virtuous.Items
                 if (player.itemAnimation == 1) //Resets the animation so it doesn't let the hand return to resting position
                 {
                     player.itemAnimation = item.useAnimation;
+                    player.statMana -= (int)(item.mana * player.manaCost);
                     Main.PlaySound(item.UseSound, player.Center);
                 }
                 if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually

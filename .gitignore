@@ -1,9 +1,11 @@
+_misc/
 .vs/
 obj/
-_misc/
+*.sln
+*.user
 *.png
+*.pdn
 *.pdb
 *.cache
-*.pdn
 *.sqlite
 *.json

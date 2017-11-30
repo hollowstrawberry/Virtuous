@@ -11,7 +11,7 @@ namespace Virtuous
     public class OrbitalPlayer : ModPlayer
     {
         public int time = 0; //Time left, in ticks, of an orbital summon. 0 is inactive
-        public bool[] active = new bool[10];
+        public bool[] active = new bool[OrbitalID.Orbital.Length];
 
         public bool[] specialFunction = new bool[2]; //[0] calls for the right-click effect to activate, [1] calls for it to shut down
         public const int SpecialOn = 0;
@@ -20,9 +20,8 @@ namespace Virtuous
         public bool accessoryTimeBoost = false;
         public bool accessoryDmgBoost = false;
 
-        public int ModifiedOrbitalTime(Item item) //Sets the final duration after any boosts applicable
+        public int ModifiedOrbitalTime(OrbitalItem orbitalItem) //Returns the final duration after any boosts applicable
         {
-            OrbitalItem orbitalItem = item.GetGlobalItem<OrbitalItem>();
             return (int)((orbitalItem.duration) * (accessoryTimeBoost ? 1.5 : 1)); // More damage with the conditon active
         }
 
@@ -30,7 +29,7 @@ namespace Virtuous
         {
             time = 0;
             specialFunction = new bool[2]; //Sets all to false
-            active = new bool[10]; //Sets all to false
+            active = new bool[OrbitalID.Orbital.Length]; //Sets all to false
         }
 
         public bool BullseyeShot() //The player is aiming in the right direction for a boosted shot by the Bullseye orbital

@@ -75,7 +75,8 @@ namespace Virtuous.Items
             int storageFilled = modPlayer.GobblerStorageFilled();
             bool hasItem = storageFilled > 0;
 
-            tooltips.RemoveAll(line => line.mod == "Terraria" && line.Name.StartsWith("Favorite")); //Removes the favorite text
+            //Removes the favorite text and critical chance text
+            tooltips.RemoveAll(line => line.mod == "Terraria" && (line.Name.StartsWith("Favorite") || line.Name.StartsWith("CritChance")));
 
 
             foreach (TooltipLine line in tooltips)
@@ -182,14 +183,14 @@ namespace Virtuous.Items
             float chance; //Chance to consume item depends on its rarity and other factors
             switch(item.rare)
             {
-                case 2: chance = 4f / 5f; break;
-                case 3: chance = 3f / 4f; break;
-                case 4: chance = 2f / 3f; break;
-                case 5: chance = 1f / 2f; break;
-                case 6: chance = 1f / 3f; break;
-                case 7: chance = 1f / 4f; break;
-                case 8: chance = 1f / 5f; break;
-                case 9: chance = 1f / 6f; break;
+                case  2: chance = 4f / 5f; break;
+                case  3: chance = 3f / 4f; break;
+                case  4: chance = 2f / 3f; break;
+                case  5: chance = 1f / 2f; break;
+                case  6: chance = 1f / 3f; break;
+                case  7: chance = 1f / 4f; break;
+                case  8: chance = 1f / 5f; break;
+                case  9: chance = 1f / 6f; break;
                 case 10: chance = 1f / 7f; break;
                 case 11: chance = 1f / 8f; break;
                 default: chance = 1f; break;

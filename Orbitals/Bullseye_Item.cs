@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Orbitals
 {
-    public class Bullseye_Item : ModItem
+    public class Bullseye_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {
@@ -13,26 +13,18 @@ namespace Virtuous.Orbitals
             Tooltip.SetDefault("\"Love at first sight\"\nShoot through the magical sight for double ranged damage\nOther ranged shots are weaker");
         }
 
-        public override void SetDefaults()
+        public override void SetOrbitalDefaults()
         {
+            type = OrbitalID.Bullseye;
+            duration = 60 * 60;
+            amount = 1;
+
             item.width = 30;
             item.height = 30;
-            item.useStyle = 4;
-            item.useTime = 30;
-            item.useAnimation = item.useTime;
-            item.UseSound = SoundID.Item8;
-            item.shoot = 1;
             item.mana = 100;
-            item.useTurn = true;
-            item.noMelee = true;
-            item.autoReuse = false;
+            item.knockBack = 2.4f;
             item.rare = 8;
             item.value = Item.sellPrice(0, 2, 0, 0);
-
-            OrbitalItem moditem = item.GetGlobalItem<OrbitalItem>();
-            moditem.type = OrbitalID.Bullseye;
-            moditem.duration = 60 * 60;
-            moditem.amount = 1;
         }
 
         public override void AddRecipes()

@@ -93,7 +93,7 @@ namespace Virtuous.Projectiles
             //Dust
             if (projectile.timeLeft > 1) //Ignores the last tick
             {
-                int dustAmount = (int)(Distance / 20f); //More dust as distance increases
+                int dustAmount = (int)(Distance / 30f); //More dust as distance increases
                 for (int i = 0; i < dustAmount; i++)
                 {
                     Dust newDust1 = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Fire, 0f, 0f, projectile.alpha, default(Color), RandomFloat(1, 2));

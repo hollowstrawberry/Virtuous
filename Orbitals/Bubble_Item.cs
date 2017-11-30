@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Orbitals
 {
-    public class Bubble_Item : ModItem
+    public class Bubble_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {
@@ -13,25 +13,20 @@ namespace Virtuous.Orbitals
             Tooltip.SetDefault("\"Stay out of my personal space\"\nThe bubble repels enemies and raises defense");
         }
 
-        public override void SetDefaults()
+        public override void SetOrbitalDefaults()
         {
+            type = OrbitalID.Bubble;
+            duration = 20 * 60;
+            amount = 1;
+
             item.width = 32;
             item.height = 32;
+            item.mana = 40;
+            item.rare = 5;
+            item.value = Item.sellPrice(0, 15, 0, 0);
             item.useStyle = 2;
             item.useTime = 20;
             item.useAnimation = item.useTime;
-            item.UseSound = SoundID.Item8;
-            item.shoot = 1;
-            item.mana = 40;
-            item.noMelee = true;
-            item.autoReuse = false;
-            item.rare = 5;
-            item.value = Item.sellPrice(0, 15, 0, 0);
-
-            OrbitalItem orbitalItem = item.GetGlobalItem<OrbitalItem>();
-            orbitalItem.type = OrbitalID.Bubble;
-            orbitalItem.duration = 20 * 60;
-            orbitalItem.amount = 1;
         }
 
         public override void AddRecipes()

@@ -35,7 +35,10 @@
   <ItemGroup>
     <Compile Include="Dusts\RainbowDust.cs" />
     <Compile Include="Items\ArtOfWar.cs" />
+    <Compile Include="OrbitalID.cs" />
+    <Compile Include="OrbitalProjectile.cs" />
     <Compile Include="Projectiles\WarArrow.cs" />
+    <Compile Include="Tools.cs" />
     <Compile Include="VirtuousItem.cs" />
     <Compile Include="Items\Accessories\Archangel.cs" />
     <Compile Include="Items\Accessories\AstroBoots.cs" />

@@ -80,30 +80,19 @@ namespace Virtuous.Projectiles
 
         public static bool IsReforgeableWeapon(Item item)
         {
-            if (item.Prefix(-3) && !item.accessory)
-            {
-                return true;
-            }
-            else return false;
+            return (item.Prefix(-3) && !item.accessory);
         }
 
         public static bool IsTool(Item item)
         {
-            if (item.pick > 0 || item.axe > 0 || item.hammer > 0)
-            {
-                return true;
-            }
-            else return false;
+            return (item.pick > 0 || item.axe > 0 || item.hammer > 0);
         }
 
         public static bool IsExplosive(Item item) //Whether the specified item is probably a consumable explosive
         {
+            return (item.consumable && item.shoot > 0 && (item.damage <= 0 || item.useStyle == 5)); //It's a consumable that is thrown, but either has no damage of its own or uses the grenade useStyle.
+            
             //bool[] explosive = ItemID.Sets.Factory.CreateBoolSet(new int[] { ProjectileID.Dynamite, ProjectileID.BouncyDynamite, ProjectileID.StickyDynamite, ProjectileID.Bomb, ProjectileID.BouncyBomb, ProjectileID.StickyBomb, ProjectileID.Grenade, ProjectileID.BouncyGrenade, ProjectileID.StickyGrenade });
-            if (item.consumable && item.shoot > 0 && (item.damage <= 0 || item.useStyle == 5))
-            {
-                return true; //It's a consumable that is thrown, but either has no damage of its own or uses the grenade useStyle
-            }
-            else return false;
         }
 
         public static bool IsDepletable(Item item) //Whether the specified item will be lost upon being shot
@@ -115,24 +104,13 @@ namespace Virtuous.Projectiles
             {
                 return false; //Exceptions
             }
-            else if (item.consumable || item.ammo != 0 || item.type == ItemID.ExplosiveBunny)
-            {
-                return true;
-            }
-            else return false;
+
+            else return (item.consumable || item.ammo != 0 || item.type == ItemID.ExplosiveBunny);
         }
 
 
 
         ///* Private methods run by the projectile for easy access and utility *///
-
-        private void ChangeSize(int newWidth, int newHeight) //Change the projectile's size but keep its center
-        {
-            projectile.position += new Vector2(projectile.width / 2, projectile.height / 2);
-            projectile.width = newWidth;
-            projectile.height = newHeight;
-            projectile.position -= new Vector2(projectile.width / 2, projectile.height / 2);
-        }
 
         private bool ToolBounce() //If the item is a tool, it will bounce off in the direction it came from when specified
         {
@@ -158,7 +136,7 @@ namespace Virtuous.Projectiles
             Item storedItem = StoredItem;
             if (storedItem.magic)
             {
-                ChangeSize(projectile.width + 50, projectile.height + 50);
+                ResizeProjectile(projectile.whoAmI, projectile.width + 50, projectile.height + 50);
                 projectile.Damage(); //Applies damage in the area
 
                 Main.PlaySound(SoundID.Item14, projectile.Center);
@@ -201,16 +179,16 @@ namespace Virtuous.Projectiles
             Player player = Main.player[projectile.owner];
 
             //Orbital behavior
-            if (storedItem.GetGlobalItem<OrbitalItem>().type != OrbitalID.None)
+            OrbitalItem orbitalItem = storedItem.modItem as OrbitalItem;
+            if (orbitalItem != null)
             {
-                OrbitalItem orbitalItem = storedItem.GetGlobalItem<OrbitalItem>();
                 Vector2 position = player.Center;
                 Vector2 velocity = Vector2.Zero;
-                int type = 0;
+                int type = orbitalItem.item.shoot;
                 int damage = storedItem.damage;
-                orbitalItem.GetWeaponDamage(storedItem, player, ref damage);
+                orbitalItem.GetWeaponDamage(player, ref damage);
 
-                orbitalItem.Shoot(storedItem, player, ref position, ref velocity.X, ref velocity.Y, ref type, ref damage, ref storedItem.knockBack);
+                orbitalItem.Shoot(player, ref position, ref velocity.X, ref velocity.Y, ref type, ref damage, ref storedItem.knockBack);
                 return;
             }
 
@@ -319,7 +297,7 @@ namespace Virtuous.Projectiles
             if (projectile.timeLeft == Lifespan && storedItem.type != ItemID.None)
             {
                 //Inherit properties from the stored item
-                ChangeSize(storedItem.width, storedItem.height);
+                ResizeProjectile(projectile.whoAmI, storedItem.width, storedItem.height);
                 projectile.damage = ShotDamage(storedItem, player);
                 projectile.knockBack = ShotKnockBack(storedItem, player);
                 projectile.melee  = storedItem.melee;

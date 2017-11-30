@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Orbitals
 {
-    public class Facade_Item : ModItem
+    public class Facade_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {
@@ -15,28 +15,19 @@ namespace Virtuous.Orbitals
             Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
         }
 
-        public override void SetDefaults()
+        public override void SetOrbitalDefaults()
         {
+            type = OrbitalID.Facade;
+            duration = 15 * 60;
+            amount = 4;
+
             item.width = 30;
             item.height = 30;
-            item.useStyle = 4;
-            item.useTime = 30;
-            item.useAnimation = item.useTime;
-            item.UseSound = SoundID.Item8;
             item.damage = 20;
             item.knockBack = 2.0f;
-            item.shoot = 1;
             item.mana = 30;
-            item.useTurn = true;
-            item.noMelee = true;
-            item.autoReuse = false;
             item.rare = 4;
             item.value = Item.sellPrice(0, 5, 0, 0);
-
-            OrbitalItem orbitalItem = item.GetGlobalItem<OrbitalItem>();
-            orbitalItem.type = OrbitalID.Facade;
-            orbitalItem.duration = 15 * 60;
-            orbitalItem.amount = 4;
         }
     }
 }
