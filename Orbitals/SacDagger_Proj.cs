@@ -13,7 +13,7 @@ namespace Virtuous.Orbitals
         public override int DyingTime => 30;
         public override int FadeTime => DyingTime;
         public override float BaseDistance => 105;
-        public override float ShootSpeed => 30;
+        public override float DyingSpeed => 30;
         public override float OscillationSpeedMax => 0.4f;
         public override float OscillationAcc => OscillationSpeedMax / 40;
 
@@ -31,6 +31,12 @@ namespace Virtuous.Orbitals
         {
             projectile.width = 48;
             projectile.height = 54;
+        }
+
+        public override void PlayerEffects(Player player)
+        {
+            player.lifeRegenTime = 0;
+            player.lifeRegen = -10;
         }
 
         public override void FirstTick()
@@ -70,10 +76,10 @@ namespace Virtuous.Orbitals
             base.DyingFirstTick(); //Shoots out
         }
 
-        public override void ExtraEffects()
+        public override void PostAll()
         {
             Lighting.AddLight(projectile.Center, 1.8f, 0f, 0f);
-            base.ExtraEffects(); //Fades
+            base.PostAll(); //Fades
         }
 
 

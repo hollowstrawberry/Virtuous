@@ -24,6 +24,12 @@ namespace Virtuous.Orbitals
             projectile.height = 100;
         }
 
+        public override void PlayerEffects(Player player)
+        {
+            player.statDefense += 10;
+            Lighting.AddLight(player.Center, 0.4f, 0.6f, 0.6f);
+        }
+
         public override void FirstTick()
         {
             base.FirstTick();
@@ -38,10 +44,9 @@ namespace Virtuous.Orbitals
             }
         }
 
-        public override Color? GetAlpha(Color newColor) //Fullbright
+        public override Color? GetAlpha(Color newColor)
         {
             return new Color(224, 255, 252, 150) * projectile.Opacity;
         }
-
     }
 }

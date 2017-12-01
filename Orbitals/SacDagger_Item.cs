@@ -9,7 +9,7 @@ namespace Virtuous.Orbitals
 {
     public class SacDagger_Item : OrbitalItem
     {
-        private static int ManaCost = 50;
+        private const int ManaCost = 50;
 
         public override void SetStaticDefaults()
         {
@@ -35,13 +35,7 @@ namespace Virtuous.Orbitals
             item.useStyle = 4;
             item.useTime = 16;
             item.useAnimation = item.useTime;
-        }
-
-        public override void GetWeaponDamage(Player player, ref int damage)
-        {
-            item.mana = ManaCost; //So it always displays the full mana cost
-
-            base.GetWeaponDamage(player, ref damage);
+            item.useTurn = false;
         }
 
         public override bool CanUseItem(Player player)
@@ -50,7 +44,7 @@ namespace Virtuous.Orbitals
 
             if (orbitalPlayer.active[this.type]) //If there is a dagger active
             {
-                item.mana = (int)Math.Ceiling((decimal)(ManaCost / 5)); 
+                item.mana = (int)Math.Ceiling(ManaCost / 5f); 
             }
             else
             {

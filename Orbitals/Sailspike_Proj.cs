@@ -11,8 +11,8 @@ namespace Virtuous.Orbitals
         public override int DyingTime => 30;
         public override int FadeTime => 20;
         public override int OriginalAlpha => 100;
-        public override float BaseDistance => 55;
-        public override float ShootSpeed => 20;
+        public override float BaseDistance => 60;
+        public override float DyingSpeed => 20;
 
 
         public override void SetStaticDefaults()
@@ -55,10 +55,10 @@ namespace Virtuous.Orbitals
             base.DyingFirstTick(); //Shoots out
         }
 
-        public override void ExtraEffects()
+        public override void PostAll()
         {
             Lighting.AddLight(projectile.Center, 0.15f, 0.5f, 1.5f);
-            base.ExtraEffects(); //Fades
+            base.PostAll(); //Fades
         }
 
 

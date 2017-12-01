@@ -15,8 +15,6 @@ namespace Virtuous.Orbitals
         public override float BaseDistance => 0;
         public override float RotationSpeed => 0 * RevolutionPerSecond; //I set this to 0 for now so that the sprite doesn't look weird
 
-        public static float DamageBoost = 0.1f; //Damage boost while the orbital is active. Used by OrbitalPlayer and OrbitalItem
-
         private static float ExpandedScale = 1.5f; //Size when fully expanded
         private static int ExpandedAlpha = 150; //Alpha value when fully expanded
         private static int OriginalSize = 120; //Width and height dimensions in pixels
@@ -34,6 +32,15 @@ namespace Virtuous.Orbitals
             projectile.height = OriginalSize;
         }
 
+        public override void PlayerEffects(Player player)
+        {
+            player.statDefense += 5;
+            player.meleeDamage += 0.1f;
+            player.magicDamage += 0.1f;
+
+            Lighting.AddLight(player.Center, 0.6f, 0.4f, 0.3f);
+        }
+
         public override void FirstTick()
         {
             base.FirstTick();
@@ -45,7 +52,6 @@ namespace Virtuous.Orbitals
                 newDust.noLight = false;
             }
         }
-
 
         public override void DyingFirstTick()
         {
@@ -86,7 +92,7 @@ namespace Virtuous.Orbitals
         }
 
 
-        public override Color? GetAlpha(Color newColor) //Fullbright
+        public override Color? GetAlpha(Color newColor)
         {
             return new Color(255, 200, 245, 150) * projectile.Opacity;
         }

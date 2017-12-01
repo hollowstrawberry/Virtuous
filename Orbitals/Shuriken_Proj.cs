@@ -32,6 +32,13 @@ namespace Virtuous.Orbitals
             projectile.height = 34;
         }
 
+        public override void PlayerEffects(Player player)
+        {
+            player.manaRegenDelayBonus++;
+            player.manaRegenBonus += 25;
+            player.meleeSpeed += 0.12f;
+        }
+
         public override void DyingFirstTick()
         {
             projectile.damage *= 3;
@@ -57,7 +64,7 @@ namespace Virtuous.Orbitals
             }
         }
 
-        public override void ExtraEffects()
+        public override void PostAll()
         {
             Lighting.AddLight(projectile.Center, 0.0f, 1.0f, 0.2f);
         }

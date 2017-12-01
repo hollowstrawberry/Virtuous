@@ -16,13 +16,15 @@ namespace Virtuous.Projectiles
 
         private const int Updates = 2; //How many updates it makes per tick
         private const int Lifespan = 90 * Updates; //Total timeLeft in ticks of the projectile
-        private const int OriginalAlpha = 200;
+        private const int OriginalAlpha = 200; //Alpha value it starts with
         private const float OrbitingSpeed = FullCircle / (Lifespan / 3f); //Last number is the revolutions over its Lifespan
+        private static float DistanceMultiplier = (float)Math.Pow(GoldenRatio, 1.0 / (Lifespan / 9.0)); //Last number is how many times over its Lifespan the distance gets multiplied by the golden ratio. Multiplying by the golden ratio results in a golden spiral
+        private static float DamageMultiplier = (float)Math.Pow(5.0, 1.0 / Lifespan); //First number is how many times the original damage it will have at the end of its lifespan
 
         private float Distance { get { return projectile.ai[0]; } set { projectile.ai[0] = value; } } //Distance away from the player, stored as ai[0]
         private int Direction => (int)projectile.ai[1]; //Cardinal direction it's aiming at from 1 to 4, negative for counterclockwise. Stored as ai[1]
 
-        private Vector2 RelativePosition //Calculated relative position in relation to the player for the current tick
+        private Vector2 RelativePosition //Calculated relative position in relation to the player for the current tick.
         {
             get
             {
@@ -61,7 +63,7 @@ namespace Virtuous.Projectiles
         {
             projectile.width = 22;
             projectile.height = 22;
-            projectile.alpha = OriginalAlpha;
+            projectile.alpha = 255;
             projectile.friendly = true;
             projectile.magic = true;
             projectile.tileCollide = false;
@@ -74,37 +76,35 @@ namespace Virtuous.Projectiles
         {
             Player player = Main.player[projectile.owner];
 
-            if(projectile.alpha > 0)
-            {
-                projectile.alpha -= (int)Math.Ceiling((double)OriginalAlpha / Lifespan);
-            }
+            projectile.alpha = 255;
 
-            //Every tick, the distance from the player is multiplied by a root of the golden ratio.
-            //This means that every certain amount of ticks, we find that the distance has increased by a factor of Phi, which is a defining factor of a golden spiral
-            float DistanceMultiplier = (float)Math.Pow(GoldenRatio, 1.0/(Lifespan / 9.0)); //Last number is how many times over its Lifespan the distance gets multiplied by the golden ratio
+            projectile.damage = (int)Math.Ceiling(projectile.damage * DamageMultiplier);
             Distance *= DistanceMultiplier;
-
-            //Something similar happens with the damage, increasing as it goes along and ending at the final damage multiplier
-            float damageMultiplier = (float)Math.Pow(5.0, 1.0 / Lifespan); //First number is how many times the original damage it will have at the end of its lifespan
-            projectile.damage = (int)Math.Ceiling(projectile.damage * damageMultiplier);
-
             projectile.Center = player.MountedCenter + RelativePosition; //Puts the projectile around the player
 
             //Dust
-            if (projectile.timeLeft > 1) //Ignores the last tick
+            int dustAmount = 1 + (int)(Distance / 15f); //More dust as distance increases
+            for (int i = 0; i < dustAmount; i++)
             {
-                int dustAmount = (int)(Distance / 30f); //More dust as distance increases
-                for (int i = 0; i < dustAmount; i++)
+                Dust newDust;
+                switch (RandomInt(4))
                 {
-                    Dust newDust1 = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Fire, 0f, 0f, projectile.alpha, default(Color), RandomFloat(1, 2));
-                    newDust1.noGravity = true;
-                    newDust1.velocity *= 3.0f;
-                    Dust newDust2 = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), 1.5f);
-                    newDust2.noGravity = true;
-                    Dust newDust3 = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/158, 0f, 0f, projectile.alpha, default(Color), RandomFloat(1, 2));
-                    newDust3.noGravity = true;
-                    newDust3.velocity *= 1.5f;
+                    case 0:
+                        newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Fire, 0f, 0f, projectile.alpha, default(Color), 0.5f);
+                        newDust.velocity *= 3.0f;
+                        break;
+
+                    case 1:
+                        newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/158, 0f, 0f, projectile.alpha, default(Color), 0.5f);
+                        newDust.velocity *= 1.5f;
+                        break;
+
+                    default:
+                        newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), 0.5f);
+                        break;
                 }
+                newDust.noGravity = true;
+                newDust.scale += dustAmount / 12f;
             }
 
             Lighting.AddLight(projectile.Center, 0.8f, 0.7f, 0.4f);
@@ -112,12 +112,11 @@ namespace Virtuous.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            for (int i = 0; i < 10; i++)
-            {
-                Dust newDust3 = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), RandomFloat(2, 3));
-                newDust3.noGravity = true;
-                newDust3.velocity *= 1.5f;
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), RandomFloat(2f, 3f));
+            //    newDust.noGravity = true;
+            //}
         }
 
         public override Color? GetAlpha(Color lightColor)

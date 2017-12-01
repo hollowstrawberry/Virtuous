@@ -12,8 +12,8 @@ namespace Virtuous
     public abstract class OrbitalProjectile : ModProjectile
     {
         /*
-         * This class contains all the fields, properties and methods used by orbitals.
-         * Most of the members are virtual, so the orbitals themselves will override them to obtain the exact behavior of each unique orbital.
+         * This class contains all the properties and methods used by orbitals.
+         * The orbitals themselves will override these virtual members to obtain the exact behavior of each unique orbital.
          * The naming convention is: "PascalCasing" if the property is constant for all orbitals of a type, "camelCasing" if the property is variable across time and across different instances
          * Be sure to read the comments to better picture what each thing does
          */
@@ -28,7 +28,6 @@ namespace Virtuous
         public float distance { get{ return relativePosition.Length(); } set{ relativePosition = relativePosition.OfLength(value); } } //Distance away from the player. Affects RelativePosition directly.
         public float oscillationSpeed { get{ return projectile.ai[0]; } set{ projectile.ai[0] = value; } } //Current speed of back-and-forth oscillation, Stored as ai[0]
         public bool direction { get { return projectile.ai[1] == 0; } set { projectile.ai[1] = value ? 0 : 1; } } //Direction of movement, inwards or outwards, used by default for oscillation. Stored as ai[1]
-        public bool firstTick => relativePosition.Length() == 1.0f; //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
         public int specialEffectTimer { get{ return (int)projectile.localAI[0]; } set{ projectile.localAI[0] = value; } } //Time passed since the special effect was used. Stored as localAI[0]
 
         //Characteristics
@@ -39,12 +38,12 @@ namespace Virtuous
         public virtual float BaseDistance => 50; //Distance it starts at
         public virtual float RotationSpeed => 0; //Speed at which the projectile's sprite rotates
         public virtual float OrbitingSpeed => 0; //Speed at which the projectile orbits around the player
-        public virtual float ShootSpeed => 0; //Speed at which the projectile will shoot out in DyingTime
+        public virtual float DyingSpeed => 0; //Speed at which, by default, the projectile will by shoot out in DyingTime
         public virtual float OscillationSpeedMax => 0;  //Speed limit. Translates into how far it can go before changing direction of movement
         public virtual float OscillationAcc => OscillationSpeedMax / 60; //Acceleration rate. Translates into how fast it reaches the point of direction change
 
-        //Extra utilities
-        public bool specialEffectActive
+        //Checks
+        public virtual bool specialEffectActive
         {
             get{ return orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn]; }
 
@@ -54,10 +53,9 @@ namespace Virtuous
                 else orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true;
             }
         }
-        public bool IsDying()
-        {
-            return !(DyingTime == 0 || orbitalPlayer.time > DyingTime || Main.myPlayer != projectile.owner);
-        }
+        public virtual bool firstTick => relativePosition.Length() == 1.0f; //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
+        public virtual bool isDying => !(DyingTime == 0 || orbitalPlayer.time > DyingTime || Main.myPlayer != projectile.owner); //Whether to treat this projectile as in dying mode
+        public virtual bool doSpecialEffect => (specialEffectActive && !isDying); //Whether to run the special effect method or not
 
 
         public virtual void SetOrbitalDefaults()
@@ -82,6 +80,11 @@ namespace Virtuous
         }
 
 
+        //Effects this orbital type will apply on the player while it is active. Called by OrbitalPlayer
+        public virtual void PlayerEffects(Player player)
+        {
+        }
+
         //Only runs once at the beginning of the orbital's life
         public virtual void FirstTick()
         {
@@ -94,7 +97,7 @@ namespace Virtuous
         //Returns whether to execute movement
         public virtual bool PreMovement()
         {
-            return (!IsDying() && !specialEffectActive);
+            return (!isDying && !specialEffectActive); //By default doesn't do normal movement if it's dying or in special mode
         }
 
         //Main orbital behavior. Runs every tick before DyingTime
@@ -118,33 +121,28 @@ namespace Virtuous
         }
 
 
-        //Returns whether to execute special effect
-        public virtual bool SpecialEffectCheck()
-        {
-            return (specialEffectActive && !IsDying());
-        }
-
         //Executes special effect
         public virtual void SpecialEffect()
         {
         }
 
+
         //Only runs once at the beginning of DyingTime
         public virtual void DyingFirstTick()
         {
-            projectile.velocity = relativePosition.OfLength(ShootSpeed); //Starts shooting-out motion
+            projectile.velocity = relativePosition.OfLength(DyingSpeed); //Starts shooting-out motion
         }
 
         //Runs every tick during DyingTime
         public virtual void Dying()
         {
-            projectile.velocity -= projectile.velocity.OfLength(ShootSpeed / DyingTime); //Slows down to a halt
+            projectile.velocity -= projectile.velocity.OfLength(DyingSpeed / DyingTime); //Slows down to a halt
             projectile.position += projectile.velocity; //Re-applies velocity as it would normally be nullified for orbitals
         }
 
 
         //Runs every tick after everything else. Used for fading away, light, etc.
-        public virtual void ExtraEffects()
+        public virtual void PostAll()
         {
             if (FadeTime > 0 && Main.myPlayer == projectile.owner)
             {
@@ -182,12 +180,12 @@ namespace Virtuous
                     PostMovement();
                 }
 
-                if (SpecialEffectCheck())
+                if (doSpecialEffect)
                 {
                     SpecialEffect();
                 }
 
-                if (IsDying())
+                if (isDying)
                 {
                     if (orbitalPlayer.time == DyingTime)
                     {
@@ -202,7 +200,8 @@ namespace Virtuous
                     projectile.timeLeft = Math.Max(2, DyingTime); //Keeps the orbital from dying naturally
                 }
 
-                ExtraEffects();
+                PostAll();
+
                 projectile.position -= projectile.velocity; //Reverses the effect of velocity so the orbital doesn't move by default
             }
         }

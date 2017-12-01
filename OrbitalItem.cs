@@ -39,6 +39,7 @@ namespace Virtuous
             item.UseSound = SoundID.Item8;
             item.noMelee = true;
             item.autoReuse = false;
+            item.useTurn = true;
 
             SetOrbitalDefaults();
             duration += OrbitalID.Orbital[this.type].DyingTime; //Adds the orbital's dying time to the total duration
@@ -62,12 +63,24 @@ namespace Virtuous
         {
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            float oDmgBuff = 0; //Doesn't count buffs from any orbitals themselves
-            if (orbitalPlayer.active[OrbitalID.SpikedBubble]) oDmgBuff += SpikedBubble_Proj.DamageBoost;
-            if (orbitalPlayer.active[OrbitalID.SpiralSword]) oDmgBuff += SpiralSword_Proj.DamageBoost;
+            //We don't want to count any of the damage buffs from orbitals themselves
+            float meleeBuff = 0f, magicBuff = 0f;
+            for (int type = 0; type < OrbitalID.Orbital.Length; type++)
+            {
+                if (orbitalPlayer.active[type]) //If an orbital is active
+                {
+                    Player tempPlayer = new Player(); //We create a temporal player instance to test on
+                    tempPlayer.meleeDamage = 0f;
+                    tempPlayer.magicDamage = 0f;
+
+                    OrbitalID.Orbital[type].PlayerEffects(tempPlayer); //We run the effects of the active orbital on it
+                    meleeBuff += tempPlayer.meleeDamage;
+                    magicBuff += tempPlayer.magicDamage;
+                }
+            }
 
             //Gets boosted by the player's strongest damage between magic and melee
-            damage = (int)(item.damage * (Math.Max(player.magicDamage, player.meleeDamage) - oDmgBuff));
+            damage = (int)(item.damage * (Math.Max(player.meleeDamage - meleeBuff, player.magicDamage - magicBuff)));
             if (orbitalPlayer.accessoryDmgBoost) damage = (int)(damage * 1.5);
         }
 
