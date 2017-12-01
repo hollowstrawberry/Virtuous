@@ -55,8 +55,6 @@ namespace Virtuous.Orbitals
                     newDust.velocity += relativePosition.Perpendicular(10, CounterClockwise); //Angular to linear velocity
                 }
             }
-
-            projectile.position -= projectile.velocity; //Reverses the effect of velocity so it doesn't move
         }
 
         public override void ExtraEffects()

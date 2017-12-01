@@ -39,12 +39,6 @@ namespace Virtuous.Orbitals
             projectile.rotation += 45.ToRadians(); //45 degrees because of the sprite
         }
 
-        public override void PostMovement()
-        {
-            base.PostMovement();
-            Lighting.AddLight(projectile.Center, 1.8f, 0f, 0f);
-        }
-
         public override void SpecialEffect()
         {
             int spinDirection = specialEffectTimer > 0 ? +1 : -1; //Positive for clockwise, negative for counterclockwise
@@ -76,6 +70,12 @@ namespace Virtuous.Orbitals
             base.DyingFirstTick(); //Shoots out
         }
 
+        public override void ExtraEffects()
+        {
+            Lighting.AddLight(projectile.Center, 1.8f, 0f, 0f);
+            base.ExtraEffects(); //Fades
+        }
+
 
         private void LifeSteal(Vector2 position, int damage) //Spawns vampire heal projectiles
         {
@@ -88,7 +88,6 @@ namespace Virtuous.Orbitals
                 Projectile.NewProjectile(position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
             }
         }
-
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             if (target.lifeMax > 5 && !Main.player[projectile.owner].moonLeech && !target.immortal)
@@ -96,7 +95,6 @@ namespace Virtuous.Orbitals
                 LifeSteal(target.Center, damage);
             }
         }
-
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
             LifeSteal(target.Center, damage);

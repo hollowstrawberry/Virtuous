@@ -43,16 +43,20 @@ namespace Virtuous
         public virtual float OscillationSpeedMax => 0;  //Speed limit. Translates into how far it can go before changing direction of movement
         public virtual float OscillationAcc => OscillationSpeedMax / 60; //Acceleration rate. Translates into how fast it reaches the point of direction change
 
-        //Extra
+        //Extra utilities
         public bool specialEffectActive
         {
             get{ return orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn]; }
 
-            set //Safe way to turn off a special effect: Passes the signal to the player, and the player turns it off in the next tick
+            set //Safe way to turn off a special effect: Passes the signal to the player, and the player itself turns it off in the next tick
             {
                 if (value == false) orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff] = true;
                 else orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true;
             }
+        }
+        public bool IsDying()
+        {
+            return !(DyingTime == 0 || orbitalPlayer.time > DyingTime || Main.myPlayer != projectile.owner);
         }
 
 
@@ -78,7 +82,6 @@ namespace Virtuous
         }
 
 
-
         //Only runs once at the beginning of the orbital's life
         public virtual void FirstTick()
         {
@@ -86,6 +89,12 @@ namespace Virtuous
             distance = BaseDistance;
             projectile.rotation = relativePosition.ToRotation();
             projectile.Center = player.MountedCenter + relativePosition;
+        }
+
+        //Returns whether to execute movement
+        public virtual bool PreMovement()
+        {
+            return (!IsDying() && !specialEffectActive);
         }
 
         //Main orbital behavior. Runs every tick before DyingTime
@@ -106,9 +115,16 @@ namespace Virtuous
 
         public virtual void PostMovement()
         {
-            if (specialEffectActive) SpecialEffect();
         }
 
+
+        //Returns whether to execute special effect
+        public virtual bool SpecialEffectCheck()
+        {
+            return (specialEffectActive && !IsDying());
+        }
+
+        //Executes special effect
         public virtual void SpecialEffect()
         {
         }
@@ -116,13 +132,14 @@ namespace Virtuous
         //Only runs once at the beginning of DyingTime
         public virtual void DyingFirstTick()
         {
-            projectile.velocity = relativePosition.OfLength(ShootSpeed); //Shoots out
+            projectile.velocity = relativePosition.OfLength(ShootSpeed); //Starts shooting-out motion
         }
 
         //Runs every tick during DyingTime
         public virtual void Dying()
         {
             projectile.velocity -= projectile.velocity.OfLength(ShootSpeed / DyingTime); //Slows down to a halt
+            projectile.position += projectile.velocity; //Re-applies velocity as it would normally be nullified for orbitals
         }
 
 
@@ -155,30 +172,38 @@ namespace Virtuous
             {
                 if (firstTick)
                 {
+                    projectile.netUpdate = true;
                     FirstTick();
-                    projectile.netUpdate = true; //Sync to multiplayer
                 }
 
-                if (DyingTime == 0 || orbitalPlayer.time > DyingTime || Main.myPlayer != projectile.owner) //When the projectile isn't dying
+                if (PreMovement())
                 {
                     Movement();
                     PostMovement();
-                    ExtraEffects();
-
-                    projectile.timeLeft = Math.Max(2, DyingTime); //Keeps the orbital from dying naturally
-                    projectile.position -= projectile.velocity; //Reverses the effect of velocity so it doesn't move
                 }
-                else //Death behavior
+
+                if (SpecialEffectCheck())
+                {
+                    SpecialEffect();
+                }
+
+                if (IsDying())
                 {
                     if (orbitalPlayer.time == DyingTime)
                     {
+                        projectile.netUpdate = true;
                         DyingFirstTick();
-                        projectile.netUpdate = true; //Sync to multiplayer
                     }
 
                     Dying();
-                    ExtraEffects();
                 }
+                else
+                {
+                    projectile.timeLeft = Math.Max(2, DyingTime); //Keeps the orbital from dying naturally
+                }
+
+                ExtraEffects();
+                projectile.position -= projectile.velocity; //Reverses the effect of velocity so the orbital doesn't move by default
             }
         }
 

@@ -67,7 +67,6 @@ namespace Virtuous.Orbitals
         
         public override void Dying()
         {
-            projectile.position -= projectile.velocity; //Reverses the effect of velocity so it doesn't move
             Lighting.AddLight(projectile.Center, 2.0f, 2.0f, 1.2f);
         }
 

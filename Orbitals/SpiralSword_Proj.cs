@@ -10,7 +10,7 @@ namespace Virtuous.Orbitals
     {
         public override int Type => OrbitalID.SpiralSword;
         public override int DyingTime => 30;
-        public override float BaseDistance => 90;
+        public override float BaseDistance => 95;
         public override float ShootSpeed => 15;
         public override float OrbitingSpeed => 0.5f * RevolutionPerSecond;
         public override float RotationSpeed => OrbitingSpeed;
@@ -41,53 +41,42 @@ namespace Virtuous.Orbitals
             projectile.rotation += 45.ToRadians(); //45 degrees because of the sprite
         }
 
-        public override void Movement()
+        public override void SpecialEffect()
         {
-            if (!specialEffectActive) //Passive movement
+            if (specialEffectTimer == 0) //First tick
             {
-                base.Movement();
+                direction = Outwards;
+                distance = BaseDistance;
+                projectile.damage = (int)(projectile.damage * ThrowDamageMultiplier);
+                projectile.idStaticNPCHitCooldown = 5; //Deals damage more rapidly
+                projectile.netUpdate = true; //Sync to multiplayer
             }
-            else //Special effect movement
+
+            float orbitSpeed = OrbitingSpeed * (specialEffectTimer < 30 ? 2 : 1); //Doubles the speed only the first 30 ticks of the special effect so that the final direction when dying isn't affected
+            relativePosition = relativePosition.RotatedBy(orbitSpeed); //Rotates the sword around the player
+            projectile.rotation += orbitSpeed; //Rotates the sprite accordingly
+            distance += ThrowSpeed * (direction ? +1 : -1); //Moves inwards or outwards
+            projectile.Center = player.MountedCenter + relativePosition; //Moves the sword to the defined position around the player
+
+            specialEffectTimer++;
+
+            if (distance >= ThrowDistance) //If it has reached the set maximum distance for the throw
             {
-                if (specialEffectTimer == 0) //First tick
-                {
-                    direction = Outwards;
-                    distance = BaseDistance;
-                    projectile.damage = (int)(projectile.damage * ThrowDamageMultiplier);
-                    projectile.idStaticNPCHitCooldown = 5; //Deals damage more rapidly
-                    projectile.netUpdate = true; //Sync to multiplayer
-                }
-                float orbitSpeed = OrbitingSpeed * (specialEffectTimer < 30 ? 2 : 1); //Doubles the speed only the first 30 ticks of the special effect so that the final direction when dying isn't affected
-                relativePosition = relativePosition.RotatedBy(orbitSpeed); //Rotates the sword around the player
-                projectile.rotation += orbitSpeed; //Rotates the sprite accordingly
-                distance += ThrowSpeed * (direction ? +1 : -1); //Moves inwards or outwards
-                projectile.Center = player.MountedCenter + relativePosition; //Moves the sword to the defined position around the player
-
-                specialEffectTimer++;
-
-                if (distance >= ThrowDistance) //If it has reached the set maximum distance for the throw
-                {
-                    direction = Inwards; //Return
-                }
-                else if (direction == Inwards && distance <= BaseDistance) //If it has returned to the passive zone
-                {
-                    specialEffectActive = false;
-                    specialEffectTimer = 0;
-                    projectile.netUpdate = true; //Sync to multiplayer
-
-                    //Resets to passive behavior
-                    direction = Inwards;
-                    distance = BaseDistance;
-                    oscillationSpeed = OscillationSpeedMax;
-                    projectile.damage = (int)(projectile.damage / ThrowDamageMultiplier);
-                    projectile.idStaticNPCHitCooldown = 10;
-                }
+                direction = Inwards; //Return
             }
-        }
+            else if (direction == Inwards && distance <= BaseDistance) //If it has returned to the passive zone
+            {
+                specialEffectActive = false;
+                specialEffectTimer = 0;
+                projectile.netUpdate = true; //Sync to multiplayer
 
-        public override void PostMovement() //Doesn't do the normal special effect check
-        {
-            return;
+                //Resets to passive behavior
+                direction = Inwards;
+                distance = BaseDistance;
+                oscillationSpeed = OscillationSpeedMax;
+                projectile.damage = (int)(projectile.damage / ThrowDamageMultiplier);
+                projectile.idStaticNPCHitCooldown = 10;
+            }
         }
 
 
@@ -100,6 +89,7 @@ namespace Virtuous.Orbitals
         public override void Dying()
         {
             projectile.velocity += projectile.velocity.OfLength(ShootAcc); //Accelerates
+            projectile.position += projectile.velocity; //Re-applies velocity as it would normally be nullified for orbitals
         }
 
 

@@ -109,13 +109,13 @@ namespace Virtuous
                         }
                         else //Right click: Special function
                         {
-                            orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true;
+                            if (!orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff]) orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true;
                         }
                         return false;
                     }
                     else if (specialFunctionType == SpecialReuse) //Reuse mode
                     {
-                        orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true; //Special function
+                        if (!orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff]) orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true; //Special function
                         orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this); //Resets duration
                         return false;
                     }

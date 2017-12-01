@@ -37,7 +37,7 @@ namespace Virtuous.Orbitals
             Lighting.AddLight(new Vector2(projectile.Center.X + 2 * player.direction, projectile.Center.Y), 0.5f, 0.3f, 0.05f);
 
             //Special effect dust
-            if (orbitalPlayer.BullseyeShot())
+            if (Main.myPlayer == projectile.owner && orbitalPlayer.BullseyeShot())
             {
                 Vector2 position = new Vector2(projectile.Center.X + 2 * player.direction, projectile.Center.Y - 1);
                 Dust newDust = Dust.NewDustDirect(position, 0, 0, mod.DustType<RainbowDust>(), 0f, 0f, /*Alpha*/50, new Color(255, 127, 0, 50), /*Scale*/1.5f);
