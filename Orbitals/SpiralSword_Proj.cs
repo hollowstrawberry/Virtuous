@@ -70,16 +70,13 @@ namespace Virtuous.Orbitals
             distance += SpecialSpeed * (direction ? +1 : -1); //Moves inwards or outwards
             projectile.Center = player.MountedCenter + relativePosition; //Moves the sword to the defined position around the player
 
-            specialEffectTimer++;
-
             if (distance >= SpecialDistance) //If it has reached the set maximum distance for the throw
             {
                 direction = Inwards; //Return
             }
             else if (direction == Inwards && distance <= BaseDistance) //If it has returned to the passive zone
             {
-                specialEffectActive = false;
-                specialEffectTimer = 0;
+                orbitalPlayer.specialFunctionActive = false;
                 projectile.netUpdate = true; //Sync to multiplayer
 
                 //Resets to passive behavior
@@ -106,10 +103,10 @@ namespace Virtuous.Orbitals
 
         public override bool? CanCutTiles() //So it doesn't become a lawnmower
         {
-            return specialEffectTimer > 0; //Only while actively attacking
+            return (isDying || doSpecialEffect); //Only while actively attacking
         }
 
-        public override Color? GetAlpha(Color newColor) //Fullbright
+        public override Color? GetAlpha(Color newColor)
         {
             return new Color(150, 255, 230, 150) * projectile.Opacity;
         }

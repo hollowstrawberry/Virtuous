@@ -49,34 +49,34 @@ namespace Virtuous.Projectiles
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, 0.0f, 0.5f, 0.6f);
-            if(HasHitEnemy)
-            {
-                projectile.Center = Target.Center - relativeCenter.RotatedBy(Target.rotation - originalTargetRotation); //Moves the projectile to the fixed position around the target, relative to where it originally hit
-                projectile.rotation = originalProjRotation - originalTargetRotation + Target.rotation; //Rotates the sprite accordingly
-
-                if (!Target.active) projectile.Kill(); //Kills the projectile if the target is dead
-                Target.GetGlobalNPC<VirtuousNPC>().summonedSwordStuck++; //Applies the damage over time effect to the target
-
-                projectile.position -= projectile.velocity; //Stops velocity from affecting the projectile
-            }
-
             if (projectile.timeLeft == Lifespan) //First tick
             {
                 projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians(); //45 degrees because of the sprite
 
-                const int DustAmount = 16;
-                for (int i = 0; i < DustAmount; i++) //We create 16 dusts in an ellipse
+                int dustAmount = 16;
+                for (int i = 0; i < dustAmount; i++) //We create 16 dusts in an ellipse
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(FullCircle * i/DustAmount); //Divides a circle into 16 points and picks the current one in the loop
-                    rotation *= new Vector2(1,4); // Multiplies the points by a vertical squish factor so the circle becomes an ellipse
+                    Vector2 rotation = Vector2.UnitY.RotatedBy(FullCircle * i / dustAmount); //A circle of radius 1 is divided into the set amount of points, focusing on the current point in the loop
+                    rotation *= new Vector2(1, 4); // Multiplies the points by a vertical squish factor so the circle becomes an ellipse
                     rotation = rotation.RotatedBy(projectile.velocity.ToRotation()); //Rotates the resulting ellipse to align with the projectile's rotation
-                    
+
                     Dust newDust = Dust.NewDustDirect(projectile.Center + rotation, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/0, default(Color), /*Scale*/1.5f);
                     newDust.velocity = rotation.Normalized(); //Shoots outwards
                     newDust.noGravity = true;
                 }
             }
+
+            if (HasHitEnemy) //Is stuck to an enemy
+            {
+                if (!Target.active) projectile.Kill(); //Kills the projectile if the target is dead
+                Target.GetGlobalNPC<VirtuousNPC>().summonedSwordStuck++; //Applies the damage-over-time effect to the target
+
+                projectile.Center = Target.Center - relativeCenter.RotatedBy(Target.rotation - originalTargetRotation); //Moves the projectile to the fixed position around the target, relative to where it originally hit
+                projectile.rotation = originalProjRotation - originalTargetRotation + Target.rotation; //Rotates the sprite accordingly
+                projectile.position -= projectile.velocity; //Stops velocity from affecting the projectile normally
+            }
+
+            Lighting.AddLight(projectile.Center, 0.0f, 0.5f, 0.6f);
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

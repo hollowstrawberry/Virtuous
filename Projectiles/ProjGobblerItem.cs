@@ -23,7 +23,7 @@ namespace Virtuous.Projectiles
             get { return projectile.ai[0] > 0; }
         } 
 
-        private Item StoredItem //An item of the type being shot. Passed as ai[1]
+        private Item MasterStoredItem //Returns an item copy of the type being shot. Passed as ai[1]
         {
             get
             {
@@ -114,7 +114,7 @@ namespace Virtuous.Projectiles
 
         private bool ToolBounce() //If the item is a tool, it will bounce off in the direction it came from when specified
         {
-            Item storedItem = StoredItem;
+            Item storedItem = MasterStoredItem;
             if (IsTool(storedItem))
             {
                 if (projectile.penetrate > 1)
@@ -133,7 +133,7 @@ namespace Virtuous.Projectiles
 
         private void MagicExplode() //If the item is a magic weapon it will explode when the projectile dies
         {
-            Item storedItem = StoredItem;
+            Item storedItem = MasterStoredItem;
             if (storedItem.magic)
             {
                 ResizeProjectile(projectile.whoAmI, projectile.width + 50, projectile.height + 50);
@@ -150,7 +150,7 @@ namespace Virtuous.Projectiles
 
         private void ItemConsume() //When the projectile dies and the stored item was set to consumed
         {
-            Item storedItem = StoredItem;
+            Item storedItem = MasterStoredItem;
             Player player = Main.player[projectile.owner];
 
             if (IsDepletable(storedItem)) //Item won't be returned
@@ -175,7 +175,7 @@ namespace Virtuous.Projectiles
 
         private void ItemShoot() //When this projectile dies it can shoot out what the stored item would shoot
         {
-            Item storedItem = StoredItem;
+            Item storedItem = MasterStoredItem;
             Player player = Main.player[projectile.owner];
 
             //Orbital behavior
@@ -291,7 +291,7 @@ namespace Virtuous.Projectiles
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            Item storedItem = StoredItem; //It's important that we make a single copy to utilize so that a new item instance isn't created every time we access the property
+            Item storedItem = MasterStoredItem; //It's important that we make a single copy to utilize so that a new item instance isn't created every time we access the property
 
             //First tick
             if (projectile.timeLeft == Lifespan && storedItem.type != ItemID.None)
@@ -330,7 +330,7 @@ namespace Virtuous.Projectiles
             {
                 projectile.velocity.Y += ItemDiagonalSize(storedItem) / 200f; //How fast they fall down depends on their size
 
-                if (storedItem.useStyle == 1 && !storedItem.consumable && storedItem.pick == 0 && storedItem.axe == 0 && storedItem.hammer == 0)
+                if (storedItem.useStyle == 1 && !storedItem.consumable && !IsTool(storedItem))
                 {
                     projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians(); //Swingable weapons point to where they're going (+45 degrees)
                 }
@@ -361,7 +361,7 @@ namespace Virtuous.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            Item storedItem = StoredItem; //A single copy
+            Item storedItem = MasterStoredItem; //A single copy
             Player player = Main.player[projectile.owner];
 
             if (projectile.owner == Main.myPlayer) //So it doesn't repeat the code for everyone in a server
@@ -382,17 +382,17 @@ namespace Virtuous.Projectiles
 
             bool canHit = projectile.CanHit(target);
 
-            if (canHit && (target.Center - projectile.Center).Length() < 50 && target.type == StoredItem.makeNPC)
+            if (canHit && (target.Center - projectile.Center).Length() < 50 && target.type == MasterStoredItem.makeNPC)
             {
                 return false; //Critters can't hit themselves
             }
 
-            return null;
+            return canHit;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            Item storedItem = StoredItem; //A single copy
+            Item storedItem = MasterStoredItem; //A single copy
 
             ToolBounce();
 
@@ -411,7 +411,7 @@ namespace Virtuous.Projectiles
         }
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            Item storedItem = StoredItem; //A single copy
+            Item storedItem = MasterStoredItem; //A single copy
 
             ToolBounce();
 
@@ -433,7 +433,7 @@ namespace Virtuous.Projectiles
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //Draws the stored item's texture as the projectile's
         {
-            Item storedItem = StoredItem; //A single copy
+            Item storedItem = MasterStoredItem; //A single copy
 
             if (storedItem.type != ItemID.None) 
             {
@@ -464,7 +464,7 @@ namespace Virtuous.Projectiles
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return StoredItem.GetAlpha(lightColor);
+            return MasterStoredItem.GetAlpha(lightColor);
         }
     }
 }

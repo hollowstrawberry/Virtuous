@@ -38,24 +38,14 @@ namespace Virtuous
         public virtual float BaseDistance => 50; //Distance it starts at
         public virtual float RotationSpeed => 0; //Speed at which the projectile's sprite rotates
         public virtual float OrbitingSpeed => 0; //Speed at which the projectile orbits around the player
-        public virtual float DyingSpeed => 0; //Speed at which, by default, the projectile will by shoot out in DyingTime
+        public virtual float DyingSpeed => 0; //Speed at which, by default, the projectile will shoot out in DyingTime
         public virtual float OscillationSpeedMax => 0;  //Speed limit. Translates into how far it can go before changing direction of movement
         public virtual float OscillationAcc => OscillationSpeedMax / 60; //Acceleration rate. Translates into how fast it reaches the point of direction change
 
         //Checks
-        public virtual bool specialEffectActive
-        {
-            get{ return orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn]; }
-
-            set //Safe way to turn off a special effect: Passes the signal to the player, and the player itself turns it off in the next tick
-            {
-                if (value == false) orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff] = true;
-                else orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true;
-            }
-        }
         public virtual bool firstTick => relativePosition.Length() == 1.0f; //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
         public virtual bool isDying => !(DyingTime == 0 || orbitalPlayer.time > DyingTime || Main.myPlayer != projectile.owner); //Whether to treat this projectile as in dying mode
-        public virtual bool doSpecialEffect => (specialEffectActive && !isDying); //Whether to run the special effect method or not
+        public virtual bool doSpecialEffect => (orbitalPlayer.specialFunctionActive && !isDying); //Whether to run the special effect method or not
 
 
         public virtual void SetOrbitalDefaults()
@@ -97,7 +87,7 @@ namespace Virtuous
         //Returns whether to execute movement
         public virtual bool PreMovement()
         {
-            return (!isDying && !specialEffectActive); //By default doesn't do normal movement if it's dying or in special mode
+            return (!isDying && !doSpecialEffect); //By default doesn't do normal movement if it's dying or in special mode
         }
 
         //Main orbital behavior. Runs every tick before DyingTime
@@ -183,6 +173,11 @@ namespace Virtuous
                 if (doSpecialEffect)
                 {
                     SpecialEffect();
+                    specialEffectTimer++;
+                }
+                else
+                {
+                    specialEffectTimer = 0;
                 }
 
                 if (isDying)

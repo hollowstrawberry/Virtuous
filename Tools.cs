@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameInput;
 
 namespace Virtuous
 {
@@ -25,7 +26,7 @@ namespace Virtuous
 
         //Objects
 
-        public static void ResizeProjectile(int projIndex, int newWidth, int newHeight)
+        public static void ResizeProjectile(int projIndex, int newWidth, int newHeight) //Changes the size of the hitbox while keeping its center
         {
             Projectile projectile = Main.projectile[projIndex];
 
@@ -33,6 +34,22 @@ namespace Virtuous
             projectile.width = newWidth;
             projectile.height = newHeight;
             projectile.position -= new Vector2(projectile.width / 2, projectile.height / 2);
+        }
+
+        public static void HandleAltUseAnimation(Player player, Item item) //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+        {
+            if (player.altFunctionUse == 2)
+            {
+                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually
+                {
+                    player.itemAnimation = 0;
+                }
+                else if (player.itemAnimation == 1) //Doesn't let the hand return to resting position
+                {
+                    player.altFunctionUse = 1;
+                    player.controlUseItem = true;
+                }
+            }
         }
 
 

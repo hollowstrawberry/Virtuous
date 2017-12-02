@@ -14,7 +14,7 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ether Slit");
-            Tooltip.SetDefault("Right Click for a barrage attack, with higher speed, critical chance and stick duration");
+            Tooltip.SetDefault("Right Click for a barrage attack\nBarrage swords have higher speed, critical chance and stick duration");
         }
 
         public override void SetDefaults()
@@ -72,48 +72,33 @@ namespace Virtuous.Items
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            //So it always displays the left-click values when not using the weapon
-            CanUseItem(player);
-
-            //A little hack to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
-            if (player.altFunctionUse == 2)
-            {
-                if (player.itemAnimation == 1) //Resets the animation so it doesn't let the hand return to resting position
-                {
-                    player.itemAnimation = item.useAnimation;
-                    player.statMana -= (int)(item.mana * player.manaCost);
-                    Main.PlaySound(item.UseSound, player.Center);
-                }
-                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually
-                {
-                    player.itemAnimation = 0;
-                }
-            }
-
+            CanUseItem(player); //A trick to always display the left-click values when not using the weapon
+            HandleAltUseAnimation(player, item); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
 
             base.GetWeaponDamage(player, ref damage);
         }
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            Vector2 center = player.MountedCenter; //Player center
-            int distanceMin = 20; //Projectile spawnpoint's minimum distance to the player
-            int distanceMax = 60; //Projectile spawnpoint's maximum distance to the player
-
-            for (int i = 0; i < 20; i++) //Makes 20 attempts at creating a projectile that the player can reach. Gives up otherwise.
+            for (int i = 0; i < 20; i++) //Makes 20 attempts at finding a projectile position that the player can reach. Gives up otherwise.
             {
-                position = center + (RandomFloat(FullCircle).ToRotationVector2() * RandomInt(distanceMin, distanceMax)); //Random rotation, random distance from the player
+                position = player.MountedCenter + (RandomFloat(FullCircle).ToRotationVector2().OfLength(RandomInt(20, 60))); //Random rotation, random distance from the player
 
-                if (Collision.CanHit(center, 0, 0, position + (position - center).OfLength(8f), 0, 0)) break;
+                if (Collision.CanHit(player.MountedCenter, 0, 0, position, 0, 0)) break;
             }
-            
-            Vector2 direction = player.altFunctionUse!=2 ? new Vector2(Main.mouseX + Main.screenPosition.X - center.X, Main.mouseY + Main.screenPosition.Y - center.Y) : new Vector2(player.direction, 0); //The direction to shoot at. In the direction of the mouse with left click, in the direction the player is facing with right click.
-            Vector2 straightVelocity =  direction.OfLength(item.shootSpeed); //Swords shoot parallel to each other in the set direction
-            Vector2 cursorVelocity   = (Main.MouseWorld - position).SafeNormalize(straightVelocity) * item.shootSpeed; //Swords shoot directly at the mouse
-            Vector2 finalVelocity    = player.altFunctionUse!=2 ? Vector2.Lerp(cursorVelocity, straightVelocity, 0.4f) : straightVelocity; //Middlepoint of both with left click, straight with right click
 
-            Projectile.NewProjectile(position, finalVelocity, type, damage, knockBack, player.whoAmI, 0.0f, 0.0f);
-            return false;
+            Vector2 velocity;
+            if (player.altFunctionUse == 2) //Right click
+            {
+                velocity = new Vector2(player.direction * item.shootSpeed, 0); //Straight in the direction the player is facing
+            }
+            else //Left click
+            {
+                velocity =  Vector2.Lerp(Main.MouseWorld - player.Center, Main.MouseWorld - position, 0.5f).OfLength(item.shootSpeed); //Direction is a middlepoint between straight from the player to the cursor and straight from the sword to the cursor
+            }
+
+            Projectile.NewProjectile(position, velocity, type, damage, knockBack, player.whoAmI);
+            return false; //So it doesn't shoot normally
         }
 
         public override void AddRecipes()

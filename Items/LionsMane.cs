@@ -5,6 +5,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
+using static Virtuous.Tools;
 
 namespace Virtuous.Items
 {
@@ -45,20 +46,7 @@ namespace Virtuous.Items
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            //A little hack to stop the bugged 1-tick delay between consecutive right click uses of a weapon
-            if (player.altFunctionUse == 2)
-            {
-                if (player.itemAnimation == 1) //Resets the animation so it doesn't let the hand return to resting position
-                {
-                    player.itemAnimation = item.useAnimation;
-                    player.statMana -= (int)(item.mana * player.manaCost);
-                    Main.PlaySound(item.UseSound, player.Center);
-                }
-                if (PlayerInput.Triggers.JustReleased.MouseRight) //Stops the animation manually
-                {
-                    player.itemAnimation = 0;
-                }
-            }
+            HandleAltUseAnimation(player, item); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
 
             base.GetWeaponDamage(player, ref damage);
         }

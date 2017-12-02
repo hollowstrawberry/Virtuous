@@ -13,9 +13,26 @@ namespace Virtuous
         public int time = 0; //Time left, in ticks, of an orbital summon. 0 is inactive
         public bool[] active = new bool[OrbitalID.Orbital.Length];
 
-        public bool[] specialFunction = new bool[2]; //[0] calls for the right-click effect to activate, [1] calls for it to shut down
-        public const int SpecialOn = 0;
-        public const int SpecialOff = 1;
+        private bool[] specialFunction = new bool[2];
+        private const int On = 0; //specialFunction[0] controls whether the special is active or not
+        private const int SafeTurnOff = 1; //specialFunction[1] safely signals the player to turn off the special itself in ResetEffects. Without this protection, orbitals could desync and interfere with one another in their behavior
+
+        public bool specialFunctionActive
+        {
+            get { return specialFunction[On]; }
+
+            set
+            {
+                if (value) //Set to true
+                {
+                    if (!specialFunction[SafeTurnOff]) specialFunction[On] = true;
+                }
+                else //Set to false
+                {
+                    specialFunction[SafeTurnOff] = true;
+                }
+            }
+        }
 
         public bool accessoryTimeBoost = false;
         public bool accessoryDmgBoost = false;
@@ -48,8 +65,7 @@ namespace Virtuous
             if (time <= 0) ResetOrbitals();
             accessoryTimeBoost = false;
             accessoryDmgBoost  = false;
-
-            if (specialFunction[SpecialOff]) specialFunction = new bool[2]; //Shuts down special effect
+            if (specialFunction[SafeTurnOff]) specialFunction = new bool[2]; //Shuts down special effect
         }
 
         public override void UpdateDead()

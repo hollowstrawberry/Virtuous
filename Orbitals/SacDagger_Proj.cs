@@ -57,8 +57,7 @@ namespace Virtuous.Orbitals
             }
             else if (Math.Abs(specialEffectTimer) == SpecialSpinTime - 1) //Last tick
             {
-                specialEffectTimer = -spinDirection; //Gets set to 0 at the end of the method
-                specialEffectActive = false; //Turns off the special effect for all daggers
+                orbitalPlayer.specialFunctionActive = false; //Turns off the special effect for all daggers
                 projectile.damage = (int)(projectile.damage / SpecialDamageMultiplier); //Returns the damage to its original
                 projectile.netUpdate = true; //Syncs to multiplayer
             }
@@ -67,6 +66,7 @@ namespace Virtuous.Orbitals
             projectile.rotation += SpecialSpinSpeed * spinDirection; //Points the sprite outwards
             projectile.Center = player.MountedCenter + relativePosition; //Keeps the orbital on the player
 
+            specialEffectTimer--; //Stops the normal increase of the timer
             specialEffectTimer += spinDirection;
         }
 
@@ -108,10 +108,10 @@ namespace Virtuous.Orbitals
 
         public override bool? CanCutTiles()
         {
-            return orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn]; //Only while spinning
+            return (isDying || doSpecialEffect); //Only while actively attacking
         }
 
-        public override Color? GetAlpha(Color newColor) //Fullbright
+        public override Color? GetAlpha(Color newColor)
         {
             return new Color(255, 0, 0, 180) * projectile.Opacity;
         }

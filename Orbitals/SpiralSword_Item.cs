@@ -32,6 +32,7 @@ namespace Virtuous.Orbitals
             item.rare = 11;
             item.value = Item.sellPrice(1, 0, 0, 0);
             item.autoReuse = true;
+            item.useTurn = false;
             item.useStyle = 4;
             item.useTime = 35;
             item.useAnimation = item.useTime;

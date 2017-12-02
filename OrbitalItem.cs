@@ -82,6 +82,12 @@ namespace Virtuous
             //Gets boosted by the player's strongest damage between magic and melee
             damage = (int)(item.damage * (Math.Max(player.meleeDamage - meleeBuff, player.magicDamage - magicBuff)));
             if (orbitalPlayer.accessoryDmgBoost) damage = (int)(damage * 1.5);
+
+
+            if (specialFunctionType == SpecialRightClick) //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            {
+                HandleAltUseAnimation(player, item);
+            }
         }
 
         public override bool CanUseItem(Player player)
@@ -122,13 +128,13 @@ namespace Virtuous
                         }
                         else //Right click: Special function
                         {
-                            if (!orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff]) orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true;
+                            orbitalPlayer.specialFunctionActive = true;
                         }
                         return false;
                     }
                     else if (specialFunctionType == SpecialReuse) //Reuse mode
                     {
-                        if (!orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOff]) orbitalPlayer.specialFunction[OrbitalPlayer.SpecialOn] = true; //Special function
+                        orbitalPlayer.specialFunctionActive = true; //Special function
                         orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this); //Resets duration
                         return false;
                     }
