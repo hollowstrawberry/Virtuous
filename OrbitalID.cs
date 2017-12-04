@@ -1,60 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Terraria;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
 
 namespace Virtuous
 {
     /*
-     * These get used to manage the player's orbitals, as well as controlling which items and projectiles are associated.
-     * The IDs must start at 0 and be consecutive, in order for arrays that depend on them to work.
-     * Adding a new orbital would require making a new ID and adding it to both the Orbital array and the GetOrbitalType switch.
-     * I'm hoping to be able to make it less redundant in the future
+     * These get used to manage the player's active orbitals, as well as controlling which items and projectiles are associated.
+     * The orbitals must have individual orbital IDs, starting at 0 and being consecutive.
      */
 
     public static class OrbitalID
     {
         public const int None = -1;
-        public const int Sailspike    = 0;
-        public const int Facade       = 1;
-        public const int Bubble       = 2;
-        public const int SpikedBubble = 3;
-        public const int HolyLight    = 4;
-        public const int SacDagger    = 5;
-        public const int Shuriken     = 6;
-        public const int Bullseye     = 7;
-        public const int SpiralSword  = 8;
+        public const int Sailspike      =  0;
+        public const int Facade         =  1;
+        public const int Bubble         =  2;
+        public const int SpikedBubble   =  3;
+        public const int HolyLight      =  4;
+        public const int SacDagger      =  5;
+        public const int Shuriken       =  6;
+        public const int Bullseye       =  7;
+        public const int SpiralSword    =  8;
+        public const int Fireball       =  9;
+        public const int EnergyCrystal  = 10;
 
 
-        public static OrbitalProjectile[] Orbital = //Contains a null static projectile instance for each orbital ID, to access its properties
+        public static OrbitalProjectile[] Orbital = CreateOrbitalArray(); //Allows me to access the properties of an orbital type whose orbital ID is the index
+
+
+        public static int OrbitalProjectileType(this Mod mod, int id) //Returns the projectile type for the given orbital ID
         {
-            new Sailspike_Proj(),
-            new Facade_Proj(),
-            new Bubble_Proj(),
-            new SpikedBubble_Proj(),
-            new HolyLight_Proj(),
-            new SacDagger_Proj(),
-            new Shuriken_Proj(),
-            new Bullseye_Proj(),
-            new SpiralSword_Proj()
-        };
+            return mod.ProjectileType(Orbital[id].GetType().Name);
+        }
 
-        public static int GetOrbitalType(Mod mod, int id) //Returns a corresponding projectile type for the given orbital ID
+
+        private static OrbitalProjectile[] CreateOrbitalArray()
         {
-            switch (id)
+            List<OrbitalProjectile> orbitals = new List<OrbitalProjectile>(); //Create a list to manipulate before sending the final array
+
+            //Obtain all subtypes of OrbitalProjectile
+            foreach (Type type in Assembly.GetAssembly(typeof(OrbitalProjectile)).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(OrbitalProjectile))))
             {
-                case OrbitalID.Sailspike:    return mod.ProjectileType<Sailspike_Proj>();
-                case OrbitalID.Facade:       return mod.ProjectileType<Facade_Proj>();
-                case OrbitalID.Bubble:       return mod.ProjectileType<Bubble_Proj>();
-                case OrbitalID.SpikedBubble: return mod.ProjectileType<SpikedBubble_Proj>();
-                case OrbitalID.HolyLight:    return mod.ProjectileType<HolyLight_Proj>();
-                case OrbitalID.SacDagger:    return mod.ProjectileType<SacDagger_Proj>();
-                case OrbitalID.Bullseye:     return mod.ProjectileType<Bullseye_Proj>();
-                case OrbitalID.Shuriken:     return mod.ProjectileType<Shuriken_Proj>();
-                case OrbitalID.SpiralSword:  return mod.ProjectileType<SpiralSword_Proj>();
+                orbitals.Add((OrbitalProjectile)Activator.CreateInstance(type));
             }
 
-            throw new Exception("Virtuous: OrbitalID has no corresponding projectile type");
+            orbitals = orbitals.OrderBy(orbital => orbital.Type).ToList(); //Sorts the orbitals by Orbital ID
+
+            //Makes sure the list has a one-to-one correspondence
+            for (int i = 0; i < orbitals.Count; i++)
+            {
+                if (orbitals[i].Type != i) throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive.");
+            }
+
+            //Return the final array
+            return orbitals.ToArray();
         }
     }
 }

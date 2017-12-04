@@ -22,7 +22,7 @@ namespace Virtuous.Orbitals
             type = OrbitalID.SacDagger;
             duration = 20 * 60;
             amount = 2;
-            specialFunctionType = OrbitalItem.SpecialReuse; //This makes the orbital's special function activate after using the item again
+            specialFunctionType = SpecialReuse; //This makes the orbital's special function activate after using the item again
 
             item.width = 30;
             item.height = 30;

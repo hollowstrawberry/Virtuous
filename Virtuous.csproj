@@ -37,6 +37,7 @@
     <Compile Include="Items\ArtOfWar.cs" />
     <Compile Include="OrbitalID.cs" />
     <Compile Include="OrbitalProjectile.cs" />
+    <Compile Include="Orbitals\Fireball.cs" />
     <Compile Include="Projectiles\WarArrow.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="VirtuousItem.cs" />

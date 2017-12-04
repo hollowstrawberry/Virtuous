@@ -16,7 +16,6 @@ namespace Virtuous
 
         public int[] GobblerStorage = new int[TheGobbler.StorageCapacity]; //Stores all the item types of the items sucked by the gobbler by this player
 
-
         public int titanShieldDashing = 0; //The time left and direction of the dash. 0 is inactive
         public int titanShieldCoolDown = TitanShield.CoolDown; //Time left until the dash can be used again
         public int titanShieldLastExplosion = 0; //Point in titanShieldDashing when an explosion was last spawned. 0 is unregistered
@@ -109,11 +108,6 @@ namespace Virtuous
             //}
         }
 
-        public override void ResetEffects()
-        {
-            if (titanShieldCoolDown > 0) titanShieldCoolDown--;
-        }
-
 
 
         ///* The Gobbler *///
@@ -177,7 +171,10 @@ namespace Virtuous
             {
                 for (int i = 0; i < Main.maxItems; i++) //Cycles through all the items in the world
                 {
-                    if (Main.item[i].WithinRange(player.Center, 300)) Main.item[i].GetGlobalItem<VirtuousItem>().beingGobbled = false; //Makes the items able to be picked up again
+                    if (Main.item[i].active && Main.item[i].WithinRange(player.Center, 300))
+                    {
+                        Main.item[i].GetGlobalItem<VirtuousItem>().beingGobbled = false; //Makes the items able to be picked up again
+                    }
                 }
             }
         }
@@ -287,6 +284,11 @@ namespace Virtuous
                 }
             }
             return true;
+        }
+
+        public override void ResetEffects()
+        {
+            if (titanShieldCoolDown > 0) titanShieldCoolDown--;
         }
     }
 }

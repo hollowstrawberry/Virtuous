@@ -14,18 +14,17 @@ namespace Virtuous
         public bool[] active = new bool[OrbitalID.Orbital.Length];
 
         private bool[] specialFunction = new bool[2];
-        private const int On = 0; //specialFunction[0] controls whether the special is active or not
-        private const int SafeTurnOff = 1; //specialFunction[1] safely signals the player to turn off the special itself in ResetEffects. Without this protection, orbitals could desync and interfere with one another in their behavior
-
+        private const int IsOn = 0; //specialFunction[0] controls whether the special is active or not
+        private const int SafeTurnOff = 1; //specialFunction[1] safely signals the player to itself turn off the special in ResetEffects. Without this protection, orbitals could desync and interfere with one another in their behavior
         public bool specialFunctionActive
         {
-            get { return specialFunction[On]; }
+            get { return specialFunction[IsOn]; }
 
             set
             {
                 if (value) //Set to true
                 {
-                    if (!specialFunction[SafeTurnOff]) specialFunction[On] = true;
+                    if (!specialFunction[SafeTurnOff]) specialFunction[IsOn] = true;
                 }
                 else //Set to false
                 {

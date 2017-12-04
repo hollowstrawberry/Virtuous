@@ -89,7 +89,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor) //Fullbright
         {
-            return new Color(255, 230, 180, 100) * projectile.Opacity;
+            return new Color(255, 255, 255, 50) * projectile.Opacity;
         }
     }
 }

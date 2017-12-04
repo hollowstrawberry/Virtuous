@@ -22,7 +22,7 @@ namespace Virtuous.Orbitals
             type = OrbitalID.SpiralSword;
             duration = 40 * 60;
             amount = 8;
-            specialFunctionType = OrbitalItem.SpecialRightClick; //Makes the orbital's special function activate with right click
+            specialFunctionType = SpecialRightClick; //Makes the orbital's special function activate with right click
 
             item.width = 30;
             item.height = 30;

@@ -31,7 +31,7 @@ namespace Virtuous
         public int specialEffectTimer { get{ return (int)projectile.localAI[0]; } set{ projectile.localAI[0] = value; } } //Time passed since the special effect was used. Stored as localAI[0]
 
         //Characteristics
-        public virtual int Type => OrbitalID.None; //The orbital ID associated with the projectile. Failing to provide one will cause an out of bounds exception.
+        public virtual int Type => OrbitalID.None; //The orbital ID associated with the projectile. Failing to provide one will cause an exception.
         public virtual int FadeTime => 0; //How many ticks the projectile fades away for, if any
         public virtual int DyingTime => 0; //How many ticks, if any, the projectile spends in "dying mode" at the end of its lifespan, during which no orbital items can be used
         public virtual int OriginalAlpha => 50; //Original alpha value of the projectile

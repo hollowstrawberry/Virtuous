@@ -104,7 +104,7 @@ namespace Virtuous.Projectiles
                         break;
                 }
                 newDust.noGravity = true;
-                newDust.scale += dustAmount / 12f;
+                newDust.scale += dustAmount / 12f; //Size gets bigger with distance as well
             }
 
             Lighting.AddLight(projectile.Center, 0.8f, 0.7f, 0.4f);

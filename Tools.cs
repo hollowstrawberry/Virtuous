@@ -26,9 +26,15 @@ namespace Virtuous
 
         //Objects
 
-        public static void ResizeProjectile(int projIndex, int newWidth, int newHeight) //Changes the size of the hitbox while keeping its center
+        public static void ResizeProjectile(int projIndex, int newWidth, int newHeight, bool changeDrawPos = false) //Changes the size of the hitbox while keeping its center
         {
             Projectile projectile = Main.projectile[projIndex];
+
+            if (changeDrawPos)
+            {
+                projectile.modProjectile.drawOffsetX += (newWidth - projectile.width) / 2;
+                projectile.modProjectile.drawOriginOffsetY += (newHeight - projectile.height) / 2;
+            }
 
             projectile.position += new Vector2(projectile.width / 2, projectile.height / 2);
             projectile.width = newWidth;

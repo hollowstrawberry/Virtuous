@@ -14,10 +14,9 @@ namespace Virtuous
         public override bool CloneNewInstances => true; //So the defaults are copied to new items
 
         //Characteristics set in defaults
-        public int type = OrbitalID.None; //The orbital this item spawns. Failing to provide a valid one will cause an out of bounds exception.
+        public int type = OrbitalID.None; //The orbital this item spawns. Failing to provide a valid one will cause an exception
         public int duration = 5 * 60; //How long the summoned orbital will last, in ticks
         public int amount = 1; //The amount of orbitals that will be spawned in a circle
-
         public int specialFunctionType = SpecialNone; //Whether this orbital has a special effect, and whether it triggers by reusing it or by right-clicking
         public const int SpecialNone = 0;
         public const int SpecialReuse = 1;
@@ -42,8 +41,10 @@ namespace Virtuous
             item.useTurn = true;
 
             SetOrbitalDefaults();
-            duration += OrbitalID.Orbital[this.type].DyingTime; //Adds the orbital's dying time to the total duration
-            item.shoot = OrbitalID.GetOrbitalType(mod, this.type); //Sets the orbital projectile to shoot
+            if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception("Virtuous: The type of an orbital item was set to an invalid orbital ID, or the orbital ID has no corresponding orbital.");
+            duration += OrbitalID.Orbital[type].DyingTime; //Adds the orbital's dying time to the total duration
+            item.shoot = mod.OrbitalProjectileType(type); //Sets the orbital projectile to shoot
+            if (specialFunctionType != SpecialNone) item.autoReuse = true;
 
             //Overwrites
             item.crit = 0;
