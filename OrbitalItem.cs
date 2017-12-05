@@ -41,7 +41,8 @@ namespace Virtuous
             item.useTurn = true;
 
             SetOrbitalDefaults();
-            if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception("Virtuous: The type of an orbital item was set to an invalid orbital ID, or the orbital ID has no corresponding orbital.");
+            if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception("Virtuous: The type of the orbital item " + item.Name + " was set to the orbital ID " + type + ", which is either invalid or doesn't have any matching orbital.");
+
             duration += OrbitalID.Orbital[type].DyingTime; //Adds the orbital's dying time to the total duration
             item.shoot = mod.OrbitalProjectileType(type); //Sets the orbital projectile to shoot
             if (specialFunctionType != SpecialNone) item.autoReuse = true;
@@ -153,6 +154,7 @@ namespace Virtuous
                     Projectile.NewProjectile(position, rotation, type, damage, knockBack, player.whoAmI);
                 }
             }
+
             orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this); //Reset duration
 
             return false; //Doesn't shoot normally

@@ -439,24 +439,26 @@ namespace Virtuous.Projectiles
             {
                 Texture2D texture = Main.itemTexture[storedItem.type];
                 Rectangle? frame = null; //Which part of the texture to load, the sourceRect
-                int frameHeight = texture.Height; //The height of an individual frame in the texture
+                Vector2 drawOrigin = texture.Size() / 2; //Center of the texture
+                Vector2 position = projectile.Center - Main.screenPosition; //Where to draw the texture
 
                 if (Main.itemAnimations[storedItem.type] != null) //For animated items, gets the current frame
                 {
                     int frameCount = Main.itemAnimations[storedItem.type].FrameCount;
                     int frameDelay = Main.itemAnimations[storedItem.type].TicksPerFrame;
                     int currentFrame = (int)(Main.GameUpdateCount / frameDelay) % frameCount; //This code cycles through the frames at a constant pace
+
                     frame = texture.Frame(1, frameCount, 0, currentFrame);
-                    frameHeight /= frameCount;
+                    drawOrigin.Y /= frameCount;
                 }
 
                 if (storedItem.color != default(Color))
                 {
                     lightColor = Color.Lerp(lightColor, storedItem.color, 0.75f); //Gel gains its blue, etc.
                 }
+               
+                spriteBatch.Draw(texture, position, frame, lightColor * projectile.Opacity, projectile.rotation, drawOrigin, projectile.scale, SpriteEffects.None, 0f);
 
-                Vector2 position = projectile.Center - Main.screenPosition + new Vector2(0, texture.Height / 2 - frameHeight / 2); //Adds the difference between the spritesheet's center and the frame's center
-                spriteBatch.Draw(texture, position, frame, lightColor * projectile.Opacity, projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
                 return false;
             }
             else return true; //Without an item, it has the default texture

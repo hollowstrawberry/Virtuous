@@ -7,6 +7,31 @@ using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
+    public class HolyLight_Item : OrbitalItem
+    {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Circle of Protection");
+            Tooltip.SetDefault("Holy lights surround you and increase life regeneration\nAligns with either magic or melee users");
+        }
+
+        public override void SetOrbitalDefaults()
+        {
+            type = OrbitalID.HolyLight;
+            duration = 30 * 60;
+            amount = 6;
+
+            item.width = 30;
+            item.height = 30;
+            item.damage = 100;
+            item.knockBack = 3f;
+            item.mana = 60;
+            item.rare = 8;
+            item.value = Item.sellPrice(0, 40, 0, 0);
+        }
+    }
+
+
     public class HolyLight_Proj : OrbitalProjectile
     {
         public override int Type => OrbitalID.HolyLight;
@@ -14,7 +39,7 @@ namespace Virtuous.Orbitals
         public override float BaseDistance => 70;
         public override float OrbitingSpeed => 1 / 30f * RevolutionPerSecond;
         public override float RotationSpeed => -OrbitingSpeed;
-        public override float OscillationSpeedMax => 0.2f; 
+        public override float OscillationSpeedMax => 0.2f;
         public override float OscillationAcc => OscillationSpeedMax / 60;
 
         private const int OriginalSize = 30; //Size of the sprite
@@ -60,18 +85,17 @@ namespace Virtuous.Orbitals
             }
         }
 
-        public override void PostMovement()
+        public override bool PreMovement()
         {
-            Lighting.AddLight(projectile.Center, 1.0f, 1.0f, 0.6f);
+            return true; //Never stops moving even while dying
         }
 
         public override void DyingFirstTick()
         {
-            projectile.damage *= 3;
             projectile.alpha = 255; //Transparent
             Main.PlaySound(SoundID.Item14, projectile.Center); //Explosion
 
-            ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize);
+            if (Main.myPlayer == projectile.owner) ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize);
 
             for (int i = 0; i < 15; i++) //Dust
             {
@@ -79,15 +103,28 @@ namespace Virtuous.Orbitals
                 newDust.velocity *= 2;
             }
         }
-        
-        public override void Dying()
+
+        public override void Dying() //Nothing
         {
-            Movement(); //Even for the split second it dies for, it doesn't stop moving
-            Lighting.AddLight(projectile.Center, 2.0f, 2.0f, 1.2f);
+        }
+
+        public override void PostAll()
+        {
+            if (isDying) Lighting.AddLight(projectile.Center, 2.0f, 2.0f, 1.2f);
+            else Lighting.AddLight(projectile.Center, 1.0f, 1.0f, 0.6f);
         }
 
 
-        public override Color? GetAlpha(Color newColor) //Fullbright
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (isDying) damage *= 3;
+        }
+        public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
+        {
+            if (isDying) damage *= 3;
+        }
+
+        public override Color? GetAlpha(Color newColor)
         {
             return new Color(255, 255, 255, 50) * projectile.Opacity;
         }

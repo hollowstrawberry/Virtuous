@@ -27,6 +27,9 @@ namespace Virtuous
         public const int SpiralSword    =  8;
         public const int Fireball       =  9;
         public const int EnergyCrystal  = 10;
+        public const int Jungle         = 11;
+        public const int LuckyBreak     = 12;
+        public const int GelCube        = 13;
 
 
         public static OrbitalProjectile[] Orbital = CreateOrbitalArray(); //Allows me to access the properties of an orbital type whose orbital ID is the index
@@ -53,7 +56,7 @@ namespace Virtuous
             //Makes sure the list has a one-to-one correspondence
             for (int i = 0; i < orbitals.Count; i++)
             {
-                if (orbitals[i].Type != i) throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive.");
+                if (orbitals[i].Type != i) throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive. The ID that caused the error is: " + orbitals[i].Type.ToString());
             }
 
             //Return the final array

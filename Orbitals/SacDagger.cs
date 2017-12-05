@@ -7,6 +7,56 @@ using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
+    public class SacDagger_Item : OrbitalItem
+    {
+        private const int ManaCost = 50;
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Sacrificial Daggers");
+            Tooltip.SetDefault("\"Feed them\"\nThe daggers drain your life, but heal you when harming an enemy\nUse again after summoning to spin and reset duration\nAligns with either magic or melee users");
+        }
+
+        public override void SetOrbitalDefaults()
+        {
+            type = OrbitalID.SacDagger;
+            duration = 20 * 60;
+            amount = 2;
+            specialFunctionType = SpecialReuse; //This makes the orbital's special function activate after using the item again
+
+            item.width = 30;
+            item.height = 30;
+            item.damage = 180;
+            item.knockBack = 5f;
+            item.mana = ManaCost; //Overwritten by CanUseItem
+            item.rare = 8;
+            item.value = Item.sellPrice(0, 40, 0, 0);
+            item.autoReuse = true;
+            item.useStyle = 4;
+            item.useTime = 16;
+            item.useAnimation = item.useTime;
+            item.useTurn = false;
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
+
+            if (orbitalPlayer.active[this.type]) //If there is a dagger active
+            {
+                item.mana = (int)Math.Ceiling(ManaCost / 5f); 
+            }
+            else
+            {
+                item.mana = ManaCost;
+            }
+
+            return base.CanUseItem(player);
+        }
+    }
+
+
+
     public class SacDagger_Proj : OrbitalProjectile
     {
         public override int Type => OrbitalID.SacDagger;
@@ -19,7 +69,6 @@ namespace Virtuous.Orbitals
 
         private const int SpecialSpinTime = 15; //Ticks it spends doing a half-orbit when spinning. Needs to be a divisor or multiple of 60
         private const float SpecialSpinSpeed = (30 / SpecialSpinTime) * RevolutionPerSecond; //Speed at which it will orbit while spinning
-        private const float SpecialDamageMultiplier = 1.5f; //Damage it deals while spinning
 
 
         public override void SetStaticDefaults()
@@ -45,35 +94,26 @@ namespace Virtuous.Orbitals
             projectile.rotation += 45.ToRadians(); //45 degrees because of the sprite
         }
 
-        public override void SpecialEffect()
+        public override void SpecialFunction()
         {
-            int spinDirection = specialEffectTimer > 0 ? +1 : -1; //Positive for clockwise, negative for counterclockwise
+            int spinDirection = specialFunctionTimer > 0 ? +1 : -1; //Positive for clockwise, negative for counterclockwise
 
-            if (specialEffectTimer == 0) //First tick
+            if (specialFunctionTimer == 0) //First tick
             {
                 spinDirection = player.direction;
-                projectile.damage = (int)(projectile.damage * SpecialDamageMultiplier); //Higher damage when spinning
                 projectile.netUpdate = true; //Syncs to multiplayer
             }
-            else if (Math.Abs(specialEffectTimer) == SpecialSpinTime - 1) //Last tick
+            else if (Math.Abs(specialFunctionTimer) == SpecialSpinTime - 1) //Last tick
             {
                 orbitalPlayer.specialFunctionActive = false; //Turns off the special effect for all daggers
-                projectile.damage = (int)(projectile.damage / SpecialDamageMultiplier); //Returns the damage to its original
                 projectile.netUpdate = true; //Syncs to multiplayer
             }
-
-            relativePosition = relativePosition.RotatedBy(SpecialSpinSpeed * spinDirection); //Rotates the daggers
+            
+            MoveRelativePosition(relativePosition.RotatedBy(SpecialSpinSpeed * spinDirection)); //Rotates the daggers
             projectile.rotation += SpecialSpinSpeed * spinDirection; //Points the sprite outwards
-            projectile.Center = player.MountedCenter + relativePosition; //Keeps the orbital on the player
 
-            specialEffectTimer--; //Stops the normal increase of the timer
-            specialEffectTimer += spinDirection;
-        }
-
-        public override void DyingFirstTick()
-        {
-            projectile.damage *= 3;
-            base.DyingFirstTick(); //Shoots out
+            specialFunctionTimer--; //Prevents the normal increase of the timer
+            specialFunctionTimer += spinDirection;
         }
 
         public override void PostAll()
@@ -83,12 +123,23 @@ namespace Virtuous.Orbitals
         }
 
 
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (isDying) damage *= 3;
+            else if (isDoingSpecial) damage = (int)(damage * 1.5f);
+        }
+        public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
+        {
+            if (isDying) damage *= 3;
+            else if (isDoingSpecial) damage = (int)(damage * 1.5f);
+        }
+
         private void LifeSteal(Vector2 position, int damage) //Spawns vampire heal projectiles
         {
             Player player = Main.player[projectile.owner];
 
             float heal = Math.Min(damage / 30f, player.statLifeMax - player.statLife); //Caps at the life missing
-            if (heal > 0 /*&& player.lifeSteal > 0*/) 
+            if (heal > 0 /*&& player.lifeSteal > 0*/)
             {
                 //player.lifeSteal -= heal; //Limits how much you can heal at once
                 Projectile.NewProjectile(position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
@@ -96,7 +147,7 @@ namespace Virtuous.Orbitals
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (target.lifeMax > 5 && !Main.player[projectile.owner].moonLeech && !target.immortal)
+            if (target.lifeMax > 5 && !target.immortal && !player.moonLeech)
             {
                 LifeSteal(target.Center, damage);
             }
@@ -108,7 +159,7 @@ namespace Virtuous.Orbitals
 
         public override bool? CanCutTiles()
         {
-            return (isDying || doSpecialEffect); //Only while actively attacking
+            return (isDying || isDoingSpecial); //Only while actively attacking
         }
 
         public override Color? GetAlpha(Color newColor)
@@ -117,4 +168,3 @@ namespace Virtuous.Orbitals
         }
     }
 }
-

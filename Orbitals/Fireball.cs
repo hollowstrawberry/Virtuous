@@ -54,7 +54,7 @@ namespace Virtuous.Orbitals
         public override float RotationSpeed => OrbitingSpeed;
 
         private const int OriginalSize = 30;
-        private const int BurstSize = OriginalSize * 3;
+        private const int BurstSize = OriginalSize * 4;
 
 
         public override void SetStaticDefaults()
@@ -86,35 +86,19 @@ namespace Virtuous.Orbitals
 
         public override void PostMovement()
         {
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++) //Dust
             {
-                Dust newDust;
-                switch (RandomInt(4))
-                {
-                    case 0:
-                        newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Fire, 0f, 0f, projectile.alpha, default(Color), 1f);
-                        newDust.velocity *= 3.0f;
-                        break;
-
-                    case 1:
-                        newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/158, 0f, 0f, projectile.alpha, default(Color), 1f);
-                        newDust.velocity *= 1.5f;
-                        break;
-
-                    default:
-                        newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), 1.5f);
-                        break;
-                }
+                Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, Utils.SelectRandom<int>(Main.rand, new int[] { DustID.Fire, DustID.SolarFlare, 158 }), 0f, 0f, projectile.alpha, default(Color), 1f);
+                if (newDust.type == DustID.SolarFlare) newDust.scale = 1.5f;
+                else newDust.velocity *= 2;
                 newDust.noGravity = true;
             }
         }
 
-        public override void SpecialEffect()
+        public override void SpecialFunction()
         {
-            if (specialEffectTimer == 0)
+            if (specialFunctionTimer == 0) //First tick
             {
-                //Explosion
-                projectile.damage *= 2;
                 ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize, true);
                 Main.PlaySound(SoundID.Item14, projectile.Center);
                 for (int i = 0; i < 6; i++)
@@ -126,35 +110,35 @@ namespace Virtuous.Orbitals
 
                 projectile.Damage(); //Damages enemies instantly
             }
-            else if (specialEffectTimer > 4)
+
+            else if (specialFunctionTimer > 4) //Last tick
             {
-                projectile.damage /= 2;
                 ResizeProjectile(projectile.whoAmI, OriginalSize, OriginalSize, true);
                 orbitalPlayer.specialFunctionActive = false;
             }
         }
 
-        public override void DyingFirstTick()
+        public override void DyingFirstTick() //Nothing
         {
-            projectile.damage *= 2;
         }
 
         public override void Dying()
         {
-            //Rotates again for more speed
+            //Gains more orbiting speed
             float extraRotationFactor = 7f * (DyingTime - projectile.timeLeft) / (float)DyingTime;
-            relativePosition = relativePosition.RotatedBy(OrbitingSpeed * extraRotationFactor);
+            MoveRelativePosition(relativePosition.RotatedBy(OrbitingSpeed * extraRotationFactor));
             projectile.rotation += RotationSpeed * extraRotationFactor;
-            projectile.Center = player.MountedCenter + relativePosition;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            if (isDying || isDoingSpecial) damage *= 2;
             target.AddBuff(BuffID.OnFire, 5 * 60);
         }
-
-        public override void OnHitPvp(Player target, int damage, bool crit)
+        public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
+            if (isDying || isDoingSpecial) damage *= 2;
             target.AddBuff(BuffID.OnFire, 5 * 60);
         }
     }

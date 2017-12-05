@@ -25,10 +25,10 @@ namespace Virtuous
 
         //Behavior
         public Vector2 relativePosition { get{ return projectile.velocity; } set{ projectile.velocity = value; } } //Relative position to the player, stored as velocity
-        public float distance { get{ return relativePosition.Length(); } set{ relativePosition = relativePosition.OfLength(value); } } //Distance away from the player. Affects RelativePosition directly.
+        public float relativeDistance { get{ return relativePosition.Length(); } set{ relativePosition = relativePosition.OfLength(value); } } //Distance away from the player. Affects RelativePosition directly.
         public float oscillationSpeed { get{ return projectile.ai[0]; } set{ projectile.ai[0] = value; } } //Current speed of back-and-forth oscillation, Stored as ai[0]
         public bool direction { get { return projectile.ai[1] == 0; } set { projectile.ai[1] = value ? 0 : 1; } } //Direction of movement, inwards or outwards, used by default for oscillation. Stored as ai[1]
-        public int specialEffectTimer { get{ return (int)projectile.localAI[0]; } set{ projectile.localAI[0] = value; } } //Time passed since the special effect was used. Stored as localAI[0]
+        public int specialFunctionTimer { get{ return (int)projectile.localAI[0]; } set{ projectile.localAI[0] = value; } } //Time passed since the special effect was used. Stored as localAI[0]
 
         //Characteristics
         public virtual int Type => OrbitalID.None; //The orbital ID associated with the projectile. Failing to provide one will cause an exception.
@@ -43,9 +43,16 @@ namespace Virtuous
         public virtual float OscillationAcc => OscillationSpeedMax / 60; //Acceleration rate. Translates into how fast it reaches the point of direction change
 
         //Checks
-        public virtual bool firstTick => relativePosition.Length() == 1.0f; //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
-        public virtual bool isDying => !(DyingTime == 0 || orbitalPlayer.time > DyingTime || Main.myPlayer != projectile.owner); //Whether to treat this projectile as in dying mode
-        public virtual bool doSpecialEffect => (orbitalPlayer.specialFunctionActive && !isDying); //Whether to run the special effect method or not
+        public virtual bool isFirstTick => relativePosition.Length() == 1.0f; //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
+        public virtual bool isDying => (Main.myPlayer == projectile.owner && DyingTime > 0 && orbitalPlayer.time <= DyingTime); //Whether to treat this projectile as in dying mode
+        public virtual bool isDoingSpecial => (Main.myPlayer == projectile.owner && orbitalPlayer.specialFunctionActive && !isDying); //Whether to run the special effect method or not
+
+        //Utils
+        public virtual void MoveRelativePosition(Vector2? newPos = null) //Changes the relativePosition and moves the orbital relative to the player
+        {
+            if (newPos != null) relativePosition = (Vector2)newPos;
+            projectile.Center = player.MountedCenter + relativePosition;
+        }
 
 
         public virtual void SetOrbitalDefaults()
@@ -56,10 +63,6 @@ namespace Virtuous
 
         public sealed override void SetDefaults() //Safe way to set constant defaults
         {
-            SetOrbitalDefaults();
-
-            projectile.alpha = OriginalAlpha;
-            projectile.timeLeft = (DyingTime > 0) ? DyingTime : 2; //Time left gets reset every tick during the orbital's life
             projectile.netImportant = true; //So it syncs more frequently in multiplayer
             projectile.penetrate = -1;
             projectile.friendly = true;
@@ -67,6 +70,10 @@ namespace Virtuous
             projectile.ignoreWater = true;
             projectile.usesIDStaticNPCImmunity = true; //Doesn't interfere with other piercing damage
             projectile.idStaticNPCHitCooldown = 10;
+            projectile.alpha = OriginalAlpha;
+            projectile.timeLeft = (DyingTime > 0) ? DyingTime : 2; //Time left gets reset every tick during the orbital's life
+
+            SetOrbitalDefaults();
         }
 
 
@@ -78,16 +85,15 @@ namespace Virtuous
         //Only runs once at the beginning of the orbital's life
         public virtual void FirstTick()
         {
+            MoveRelativePosition(relativePosition.OfLength(BaseDistance));
             oscillationSpeed = OscillationSpeedMax;
-            distance = BaseDistance;
             projectile.rotation = relativePosition.ToRotation();
-            projectile.Center = player.MountedCenter + relativePosition;
         }
 
         //Returns whether to execute movement
         public virtual bool PreMovement()
         {
-            return (!isDying && !doSpecialEffect); //By default doesn't do normal movement if it's dying or in special mode
+            return (!isDying && !isDoingSpecial); //By default doesn't do normal movement if it's dying or in special mode
         }
 
         //Main orbital behavior. Runs every tick before DyingTime
@@ -98,12 +104,12 @@ namespace Virtuous
                 if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  //If it has reached the outwards speed limit, begin to switch direction
                 else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards; //If it has reached the inwards speed limit, begin to switch direction
                 oscillationSpeed += OscillationAcc * (direction ? +1 : -1); //Accelerate in the corresponding direction
-                distance += oscillationSpeed;
+                relativeDistance += oscillationSpeed;
             }
 
             relativePosition = relativePosition.RotatedBy(OrbitingSpeed); //Rotates the projectile around the player
-            projectile.Center = player.MountedCenter + relativePosition; //Moves the projectile to the new position around the player
             projectile.rotation += RotationSpeed; //Rotates the projectile itself
+            MoveRelativePosition(); //Moves the projectile to the new position around the player
         }
 
         public virtual void PostMovement()
@@ -112,7 +118,7 @@ namespace Virtuous
 
 
         //Executes special effect
-        public virtual void SpecialEffect()
+        public virtual void SpecialFunction()
         {
         }
 
@@ -158,7 +164,7 @@ namespace Virtuous
             }
             else
             {
-                if (firstTick)
+                if (isFirstTick)
                 {
                     projectile.netUpdate = true;
                     FirstTick();
@@ -170,17 +176,17 @@ namespace Virtuous
                     PostMovement();
                 }
 
-                if (doSpecialEffect)
+                if (isDoingSpecial)
                 {
-                    SpecialEffect();
-                    specialEffectTimer++;
+                    SpecialFunction();
+                    specialFunctionTimer++;
                 }
                 else
                 {
-                    specialEffectTimer = 0;
+                    specialFunctionTimer = 0;
                 }
 
-                if (isDying)
+                if (isDying) //timeLeft ticks down during dying time
                 {
                     if (orbitalPlayer.time == DyingTime)
                     {

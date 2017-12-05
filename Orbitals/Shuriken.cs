@@ -7,6 +7,31 @@ using static Virtuous.Tools;
 
 namespace Virtuous.Orbitals
 {
+    public class Shuriken_Item : OrbitalItem
+    {
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Twilight");
+            Tooltip.SetDefault("Shurikens defend you, raising melee speed and mana regeneration\nAligns with either magic or melee users");
+        }
+
+        public override void SetOrbitalDefaults()
+        {
+            type = OrbitalID.Shuriken;
+            duration = 35 * 60;
+            amount = 3;
+
+            item.width = 30;
+            item.height = 30;
+            item.damage = 190;
+            item.knockBack = 6.2f;
+            item.mana = 70;
+            item.rare = 9;
+            item.value = Item.sellPrice(0, 60, 0, 0);
+        }
+    }
+
+
     public class Shuriken_Proj : OrbitalProjectile
     {
         public override int Type => OrbitalID.Shuriken;
@@ -42,15 +67,13 @@ namespace Virtuous.Orbitals
         public override void DyingFirstTick()
         {
             projectile.damage *= 3;
-            distance = BaseDistance / 2;
+            relativeDistance = BaseDistance / 2;
         }
 
         public override void Dying()
         {
-            distance += OscillationSpeedMax; //Expands out
-            relativePosition = relativePosition.RotatedBy(DyingOrbitingSpeed); //Rotates the shuriken around the player
+            MoveRelativePosition(relativePosition.OfLength(relativeDistance + OscillationSpeedMax).RotatedBy(DyingOrbitingSpeed)); //Expands outwards and rotates
             projectile.rotation += DyingRotationSpeed; //Rotates the sprite as well
-            projectile.Center = player.MountedCenter + relativePosition; //Moves the shuriken to the defined position around the player
 
             if (projectile.timeLeft == 1) //Last tick
             {
@@ -59,7 +82,7 @@ namespace Virtuous.Orbitals
                 for (int i = 0; i < 10; i++)
                 {
                     Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/74, 0f, 0f, /*Alpha*/150, new Color(50, 255, 100, 150), /*Scale*/1.5f);
-                    newDust.velocity += relativePosition.Perpendicular(10, CounterClockwise); //Angular to linear velocity
+                    newDust.velocity += relativePosition.Perpendicular(10, CounterClockwise); //Tangent linear velocity to the angular velocity
                 }
             }
         }
@@ -68,7 +91,7 @@ namespace Virtuous.Orbitals
         {
             Lighting.AddLight(projectile.Center, 0.0f, 1.0f, 0.2f);
         }
-        
+
 
         public override Color? GetAlpha(Color newColor)
         {
