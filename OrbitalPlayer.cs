@@ -33,13 +33,16 @@ namespace Virtuous
             }
         }
 
-        public bool accessoryTimeBoost = false;
-        public bool accessoryDmgBoost = false;
+        public float damageBuffFromOrbitals = 0f; //Increased every tick by orbitals that don't want their damage to increase other orbitals
+
+        public float durationMultiplier = 1f;
+        public float damageMultiplier = 1f;
+        public bool accessoryPermanent = false; //Orbitals last forever
 
 
-        public int ModifiedOrbitalTime(OrbitalItem orbitalItem) //Returns the final duration after any boosts applicable
+        public int ModifiedOrbitalTime(OrbitalItem item)
         {
-            return (int)((orbitalItem.duration) * (accessoryTimeBoost ? 1.5 : 1)); // More damage with the conditon active
+            return (int)(item.duration * durationMultiplier);
         }
 
         public void ResetOrbitals() //Resets all orbital data on the player, killing any orbitals active in the process
@@ -54,7 +57,11 @@ namespace Virtuous
         {
             for (int type = 0; type < OrbitalID.Orbital.Length; type++)
             {
-                if (active[type]) OrbitalID.Orbital[type].PlayerEffects(player);
+                if (active[type])
+                {
+                    OrbitalProjectile orbital = OrbitalProjectile.FindFirstOrbital(mod, player, type);
+                    if (orbital != null) orbital.PlayerEffects();
+                }
             }
         }
         
@@ -62,8 +69,13 @@ namespace Virtuous
         {
             if (time > 0) time--;
             if (time <= 0) ResetOrbitals();
-            accessoryTimeBoost = false;
-            accessoryDmgBoost  = false;
+
+            damageBuffFromOrbitals  = 0f;
+
+            durationMultiplier = 1f;
+            damageMultiplier   = 1f;
+            accessoryPermanent = false;
+
             if (specialFunction[SafeTurnOff]) specialFunction = new bool[2]; //Shuts down special effect
         }
 

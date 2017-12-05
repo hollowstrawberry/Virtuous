@@ -39,6 +39,7 @@
     <Compile Include="OrbitalProjectile.cs" />
     <Compile Include="Orbitals\EnergyCrystal.cs" />
     <Compile Include="Orbitals\Fireball.cs" />
+    <Compile Include="Orbitals\LuckyBreak.cs" />
     <Compile Include="Projectiles\WarArrow.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="VirtuousItem.cs" />

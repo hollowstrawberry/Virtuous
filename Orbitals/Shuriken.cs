@@ -57,7 +57,7 @@ namespace Virtuous.Orbitals
             projectile.height = 34;
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
             player.manaRegenDelayBonus++;
             player.manaRegenBonus += 25;
@@ -72,7 +72,8 @@ namespace Virtuous.Orbitals
 
         public override void Dying()
         {
-            MoveRelativePosition(relativePosition.OfLength(relativeDistance + OscillationSpeedMax).RotatedBy(DyingOrbitingSpeed)); //Expands outwards and rotates
+            AddDistance(OscillationSpeedMax); //Expands outwards
+            RotatePosition(DyingOrbitingSpeed); //Spins
             projectile.rotation += DyingRotationSpeed; //Rotates the sprite as well
 
             if (projectile.timeLeft == 1) //Last tick

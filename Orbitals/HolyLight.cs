@@ -57,9 +57,9 @@ namespace Virtuous.Orbitals
             projectile.height = OriginalSize;
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
-            player.lifeRegen += 3;
+            player.lifeRegen += 5;
 
             if (OneIn(6))
             {

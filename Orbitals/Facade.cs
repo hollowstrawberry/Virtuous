@@ -57,7 +57,7 @@ namespace Virtuous.Orbitals
         public override void PostMovement()
         {
             relativeDistance -= oscillationSpeed; //Undoes the distance oscillation
-            MoveRelativePosition(relativePosition.RotatedBy(oscillationSpeed)); //Applies it as angular oscillation
+            RotatePosition(oscillationSpeed); //Applies it as angular oscillation
             projectile.rotation += oscillationSpeed; //Rotates the sprite
         }
 

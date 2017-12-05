@@ -126,7 +126,7 @@ namespace Virtuous.Orbitals
         {
             //Gains more orbiting speed
             float extraRotationFactor = 7f * (DyingTime - projectile.timeLeft) / (float)DyingTime;
-            MoveRelativePosition(relativePosition.RotatedBy(OrbitingSpeed * extraRotationFactor));
+            RotatePosition(OrbitingSpeed * extraRotationFactor);
             projectile.rotation += RotationSpeed * extraRotationFactor;
         }
 

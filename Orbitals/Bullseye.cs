@@ -65,7 +65,7 @@ namespace Virtuous.Orbitals
             return Math.Abs((Main.MouseWorld - player.Center).Normalized().X) > 0.990f; //Roughly straight left or right. The number guides how forgiving the treshold is
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
             if (BullseyeShot(player))
             {
@@ -83,7 +83,7 @@ namespace Virtuous.Orbitals
         {
             //Stays in front of the player
             projectile.spriteDirection = player.direction;
-            MoveRelativePosition(new Vector2(player.direction * relativeDistance, 0));
+            SetPosition(new Vector2(player.direction * relativeDistance, 0));
 
             Lighting.AddLight(new Vector2(projectile.Center.X + 2 * player.direction, projectile.Center.Y), 0.5f, 0.3f, 0.05f);
 

@@ -12,7 +12,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spiked Bubble");
-            Tooltip.SetDefault("The bubble slightly raises damage and defense\nAligns with either magic or melee users");
+            Tooltip.SetDefault("The bubble slightly raises damage and defense\nEnemies are repelled and damaged\nAligns with either magic or melee users");
         }
 
         public override void SetOrbitalDefaults()
@@ -58,6 +58,7 @@ namespace Virtuous.Orbitals
         private const int ExpandedAlpha = 150; //Alpha value when fully expanded
         private const int OriginalSize = 120; //Width and height dimensions in pixels
         private const int PopTime = 10; //Part of DyingTime where it keeps its size before popping
+        private const float DamageBoost = 0.1f; //Damage boost while the orbital is active
 
 
         public override void SetStaticDefaults()
@@ -71,11 +72,12 @@ namespace Virtuous.Orbitals
             projectile.height = OriginalSize;
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
             player.statDefense += 5;
-            player.meleeDamage += 0.1f;
-            player.magicDamage += 0.1f;
+            player.meleeDamage += DamageBoost;
+            player.magicDamage += DamageBoost;
+            orbitalPlayer.damageBuffFromOrbitals += DamageBoost;
 
             Lighting.AddLight(player.Center, 0.6f, 0.4f, 0.3f);
         }

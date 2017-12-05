@@ -63,27 +63,9 @@ namespace Virtuous
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
+            //Gets boosted by the player's strongest damage between magic and melee, and ignores buffs from other orbitals
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
-
-            //We don't want to count any of the damage buffs from orbitals themselves
-            float meleeBuff = 0f, magicBuff = 0f;
-            for (int type = 0; type < OrbitalID.Orbital.Length; type++)
-            {
-                if (orbitalPlayer.active[type]) //If an orbital is active
-                {
-                    Player tempPlayer = new Player(); //We create a temporal player instance to test on
-                    tempPlayer.meleeDamage = 0f;
-                    tempPlayer.magicDamage = 0f;
-
-                    OrbitalID.Orbital[type].PlayerEffects(tempPlayer); //We run the effects of the active orbital on it
-                    meleeBuff += tempPlayer.meleeDamage;
-                    magicBuff += tempPlayer.magicDamage;
-                }
-            }
-
-            //Gets boosted by the player's strongest damage between magic and melee
-            damage = (int)(item.damage * (Math.Max(player.meleeDamage - meleeBuff, player.magicDamage - magicBuff)));
-            if (orbitalPlayer.accessoryDmgBoost) damage = (int)(damage * 1.5);
+            damage = (int)(item.damage * orbitalPlayer.damageMultiplier * (Math.Max(player.meleeDamage, player.magicDamage) - orbitalPlayer.damageBuffFromOrbitals));
 
 
             if (specialFunctionType == SpecialRightClick) //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
@@ -146,6 +128,7 @@ namespace Virtuous
             {
                 orbitalPlayer.ResetOrbitals();
                 orbitalPlayer.active[this.type] = true;
+                orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this);
 
                 for (int i = 0; i < amount; i++)
                 {
@@ -154,8 +137,6 @@ namespace Virtuous
                     Projectile.NewProjectile(position, rotation, type, damage, knockBack, player.whoAmI);
                 }
             }
-
-            orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this); //Reset duration
 
             return false; //Doesn't shoot normally
         }

@@ -27,8 +27,8 @@ namespace Virtuous
         public const int SpiralSword    =  8;
         public const int Fireball       =  9;
         public const int EnergyCrystal  = 10;
-        public const int Jungle         = 11;
-        public const int LuckyBreak     = 12;
+        public const int LuckyBreak     = 11;
+        public const int Jungle         = 12;
         public const int GelCube        = 13;
 
 

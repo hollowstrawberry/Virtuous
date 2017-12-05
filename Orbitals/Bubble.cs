@@ -60,7 +60,7 @@ namespace Virtuous.Orbitals
             projectile.height = 100;
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
             player.statDefense += 10;
             Lighting.AddLight(player.Center, 0.4f, 0.6f, 0.6f);

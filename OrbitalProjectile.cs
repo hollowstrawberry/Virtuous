@@ -43,22 +43,50 @@ namespace Virtuous
         public virtual float OscillationAcc => OscillationSpeedMax / 60; //Acceleration rate. Translates into how fast it reaches the point of direction change
 
         //Checks
-        public virtual bool isFirstTick => relativePosition.Length() == 1.0f; //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
+        public virtual bool isFirstTick => (relativeDistance == 1.0f); //Whether it's the first tick of the orbital's life. Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
         public virtual bool isDying => (Main.myPlayer == projectile.owner && DyingTime > 0 && orbitalPlayer.time <= DyingTime); //Whether to treat this projectile as in dying mode
         public virtual bool isDoingSpecial => (Main.myPlayer == projectile.owner && orbitalPlayer.specialFunctionActive && !isDying); //Whether to run the special effect method or not
 
-        //Utils
-        public virtual void MoveRelativePosition(Vector2? newPos = null) //Changes the relativePosition and moves the orbital relative to the player
+
+        //Utility methods
+        public void SetPosition(Vector2? newPos = null) //Moves the orbital relative to the player
         {
             if (newPos != null) relativePosition = (Vector2)newPos;
             projectile.Center = player.MountedCenter + relativePosition;
         }
+        public void RotatePosition(float radians) //Rotates the orbital relative to the player
+        {
+            SetPosition(relativePosition.RotatedBy(radians));
+        }
+        public void SetDistance(float newDistance) //Applies a new distance to the player and moves the orbital relative to the player
+        {
+            SetPosition(relativePosition.OfLength(newDistance));
+        }
+        public void AddDistance(float distance)
+        {
+            SetDistance(relativeDistance + distance);
+        }
+
+        public static OrbitalProjectile FindFirstOrbital(Mod mod, Player player, int id = OrbitalID.None) //Returns the first orbital found for the given player and type
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (Main.projectile[i].active && Main.projectile[i].owner == player.whoAmI)
+                {
+                    if (id == OrbitalID.None && Main.projectile[i].modProjectile as OrbitalProjectile != null || id > 0 && Main.projectile[i].type == mod.OrbitalProjectileType(id))
+                    {
+                        return Main.projectile[i].modProjectile as OrbitalProjectile;
+                    }
+                }
+            }
+
+            return null; //No orbital was found
+        }
+
 
 
         public virtual void SetOrbitalDefaults()
         {
-            projectile.width = 10;
-            projectile.height = 10;
         }
 
         public sealed override void SetDefaults() //Safe way to set constant defaults
@@ -76,16 +104,15 @@ namespace Virtuous
             SetOrbitalDefaults();
         }
 
-
-        //Effects this orbital type will apply on the player while it is active. Called by OrbitalPlayer
-        public virtual void PlayerEffects(Player player)
+        //Effects the orbital type will apply on the player while it is active. Only runs for the first orbital of a type. Called by OrbitalPlayer
+        public virtual void PlayerEffects()
         {
         }
 
         //Only runs once at the beginning of the orbital's life
         public virtual void FirstTick()
         {
-            MoveRelativePosition(relativePosition.OfLength(BaseDistance));
+            SetDistance(BaseDistance);
             oscillationSpeed = OscillationSpeedMax;
             projectile.rotation = relativePosition.ToRotation();
         }
@@ -96,7 +123,7 @@ namespace Virtuous
             return (!isDying && !isDoingSpecial); //By default doesn't do normal movement if it's dying or in special mode
         }
 
-        //Main orbital behavior. Runs every tick before DyingTime
+        //Main orbital behavior
         public virtual void Movement()
         {
             if (OscillationSpeedMax != 0) //Oscillation
@@ -104,12 +131,11 @@ namespace Virtuous
                 if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  //If it has reached the outwards speed limit, begin to switch direction
                 else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards; //If it has reached the inwards speed limit, begin to switch direction
                 oscillationSpeed += OscillationAcc * (direction ? +1 : -1); //Accelerate in the corresponding direction
-                relativeDistance += oscillationSpeed;
+                AddDistance(oscillationSpeed);
             }
 
-            relativePosition = relativePosition.RotatedBy(OrbitingSpeed); //Rotates the projectile around the player
+            RotatePosition(OrbitingSpeed); //Rotates the projectile around the player
             projectile.rotation += RotationSpeed; //Rotates the projectile itself
-            MoveRelativePosition(); //Moves the projectile to the new position around the player
         }
 
         public virtual void PostMovement()
@@ -144,7 +170,7 @@ namespace Virtuous
             {
                 if (orbitalPlayer.time <= FadeTime)
                 {
-                    projectile.alpha += (int)Math.Ceiling((255f - OriginalAlpha) / FadeTime); //Fades away completely over fadeTime
+                    projectile.alpha += Math.Max(1, (int)((255f - OriginalAlpha) / FadeTime)); //Fades away completely over fadeTime
                 }
                 else
                 {
@@ -196,10 +222,11 @@ namespace Virtuous
 
                     Dying();
                 }
-                else
+                else //Keeps the orbital from dying naturally
                 {
-                    projectile.timeLeft = Math.Max(2, DyingTime); //Keeps the orbital from dying naturally
+                    projectile.timeLeft = Math.Max(2, DyingTime);
                 }
+
 
                 PostAll();
 

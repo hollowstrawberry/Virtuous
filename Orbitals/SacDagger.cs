@@ -82,7 +82,7 @@ namespace Virtuous.Orbitals
             projectile.height = 54;
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
             player.lifeRegenTime = 0;
             player.lifeRegen = -10;
@@ -109,11 +109,11 @@ namespace Virtuous.Orbitals
                 projectile.netUpdate = true; //Syncs to multiplayer
             }
             
-            MoveRelativePosition(relativePosition.RotatedBy(SpecialSpinSpeed * spinDirection)); //Rotates the daggers
+            RotatePosition(SpecialSpinSpeed * spinDirection); //Rotates the daggers
             projectile.rotation += SpecialSpinSpeed * spinDirection; //Points the sprite outwards
 
-            specialFunctionTimer--; //Prevents the normal increase of the timer
-            specialFunctionTimer += spinDirection;
+            specialFunctionTimer--; //Reverts the normal increase of the timer
+            specialFunctionTimer += spinDirection; //Advances timer in either direction
         }
 
         public override void PostAll()
@@ -139,11 +139,7 @@ namespace Virtuous.Orbitals
             Player player = Main.player[projectile.owner];
 
             float heal = Math.Min(damage / 30f, player.statLifeMax - player.statLife); //Caps at the life missing
-            if (heal > 0 /*&& player.lifeSteal > 0*/)
-            {
-                //player.lifeSteal -= heal; //Limits how much you can heal at once
-                Projectile.NewProjectile(position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
-            }
+            if (heal > 0) Projectile.NewProjectile(position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {

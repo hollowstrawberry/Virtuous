@@ -61,7 +61,7 @@ namespace Virtuous
 
         //Vectors
 
-        public static Vector2 Normalized(this Vector2 vector) //Shorthand for Terraria's SafeNormalize
+        public static Vector2 Normalized(this Vector2 vector) //Shorthand for SafeNormalize
         {
             return vector.SafeNormalize(Vector2.UnitX);
         }

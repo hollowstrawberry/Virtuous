@@ -70,7 +70,7 @@ namespace Virtuous.Orbitals
         {
             //Stays in front of the player
             projectile.spriteDirection = player.direction;
-            MoveRelativePosition(new Vector2(player.direction * relativeDistance, 0));
+            SetPosition(new Vector2(player.direction * relativeDistance, 0));
         }
 
         public override void PostAll()

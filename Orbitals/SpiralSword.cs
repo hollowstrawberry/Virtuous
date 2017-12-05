@@ -102,13 +102,14 @@ namespace Virtuous.Orbitals
             projectile.height = 76;
         }
 
-        public override void PlayerEffects(Player player)
+        public override void PlayerEffects()
         {
             player.meleeDamage  += DamageBoost;
             player.rangedDamage += DamageBoost;
             player.magicDamage  += DamageBoost;
             player.minionDamage += DamageBoost;
             player.thrownDamage += DamageBoost;
+            orbitalPlayer.damageBuffFromOrbitals += DamageBoost;
 
             Lighting.AddLight(player.Center, 0.5f, 1.5f, 3.0f);
         }
@@ -124,14 +125,15 @@ namespace Virtuous.Orbitals
             if (specialFunctionTimer == 0) //First tick
             {
                 direction = Outwards;
-                relativeDistance = BaseDistance;
+                SetDistance(BaseDistance);
                 projectile.idStaticNPCHitCooldown = 5; //Deals damage more rapidly
                 projectile.netUpdate = true; //Sync to multiplayer
             }
 
             float orbitSpeed = OrbitingSpeed * (specialFunctionTimer < 30 ? 2 : 1); //Doubles the speed only the first 30 ticks of the special effect so that the final direction when dying isn't affected
-            MoveRelativePosition(relativePosition.OfLength(relativeDistance + SpecialSpeed * (direction ? +1 : -1)).RotatedBy(orbitSpeed)); //Moves the sword innard or outward and around the player
+            RotatePosition(orbitSpeed); //Moves the sword around the player
             projectile.rotation += orbitSpeed; //Rotates the sprite accordingly
+            AddDistance(SpecialSpeed * (direction ? +1 : -1)); //Moves the sword innard or outward
 
             if (relativeDistance >= SpecialDistance) //If it has reached the set maximum distance for the throw
             {
@@ -143,7 +145,7 @@ namespace Virtuous.Orbitals
                 projectile.netUpdate = true; //Sync to multiplayer
 
                 //Resets to passive behavior
-                MoveRelativePosition(relativePosition.OfLength(BaseDistance));
+                SetDistance(BaseDistance);
                 oscillationSpeed = OscillationSpeedMax;
                 projectile.idStaticNPCHitCooldown = 10;
             }

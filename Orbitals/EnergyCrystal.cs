@@ -25,8 +25,8 @@ namespace Virtuous.Orbitals
 
             item.width = 30;
             item.height = 30;
-            item.damage = 60;
-            item.knockBack = 3f;
+            item.damage = 55;
+            item.knockBack = 2f;
             item.mana = 40;
             item.rare = 6;
             item.value = Item.sellPrice(0, 8, 0, 0);
@@ -53,7 +53,7 @@ namespace Virtuous.Orbitals
         {
             DisplayName.SetDefault("Energy Crystal");
             Main.projFrames[projectile.type] = 12;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 10;
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
 
@@ -63,11 +63,26 @@ namespace Virtuous.Orbitals
             projectile.height = 36;
         }
 
+
+        private bool InOverdrive() //When it will shoot faster
+        {
+            return (player.immune || orbitalPlayer.time < FadeTime);
+        }
+
+
+        public override void PlayerEffects()
+        {
+            if (specialFunctionTimer == CycleTime - CycleMoveTime)
+            {
+                Main.PlaySound(SoundID.Item15.WithVolume(0.5f), player.Center); //Woosh
+            }
+        }
+
         public override void FirstTick()
         {
             base.FirstTick();
             projectile.rotation = 0;
-            MoveRelativePosition(relativePosition.RotatedBy(-FullCircle / 4)); //The first crystal will be above the player instead of right to it
+            RotatePosition(-FullCircle / 4); //The first crystal will be above the player instead of right to it
         }
 
         public override bool PreMovement()
@@ -89,15 +104,15 @@ namespace Virtuous.Orbitals
             //Orbiting
             if (CycleTime - specialFunctionTimer <= CycleMoveTime) //Cycles positions
             {
-                base.Movement();
+                RotatePosition(OrbitingSpeed);
             }
             else
             {
-                MoveRelativePosition();
+                SetPosition();
             }
 
             //Firing
-            int fireChances = (player.immune || orbitalPlayer.time < FadeTime) ? 15 : 5; //How many times in a cycle it gets the chance to shoot
+            int fireChances = InOverdrive() ? 15 : 5; //How many times in a cycle it gets the chance to shoot
             if (specialFunctionTimer % (CycleTime / fireChances) == 0 && OneIn(3))
             {
                 NPC target = FindTarget();
@@ -115,7 +130,7 @@ namespace Virtuous.Orbitals
             {
                 if (Main.npc[i].active && !Main.npc[i].friendly && Main.npc[i].lifeMax > 5 && !Main.npc[i].immortal && !Main.npc[i].dontTakeDamage)
                 {
-                    if ((Main.npc[i].Center - projectile.Center).Length() < 400) return Main.npc[i];
+                    if ((Main.npc[i].Center - projectile.Center).Length() < (InOverdrive() ? 600 : 400)) return Main.npc[i];
                 }
             }
 
@@ -125,20 +140,21 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying || isDoingSpecial) damage *= 2;
+            if (isDying) damage *= 2;
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying || isDoingSpecial) damage *= 2;
+            if (isDying) damage *= 2;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //Trail
         {
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawOrigin = new Vector2(texture.Width / 2, texture.Height / Main.projFrames[projectile.type] / 2);
+
             for (int i = 0; i < projectile.oldPos.Length; i++)
             {
-                if (projectile.oldPos[i] != projectile.position) //Doesn't draw when unnecessary
+                if (i == 0 || projectile.oldPos[i] != projectile.position) //Doesn't stack them if they're all the same
                 {
                     Rectangle? frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
                     Vector2 position = projectile.oldPos[i] - Main.screenPosition + drawOrigin + new Vector2(0f, projectile.gfxOffY);
@@ -146,6 +162,9 @@ namespace Virtuous.Orbitals
 
                     spriteBatch.Draw(texture, position, frame, color, projectile.rotation, drawOrigin, projectile.scale, SpriteEffects.None, 0f);
                 }
+
+                if (player.velocity == Vector2.Zero) i++; //If the player is stationary, skip every second oldPos
+                else if (i >= 4) break; //If the player is moving, only draw the first five oldPos
             }
 
             return true;
