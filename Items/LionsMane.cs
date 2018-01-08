@@ -14,7 +14,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lion's Mane");
+			DisplayName.AddTranslation(GameCulture.Russian, "Львиная Грива");
             Tooltip.SetDefault("Damage increases exponentially as it travels\nLeft Click for clockwise, Right Click for counter-clockwise");
+			Tooltip.AddTranslation(GameCulture.Russian, "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
         }
 
         public override void SetDefaults()

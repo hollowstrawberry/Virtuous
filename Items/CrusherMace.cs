@@ -12,7 +12,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crusher Mace");
+			DisplayName.AddTranslation(GameCulture.Russian, "Дробилка");
             Tooltip.SetDefault("\"To shreds, you say?\"");
+			Tooltip.AddTranslation(GameCulture.Russian, "\"На кусочки, говоришь?\"");
         }
 
         public override void SetDefaults()

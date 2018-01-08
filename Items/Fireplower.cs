@@ -13,7 +13,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fireplower");
+			DisplayName.AddTranslation(GameCulture.Russian, "Огнеплюв");
             Tooltip.SetDefault("50% chance to not consume gel\nLeaves burning gel on the ground");
+			DisplayName.AddTranslation(GameCulture.Russian, "50% не потратить гель\nОставляет горящий гель на земле");
         }
 
         public override void SetDefaults()

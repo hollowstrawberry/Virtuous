@@ -12,7 +12,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Staff of Flinging");
+			DisplayName.AddTranslation(GameCulture.Russian, "Посох Броска");
             Tooltip.SetDefault("Ground-born enemies will take damage from the fall");
+			Tooltip.AddTranslation(GameCulture.Russian, "Наземные враги получают урон от падения");
             Item.staff[item.type] = true;
         }
 

@@ -11,7 +11,9 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astro Boots");
+			DisplayName.AddTranslation(GameCulture.Russian, "Космические Ботинки");
             Tooltip.SetDefault("Fantastic flight and slow fall\nExtreme mobility on all surfaces\nTemporary immunity to lava");
+			Tooltip.AddTranslation(GameCulture.Russian, "Фантастический полёт и мягкое приземление\nМобильность на всех поверхностях\nВременная неуязвимость к лаве");
         }
 
         public override void SetDefaults()
