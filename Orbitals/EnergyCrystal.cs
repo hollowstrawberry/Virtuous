@@ -14,7 +14,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Energy Crystal");
+			DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
             Tooltip.SetDefault("The crystals fire at nearby enemies\nGetting hurt causes a momentary overdrive\nAligns with either magic or melee users");
+			Tooltip.AddTranslation(GameCulture.Russian, "Кристаллы стреляют по ближайшим врагам\nПолучение урона вызывает короткую перегрузку\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()
@@ -52,6 +54,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Energy Crystal");
+			DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
             Main.projFrames[projectile.type] = 12;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 10;
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;

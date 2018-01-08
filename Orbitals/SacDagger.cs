@@ -14,7 +14,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sacrificial Daggers");
+			DisplayName.AddTranslation(GameCulture.Russian, "Жертвенные Кинжалы");
             Tooltip.SetDefault("\"Feed them\"\nThe daggers drain your life, but heal you when harming an enemy\nUse again after summoning to spin and reset duration\nAligns with either magic or melee users");
+			Tooltip.AddTranslation(GameCulture.Russian, "\"Накорми их\"\nКинжалы высасывают ваше здоровье, но крадут его у врагов\nИспользуйте повторно, чтобы раскрутить и сбросить время действия\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()
@@ -74,6 +76,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sacrificial Dagger");
+			DisplayName.AddTranslation(GameCulture.Russian, "Жертвенный Кинжал");
         }
 
         public override void SetOrbitalDefaults()

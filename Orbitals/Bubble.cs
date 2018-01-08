@@ -10,7 +10,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bubble");
+			DisplayName.AddTranslation(GameCulture.Russian, "Пузырь");
             Tooltip.SetDefault("\"Stay out of my personal space\"\nThe bubble repels enemies and raises defense");
+			Tooltip.AddTranslation(GameCulture.Russian, "\"У меня должно быть личное пространство!\"\nОтталкивает врагов и увеличивает защиту");
         }
 
         public override void SetOrbitalDefaults()
@@ -52,6 +54,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bubble");
+			DisplayName.AddTranslation(GameCulture.Russian, "Пузырь");
         }
 
         public override void SetOrbitalDefaults()
