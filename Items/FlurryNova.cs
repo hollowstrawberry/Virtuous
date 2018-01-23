@@ -14,7 +14,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Flurry Nova");
+			DisplayName.AddTranslation(GameCulture.Russian, "Шквал");
             Tooltip.SetDefault("\"Over 9000 punches per hour\"\nRight Click for a boring punch");
+			Tooltip.AddTranslation(GameCulture.Russian, "\"9000 ударов в час\"\nПКМ для обычного удара");
         }
 
         private int previousFist = -1; //The position ID of the previous fist shot, so it won't be used twice in a row

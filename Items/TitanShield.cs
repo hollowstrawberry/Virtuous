@@ -13,7 +13,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Titan Shield");
+			DisplayName.AddTranslation(GameCulture.Russian, "Щит Титана");
             Tooltip.SetDefault("Use to ram your enemies\nBase damage scales with defense\nWhile held: Reduces 20% of damage taken from the front");
+			Tooltip.AddTranslation(GameCulture.Russian, "Пробивайтесь через врагов\nБазовый урон увеличивается с защитой\nВ руках: Уменьшает получаемый урон с тыла на 20%");
         }
 
         public const float DamageReduction = 0.2f; //This gets applied multiplicatevely at the end of the damage formula

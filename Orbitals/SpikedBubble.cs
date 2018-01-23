@@ -12,7 +12,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spiked Bubble");
+			DisplayName.AddTranslation(GameCulture.Russian, "Колючий Пузырь");
             Tooltip.SetDefault("The bubble slightly raises damage and defense\nEnemies are repelled and damaged\nAligns with either magic or melee users");
+			Tooltip.AddTranslation(GameCulture.Russian, "Пузырь немного увеличивает урон и защиту\nВраги отталкиваются и получают урон\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()
@@ -64,6 +66,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spiked Bubble");
+			DisplayName.AddTranslation(GameCulture.Russian, "Колючий Пузырь");
         }
 
         public override void SetOrbitalDefaults()

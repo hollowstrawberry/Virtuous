@@ -11,7 +11,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bullseye");
+			DisplayName.AddTranslation(GameCulture.Russian, "Бычий Глаз");
             Tooltip.SetDefault("\"Love at first sight\"\nShoot through the magical sight for double ranged damage\nOther ranged shots are weaker");
+			Tooltip.AddTranslation(GameCulture.Russian, "\"Любовь с первого взгляда\"\nУдваивает дальний урон, если стрелять через прицел\nОстальные снаряды будут слабее");
         }
 
         public override void SetOrbitalDefaults()
@@ -51,6 +53,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Summoned Sight");
+			DisplayName.AddTranslation(GameCulture.Russian, "Призванный Прицел");
         }
 
         public override void SetOrbitalDefaults()
