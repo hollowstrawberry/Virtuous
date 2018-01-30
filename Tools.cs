@@ -42,7 +42,7 @@ namespace Virtuous
             projectile.position -= new Vector2(projectile.width / 2, projectile.height / 2);
         }
 
-        public static void HandleAltUseAnimation(Player player, Item item) //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+        public static void HandleAltUseAnimation(Player player) //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
         {
             if (player.altFunctionUse == 2)
             {
@@ -95,7 +95,7 @@ namespace Virtuous
         {
             return (float)Main.rand.NextDouble() * (max - min) + min;
         }
-        public static float RandomFloat(float max = 1)
+        public static float RandomFloat(float max = 1) //Inclusive max
         {
             return (float)Main.rand.NextDouble() * max;
         }

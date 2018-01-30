@@ -43,7 +43,6 @@ namespace Virtuous
             SetOrbitalDefaults();
             if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception("Virtuous: The type of the orbital item " + item.Name + " was set to the orbital ID " + type + ", which is either invalid or doesn't have any matching orbital.");
 
-            duration += OrbitalID.Orbital[type].DyingTime; //Adds the orbital's dying time to the total duration
             item.shoot = mod.OrbitalProjectileType(type); //Sets the orbital projectile to shoot
             if (specialFunctionType != SpecialNone) item.autoReuse = true;
 
@@ -67,10 +66,9 @@ namespace Virtuous
             OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
             damage = (int)(item.damage * orbitalPlayer.damageMultiplier * (Math.Max(player.meleeDamage, player.magicDamage) - orbitalPlayer.damageBuffFromOrbitals));
 
-
-            if (specialFunctionType == SpecialRightClick) //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            if (specialFunctionType == SpecialRightClick)
             {
-                HandleAltUseAnimation(player, item);
+                HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
             }
         }
 
@@ -132,7 +130,7 @@ namespace Virtuous
 
                 for (int i = 0; i < amount; i++)
                 {
-                    Vector2 rotation; //We will pass this as the velocity of the projectile, which will be stored then set to 0
+                    Vector2 rotation; //We will pass this as the velocity of the projectile
                     rotation = Vector2.UnitX.RotatedBy(FullCircle * i / amount); //Divides the circle into a set amount of points and picks the current one in the loop
                     Projectile.NewProjectile(position, rotation, type, damage, knockBack, player.whoAmI);
                 }
@@ -156,7 +154,7 @@ namespace Virtuous
                 }
             }
 
-            string durationText = ((int)(orbitalPlayer.ModifiedOrbitalTime(this) / 60)).ToString() + " seconds duration";
+            string durationText = (int)((orbitalPlayer.ModifiedOrbitalTime(this) - OrbitalID.Orbital[type].DyingTime) / 60) + " seconds duration";
 
             foreach (TooltipLine line in tooltips) //Adds the duration, with the place depending on whether the item has damage or not
             {

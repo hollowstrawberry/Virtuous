@@ -84,7 +84,7 @@ namespace Virtuous.Orbitals
         public override float OscillationSpeedMax => 0.4f;
         public override float OscillationAcc => OscillationSpeedMax / 40;
 
-        private const float _BaseDistance = 92;
+        private const float _BaseDistance = 95;
         private const float SpecialDistance = 300f; //Maximum distance when thrown
         private const float SpecialSpeed = (SpecialDistance - _BaseDistance) / 16; //Last number is how many ticks it takes to go in one direction
         private const float DyingAcc = 3; //Acceleration per tick while dying

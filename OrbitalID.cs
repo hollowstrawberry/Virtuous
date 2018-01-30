@@ -32,7 +32,7 @@ namespace Virtuous
         public const int GelCube        = 13;
 
 
-        public static OrbitalProjectile[] Orbital = CreateOrbitalArray(); //Allows me to access the properties of an orbital type whose orbital ID is the index
+        public static OrbitalProjectile[] Orbital = CreateOrbitalArray(); //Allows me to access the properties of an orbital type whose orbital ID is the index of the array
 
 
         public static int OrbitalProjectileType(this Mod mod, int id) //Returns the projectile type for the given orbital ID
@@ -59,8 +59,7 @@ namespace Virtuous
                 if (orbitals[i].Type != i) throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive. The ID that caused the error is: " + orbitals[i].Type.ToString());
             }
 
-            //Return the final array
-            return orbitals.ToArray();
+            return orbitals.ToArray(); //Return the final array
         }
     }
 }

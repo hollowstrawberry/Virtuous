@@ -64,7 +64,7 @@ namespace Virtuous.Items
 
                 if (newProj.type == mod.ProjectileType<WarArrow>()) //Special arrow
                 {
-                    newProj.ai[1] = player.Center.Y; //Signals when to cause all the arrows in the pack to start colliding (after they pass the vertical position of the player)
+                    newProj.ai[1] = player.Center.Y; //Will signal to cause all the arrows in the pack to start colliding after they pass the vertical position of the player
                 }
             }
 
@@ -75,6 +75,7 @@ namespace Virtuous.Items
             //    Main.PlaySound(SoundID.Item5, position);
             //    return true;
             //}
+
             return false;
         }
 

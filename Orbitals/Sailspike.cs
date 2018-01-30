@@ -27,6 +27,17 @@ namespace Virtuous.Orbitals
             item.rare = 3;
             item.value = Item.sellPrice(0, 2, 0, 0);
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddIngredient(ItemID.Gel, 15);
+            recipe.AddIngredient(ItemID.Silk, 2);
+            recipe.AddIngredient(ItemID.Star, 1);
+            recipe.AddTile(TileID.WorkBenches);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
+        }
     }
 
 

@@ -46,7 +46,7 @@ namespace Virtuous.Items
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            HandleAltUseAnimation(player, item); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
 
             base.GetWeaponDamage(player, ref damage);
         }

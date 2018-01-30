@@ -35,13 +35,14 @@ namespace Virtuous.Orbitals
     }
 
 
+
     public class LuckyBreak_Proj : OrbitalProjectile
     {
         public override int Type => OrbitalID.LuckyBreak;
         public override int DyingTime => 30;
         public override int FadeTime => 15;
         public override int OriginalAlpha => 0;
-        public override float BaseDistance => _BaseDistance;
+        public override float BaseDistance => _BaseDistance; //Set to a constant so it can be used in other constants
         public override float OrbitingSpeed => 0.0f * RevolutionPerSecond;
         public override float OscillationSpeedMax => 15f / 30;
         public override float OscillationAcc => OscillationSpeedMax / 20;
@@ -49,11 +50,11 @@ namespace Virtuous.Orbitals
 
         public override bool isDoingSpecial => true; //Always keeps increasing specialFunctionTimer
 
-        public const int _BaseDistance = 65;
-        public const int CycleTime = 7 * 60; //Time between shuffles
-        public const int ShuffleTime = 30; //Time of CycleTime in which the cards shuffle
-        public const int ShuffleSpeed = (_BaseDistance - 2) * 2 / ShuffleTime; //Distance it takes to go back and forth over the time it will take to do it
-        public const int Hearts = 0, Diamonds = 1, Spades = 2, Clubs = 3; //Frames
+        private const int _BaseDistance = 65;
+        private const int CycleTime = 7 * 60; //Time between shuffles
+        private const int ShuffleTime = 30; //Part of CycleTime in which the cards do the shuffle motion
+        private const int ShuffleSpeed = (_BaseDistance - 2) * 2 / ShuffleTime;
+        private const int Hearts = 0, Diamonds = 1, Spades = 2, Clubs = 3; //Frames
 
         public const int CritBuff = 7;
         public const int DamageDebuff = 7; //In percent
@@ -93,8 +94,8 @@ namespace Virtuous.Orbitals
                     switch (Main.projectile[i].frame)
                     {
                         case Hearts:
-                            player.runAcceleration *= 1.2f;
-                            player.maxRunSpeed *= 1.2f;
+                            player.runAcceleration *= 1.15f;
+                            player.maxRunSpeed *= 1.15f;
                             player.lifeRegen += 1;
                             break;
 
@@ -148,11 +149,12 @@ namespace Virtuous.Orbitals
                     direction = Outwards;
                 }
 
-                else if (specialFunctionTimer == CycleTime - 1) //Last tick
+                else if (specialFunctionTimer == CycleTime) //Last tick
                 {
                     SetDistance(BaseDistance);
                     oscillationSpeed = OscillationSpeedMax;
                     specialFunctionTimer = 0;
+                    base.Movement();
                     return;
                 }
 
@@ -180,9 +182,7 @@ namespace Virtuous.Orbitals
             if (projectile.frame == Diamonds && target.lifeMax > 5 && !target.immortal)
             {
                 target.AddBuff(BuffID.Midas, 7 * 60);
-                int type = OneIn(10) ? (OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin;
-                int amount = RandomInt(3, 15);
-                int newItem = Item.NewItem(target.position, target.width, target.height, type, amount);
+                int newItem = Item.NewItem(target.position, target.width, target.height, (OneIn(10) ? (OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin), RandomInt(3, 15));
                 if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem); //Syncs to multiplayer
             }
         }

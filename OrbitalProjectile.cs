@@ -15,7 +15,7 @@ namespace Virtuous
          * This class contains all the properties and methods used by orbitals.
          * The orbitals themselves will override these virtual members to obtain the exact behavior of each unique orbital.
          * The naming convention is: "PascalCasing" if the property is constant for all orbitals of a type, "camelCasing" if the property is variable across time and across different instances
-         * Be sure to read the comments to better picture what each thing does
+         * Be sure to read the comments
          */
 
 
@@ -48,6 +48,7 @@ namespace Virtuous
         public virtual bool isDoingSpecial => (Main.myPlayer == projectile.owner && orbitalPlayer.specialFunctionActive && !isDying); //Whether to run the special effect method or not
 
 
+
         //Utility methods
         public void SetPosition(Vector2? newPos = null) //Moves the orbital relative to the player
         {
@@ -58,7 +59,7 @@ namespace Virtuous
         {
             SetPosition(relativePosition.RotatedBy(radians));
         }
-        public void SetDistance(float newDistance) //Applies a new distance to the player and moves the orbital relative to the player
+        public void SetDistance(float newDistance) //Applies a new distance relative to the player and moves the orbital accordingly
         {
             SetPosition(relativePosition.OfLength(newDistance));
         }
@@ -85,6 +86,7 @@ namespace Virtuous
 
 
 
+
         public virtual void SetOrbitalDefaults()
         {
         }
@@ -99,10 +101,11 @@ namespace Virtuous
             projectile.usesIDStaticNPCImmunity = true; //Doesn't interfere with other piercing damage
             projectile.idStaticNPCHitCooldown = 10;
             projectile.alpha = OriginalAlpha;
-            projectile.timeLeft = (DyingTime > 0) ? DyingTime : 2; //Time left gets reset every tick during the orbital's life
+            projectile.timeLeft = (DyingTime > 0) ? DyingTime : 2; //Time left will later get reset every tick during the orbital's life
 
             SetOrbitalDefaults();
         }
+
 
         //Effects the orbital type will apply on the player while it is active. Only runs for the first orbital of a type. Called by OrbitalPlayer
         public virtual void PlayerEffects()
@@ -143,7 +146,7 @@ namespace Virtuous
         }
 
 
-        //Executes special effect
+        //Executes special effect if isDoingSpecial is true
         public virtual void SpecialFunction()
         {
         }
@@ -152,7 +155,7 @@ namespace Virtuous
         //Only runs once at the beginning of DyingTime
         public virtual void DyingFirstTick()
         {
-            projectile.velocity = relativePosition.OfLength(DyingSpeed); //Starts shooting-out motion
+            projectile.velocity = relativePosition.OfLength(DyingSpeed); //Shoots out
         }
 
         //Runs every tick during DyingTime
@@ -246,6 +249,7 @@ namespace Virtuous
             projectile.localAI[0] = reader.ReadSingle();
             projectile.localAI[1] = reader.ReadSingle();
         }
+
 
         public override bool? CanCutTiles()
         {

@@ -33,7 +33,7 @@ namespace Virtuous
             }
         }
 
-        public float damageBuffFromOrbitals = 0f; //Increased every tick by orbitals that don't want their damage to increase other orbitals
+        public float damageBuffFromOrbitals = 0f; //Increased every tick by orbitals that don't want their damage buff to increase other orbitals' damage
 
         public float durationMultiplier = 1f;
         public float damageMultiplier = 1f;
@@ -42,18 +42,18 @@ namespace Virtuous
 
         public int ModifiedOrbitalTime(OrbitalItem item)
         {
-            return (int)(item.duration * durationMultiplier);
+            return (int)(item.duration * durationMultiplier + OrbitalID.Orbital[item.type].DyingTime);
         }
 
-        public void ResetOrbitals() //Resets all orbital data on the player, killing any orbitals active in the process
+        public void ResetOrbitals() //Resets all active orbital data on the player, killing orbitals in the process
         {
             time = 0;
             specialFunction = new bool[2]; //Sets all to false
-            active = new bool[OrbitalID.Orbital.Length]; //Sets all to false
+            active = new bool[active.Length]; //Sets all to false
         }
 
 
-        public override void PostUpdateEquips()
+        public override void PostUpdateEquips() //Applies orbital buffs
         {
             for (int type = 0; type < OrbitalID.Orbital.Length; type++)
             {
