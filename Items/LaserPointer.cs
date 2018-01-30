@@ -9,7 +9,7 @@ namespace Virtuous.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser Pointer lol");
+            DisplayName.SetDefault("Laser Pointer");
         }
 
         public override void SetDefaults()
