@@ -1,5 +1,6 @@
-using Terraria;
+п»їusing Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 
@@ -12,9 +13,9 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Archangel");
-			DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
+			DisplayName.AddTranslation(GameCulture.Russian, "РђСЂС…Р°РЅРіРµР»");
             Tooltip.SetDefault("Sublime flight and speed!\nExtreme mobility on all surfaces\nTemporary immunity to lava");
-			Tooltip.AddTranslation(GameCulture.Russian, "Грандиозный полёт и скорость!\nМобильность на всех поверхностях\nВременная неуязвимость к лаве");
+			Tooltip.AddTranslation(GameCulture.Russian, "Р°РЅРґРёРѕР·РЅС‹Р№ РїРѕР»С‘С‚ Рё СЃРєРѕ РѕСЃС‚СЊ!\nРњРѕР±РёР»СЊРЅРѕСЃС‚СЊ РЅР° РІСЃ РїРѕРІ РЅРѕСЃС‚\nР’ Рј РЅРЅР° РЅ Сѓ Р·РІРёРјРѕСЃС‚СЊ Рє Р»Р°РІ");
         }
 
         public override void SetDefaults()

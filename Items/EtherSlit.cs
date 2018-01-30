@@ -1,8 +1,9 @@
-using System;
+п»їusing System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
 using static Virtuous.Tools;
@@ -14,9 +15,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ether Slit");
-			DisplayName.AddTranslation(GameCulture.Russian, "Небесная Скважина");
             Tooltip.SetDefault("Right Click for a barrage attack\nBarrage swords have higher speed, critical chance and stick duration");
-			Tooltip.AddTranslation(GameCulture.Russian, "ПКМ для стихийной атаки\nУ стихийных клинков повышены скорость, шанс критического удара и время застревания");
+            DisplayName.AddTranslation(GameCulture.Russian, "РќРµР±РµСЃРЅР°СЏ РЎРєРІР°Р¶РёРЅР°");
+            Tooltip.AddTranslation(GameCulture.Russian, "РџРљРњ РґР»СЏ СЃС‚РёС…РёР№РЅРѕР№ Р°С‚Р°РєРё\nРЈ СЃС‚РёС…РёР№РЅС‹С… РєР»РёРЅРєРѕРІ РїРѕРІС‹С€РµРЅС‹ СЃРєРѕСЂРѕСЃС‚СЊ, С€Р°РЅСЃ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° Рё РІСЂРµРјСЏ Р·Р°СЃС‚СЂРµРІР°РЅРёСЏ");
         }
 
         public override void SetDefaults()

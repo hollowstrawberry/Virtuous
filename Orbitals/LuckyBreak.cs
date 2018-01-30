@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using static Virtuous.Tools;
 
@@ -14,7 +15,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Lucky Break");
 			DisplayName.AddTranslation(GameCulture.Russian, "");
             Tooltip.SetDefault("The cards shuffle every few seconds, each giving individual effects\nHearts increase movement speed and life regeneration\nDiamonds make enemies drop more coins\nSpades increase all critical strike chance by " + LuckyBreak_Proj.CritBuff + "%\nClubs REDUCE all damage by " + LuckyBreak_Proj.DamageDebuff + "%\nAligns with either magic or melee users");
-			Tooltip.AddTranslation(GameCulture.Russian, "Карты перемешиваются каждые несколько секунд, давая разные эффекты\nЧервы увеличивают скорость передвижения и регенерации здоровья\nБубны увеличивают количество монет, выпадаемых с врагов\nПики увеличивают шанс критического удара на " + LuckyBreak_Proj.CritBuff + "%\nТрефы уменьшают получаемый урон на " + LuckyBreak_Proj.DamageBuff + "%\nПодходит воинам и магам");
+			Tooltip.AddTranslation(GameCulture.Russian, "Карты перемешиваются каждые несколько секунд, давая разные эффекты\nЧервы увеличивают скорость передвижения и регенерации здоровья\nБубны увеличивают количество монет, выпадаемых с врагов\nПики увеличивают шанс критического удара на " + LuckyBreak_Proj.CritBuff + "%\nТрефы уменьшают получаемый урон на " + LuckyBreak_Proj.DamageDebuff + "%\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()

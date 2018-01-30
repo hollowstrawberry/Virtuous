@@ -1,5 +1,6 @@
-using Terraria;
+п»їusing Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 
@@ -11,9 +12,9 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Terra Walkers");
-			DisplayName.AddTranslation(GameCulture.Russian, "Терра Боты");
+			DisplayName.AddTranslation(GameCulture.Russian, "РўРµСЂСЂР° Р‘РѕС‚С‹");
             Tooltip.SetDefault("Extreme mobility on all surfaces\nIncreased wing time\nTemporary immunity to lava");
-			Tooltip.AddTranslation(GameCulture.Russian, "Мобильность на всех поверхностях\nУвеличено время полёта\nВременная неуязвимость к лаве");
+			Tooltip.AddTranslation(GameCulture.Russian, "РњРѕР±РёР»СЊРЅРѕСЃС‚СЊ РЅР° РІСЃРµС… РїРѕРІРµСЂС…РЅРѕСЃС‚СЏС…\nРЈРІРµР»РёС‡РµРЅРѕ РІСЂРµРјСЏ РїРѕР»С‘С‚Р°\nР’СЂРµРјРµРЅРЅР°СЏ РЅРµСѓСЏР·РІРёРјРѕСЃС‚СЊ Рє Р»Р°РІРµ");
         }
 
         public override void SetDefaults()

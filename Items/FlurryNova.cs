@@ -1,7 +1,8 @@
-using Microsoft.Xna.Framework;
+п»їusing Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
 using static Virtuous.Tools;
@@ -14,9 +15,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Flurry Nova");
-			DisplayName.AddTranslation(GameCulture.Russian, "Шквал");
             Tooltip.SetDefault("\"Over 9000 punches per hour\"\nRight Click for a boring punch");
-			Tooltip.AddTranslation(GameCulture.Russian, "\"9000 ударов в час\"\nПКМ для обычного удара");
+            DisplayName.AddTranslation(GameCulture.Russian, "РЁРєРІР°Р»");
+            Tooltip.AddTranslation(GameCulture.Russian, "\"9000 СѓРґР°СЂРѕРІ РІ С‡Р°СЃ\"\nРџРљРњ РґР»СЏ РѕР±С‹С‡РЅРѕРіРѕ СѓРґР°СЂР°");
         }
 
         private int previousFist = -1; //The position ID of the previous fist shot, so it won't be used twice in a row

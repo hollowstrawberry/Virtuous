@@ -1,7 +1,8 @@
-using Microsoft.Xna.Framework;
+п»їusing Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
 using static Virtuous.Tools;
@@ -13,9 +14,11 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Rainbow");
-			DisplayName.AddTranslation(GameCulture.Russian, "Радуга");
             Tooltip.SetDefault("Shoot straight up to rain down on your foes");
-			Tooltip.AddTranslation(GameCulture.Russian, "Пустите стрелу вверх для навесной атаки");
+            DisplayName.AddTranslation(GameCulture.Russian, "Р Р°РґСѓРіР°");
+			Tooltip.AddTranslation(GameCulture.Russian, "РџСѓСЃС‚РёС‚Рµ СЃС‚СЂРµР»Сѓ РІРІРµСЂС… РґР»СЏ РЅР°РІРµСЃРЅРѕР№ Р°С‚Р°РєРё");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Arco Iris");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Dispara al cielo para hacer llover destrucciГіn sobre tus enemigos");
         }
 
         private int nextColor = 0; //Next arrow color being shot by the bow, from 0 to 11

@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.Audio;
 using Terraria.ModLoader;
 using static Virtuous.Tools;
+using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {

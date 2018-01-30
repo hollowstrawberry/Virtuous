@@ -1,5 +1,6 @@
-using Terraria;
+п»їusing Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 
@@ -11,9 +12,9 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astro Boots");
-			DisplayName.AddTranslation(GameCulture.Russian, "Космические Ботинки");
+			DisplayName.AddTranslation(GameCulture.Russian, "РљРѕСЃРјРёС‡ СЃРєРё Р‘РѕС‚РёРЅРєРё");
             Tooltip.SetDefault("Fantastic flight and slow fall\nExtreme mobility on all surfaces\nTemporary immunity to lava");
-			Tooltip.AddTranslation(GameCulture.Russian, "Фантастический полёт и мягкое приземление\nМобильность на всех поверхностях\nВременная неуязвимость к лаве");
+			Tooltip.AddTranslation(GameCulture.Russian, "Р¤Р°РЅС‚Р°СЃС‚РёС‡ СЃРєРёР№ РїРѕР»С‘С‚ Рё Рј РєРѕ Рї РёР· РјР» РЅРё \nРњРѕР±РёР»СЊРЅРѕСЃС‚СЊ РЅР° РІСЃ РїРѕРІ РЅРѕСЃС‚ \nР’ Рј РЅРЅР° РЅ Сѓ Р·РІРёРјРѕСЃС‚СЊ Рє Р»Р°РІ ");
         }
 
         public override void SetDefaults()

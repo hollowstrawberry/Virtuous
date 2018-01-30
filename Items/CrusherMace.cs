@@ -1,6 +1,7 @@
-using Microsoft.Xna.Framework;
+п»їusing Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
 using static Virtuous.Tools;
@@ -12,9 +13,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crusher Mace");
-			DisplayName.AddTranslation(GameCulture.Russian, "Дробилка");
             Tooltip.SetDefault("\"To shreds, you say?\"");
-			Tooltip.AddTranslation(GameCulture.Russian, "\"На кусочки, говоришь?\"");
+            DisplayName.AddTranslation(GameCulture.Russian, "Р”СЂРѕР±РёР»РєР°");
+            Tooltip.AddTranslation(GameCulture.Russian, "\"РќР° РєСѓСЃРѕС‡РєРё, РіРѕРІРѕСЂРёС€СЊ?\"");
         }
 
         public override void SetDefaults()
