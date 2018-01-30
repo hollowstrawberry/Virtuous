@@ -14,7 +14,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Art of War");
+			DisplayName.AddTranslation(GameCulture.Russian, "Искусство Войны");
             Tooltip.SetDefault("\"Appear strong when you are, in fact, strong.\"\nWar arrows penetrate armor");
+			Tooltip.AddTranslation(GameCulture.Russian, "\"Ты силён, когда ты силён.\"\nСтрелы Войны пробивают броню");
         }
 
         public override void SetDefaults()

@@ -13,7 +13,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Facade");
+			DisplayName.AddTranslation(GameCulture.Russian, "Преграда");
             Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
+			Tooltip.AddTranslation(GameCulture.Russian, "Призывает временные защитные барьеры\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()
@@ -46,6 +48,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Summoned Barrier");
+			DisplayName.AddTranslation(GameCulture.Russian, "Призванный Барьер");
         }
 
         public override void SetOrbitalDefaults()

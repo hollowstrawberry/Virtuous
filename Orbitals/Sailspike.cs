@@ -10,7 +10,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sailspike");
+			DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
             Tooltip.SetDefault("Summons a spike for a short time\nAligns with either magic or melee users");
+			Tooltip.AddTranslation(GameCulture.Russian, "Призывает временный шип\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()
@@ -54,6 +56,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sailspike");
+			DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
         }
 
         public override void SetOrbitalDefaults()

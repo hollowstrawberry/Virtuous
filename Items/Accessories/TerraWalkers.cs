@@ -11,7 +11,9 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Terra Walkers");
+			DisplayName.AddTranslation(GameCulture.Russian, "Терра Боты");
             Tooltip.SetDefault("Extreme mobility on all surfaces\nIncreased wing time\nTemporary immunity to lava");
+			Tooltip.AddTranslation(GameCulture.Russian, "Мобильность на всех поверхностях\nУвеличено время полёта\nВременная неуязвимость к лаве");
         }
 
         public override void SetDefaults()

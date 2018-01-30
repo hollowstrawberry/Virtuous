@@ -12,7 +12,9 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Archangel");
+			DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
             Tooltip.SetDefault("Sublime flight and speed!\nExtreme mobility on all surfaces\nTemporary immunity to lava");
+			Tooltip.AddTranslation(GameCulture.Russian, "Грандиозный полёт и скорость!\nМобильность на всех поверхностях\nВременная неуязвимость к лаве");
         }
 
         public override void SetDefaults()

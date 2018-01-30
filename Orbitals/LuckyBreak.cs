@@ -12,7 +12,9 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lucky Break");
+			DisplayName.AddTranslation(GameCulture.Russian, "");
             Tooltip.SetDefault("The cards shuffle every few seconds, each giving individual effects\nHearts increase movement speed and life regeneration\nDiamonds make enemies drop more coins\nSpades increase all critical strike chance by " + LuckyBreak_Proj.CritBuff + "%\nClubs REDUCE all damage by " + LuckyBreak_Proj.DamageDebuff + "%\nAligns with either magic or melee users");
+			Tooltip.AddTranslation(GameCulture.Russian, "Карты перемешиваются каждые несколько секунд, давая разные эффекты\nЧервы увеличивают скорость передвижения и регенерации здоровья\nБубны увеличивают количество монет, выпадаемых с врагов\nПики увеличивают шанс критического удара на " + LuckyBreak_Proj.CritBuff + "%\nТрефы уменьшают получаемый урон на " + LuckyBreak_Proj.DamageBuff + "%\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()
@@ -63,6 +65,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Card");
+			DisplayName.AddTranslation(GameCulture.Russian, "Карта");
             Main.projFrames[projectile.type] = 4;
         }
 

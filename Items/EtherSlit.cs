@@ -14,7 +14,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ether Slit");
+			DisplayName.AddTranslation(GameCulture.Russian, "Небесная Скважина");
             Tooltip.SetDefault("Right Click for a barrage attack\nBarrage swords have higher speed, critical chance and stick duration");
+			Tooltip.AddTranslation(GameCulture.Russian, "ПКМ для стихийной атаки\nУ стихийных клинков повышены скорость, шанс критического удара и время застревания");
         }
 
         public override void SetDefaults()

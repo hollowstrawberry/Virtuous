@@ -13,7 +13,9 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Rainbow");
+			DisplayName.AddTranslation(GameCulture.Russian, "Радуга");
             Tooltip.SetDefault("Shoot straight up to rain down on your foes");
+			Tooltip.AddTranslation(GameCulture.Russian, "Пустите стрелу вверх для навесной атаки");
         }
 
         private int nextColor = 0; //Next arrow color being shot by the bow, from 0 to 11
