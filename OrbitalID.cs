@@ -56,7 +56,7 @@ namespace Virtuous
             //Makes sure the list has a one-to-one correspondence
             for (int i = 0; i < orbitals.Count; i++)
             {
-                if (orbitals[i].Type != i) throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive. The ID that caused the error is: " + orbitals[i].Type.ToString());
+                if (orbitals[i].Type != i) throw new Exception($"Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive. The ID that caused the error is {orbitals[i].Type}");
             }
 
             return orbitals.ToArray(); //Return the final array

@@ -13,9 +13,11 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Circle of Protection");
-			DisplayName.AddTranslation(GameCulture.Russian, "Круг Защиты");
             Tooltip.SetDefault("Holy lights surround you and increase life regeneration\nAligns with either magic or melee users");
-			Tooltip.AddTranslation(GameCulture.Russian, "Святые огни окружают вас, увеличивая регенерацию здоровья\nПодходит воинам и магам");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Círculo Sagrado");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Luces santas te rodean y aumentan la regeneración de vida\nEl daño se alínea con magia o cuerpo a cuerpo");
+            DisplayName.AddTranslation(GameCulture.Russian, "Круг Защиты");
+            Tooltip.AddTranslation(GameCulture.Russian, "Святые огни окружают вас, увеличивая регенерацию здоровья\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()

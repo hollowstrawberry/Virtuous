@@ -80,6 +80,12 @@ namespace Virtuous
         }
 
 
+        //String
+
+        public static string If(this string text, bool condition) => condition ? text : ""; //Conditional strings to help with complex text concatenation
+        public static string Unless(this string text, bool condition) => text.If(!condition);
+
+
         //Random
 
         public static int RandomInt(int min, int max) //Inclusive min and max

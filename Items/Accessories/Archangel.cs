@@ -3,7 +3,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
-
 namespace Virtuous.Items.Accessories
 {
 
@@ -13,9 +12,12 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Archangel");
-			DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
             Tooltip.SetDefault("Sublime flight and speed!\nExtreme mobility on all surfaces\nTemporary immunity to lava");
-			Tooltip.AddTranslation(GameCulture.Russian, "андиозный полёт и ско ость!\nМобильность на вс пов ност\nВ м нна н у звимость к лав");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Arcángel");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Vuelo y velocidad sublimes\nMobilidad extrema en toda superficie\nInmunidad temoral a la lava");
+            DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
+            Tooltip.AddTranslation(GameCulture.Russian, "андиозный полёт и ско ость!\nМобильность на вс пов ност\nВ м нна н у звимость к лав");
+
         }
 
         public override void SetDefaults()

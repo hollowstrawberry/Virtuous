@@ -16,6 +16,8 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Ether Slit");
             Tooltip.SetDefault("Right Click for a barrage attack\nBarrage swords have higher speed, critical chance and stick duration");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Éter");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Haz Click Derecho para un ataque concentrado de mayor potencia");
             DisplayName.AddTranslation(GameCulture.Russian, "Небесная Скважина");
             Tooltip.AddTranslation(GameCulture.Russian, "ПКМ для стихийной атаки\nУ стихийных клинков повышены скорость, шанс критического удара и время застревания");
         }

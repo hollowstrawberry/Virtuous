@@ -13,9 +13,11 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Twilight");
-			DisplayName.AddTranslation(GameCulture.Russian, "Сумерки");
-            Tooltip.SetDefault("Shurikens defend you, raising melee speed and mana regeneration\nAligns with either magic or melee users");
-			Tooltip.AddTranslation(GameCulture.Russian, "Сюрикены защищают вас, увеличивая скорость ближнего боя и регенерации маны\nПодходит воинам и магам");
+			Tooltip.SetDefault("Shuriken defend you, raising melee speed and mana regeneration\nAligns with either magic or melee users");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Crepúsculo");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Los Shuriken te defenderán y aumentarán la velocidad cuerpo a cuerpo y regeneración de maná\nEl daño se alínea con magia o cuerpo a cuerpo");
+            DisplayName.AddTranslation(GameCulture.Russian, "Сумерки");
+            Tooltip.AddTranslation(GameCulture.Russian, "Сюрикены защищают вас, увеличивая скорость ближнего боя и регенерации маны\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()

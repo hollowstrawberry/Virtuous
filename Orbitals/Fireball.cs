@@ -12,9 +12,11 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fireball");
-			DisplayName.AddTranslation(GameCulture.Russian, "Огненный Шар");
             Tooltip.SetDefault("Burn nearby enemies\nRight-Click after summoning for a fire burst\nAligns with either magic or melee users");
-			Tooltip.AddTranslation(GameCulture.Russian, "Поджигает ближайших врагов\nПКМ после вызова для всплеска огня\nПодходит воинам и магам");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Bola de Fuego");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Quema a los enemigos cercanos\nHaz Click Derecho tras invocarla para una pequeña explosión\nEl daño se alínea con magia o cuerpo a cuerpo");
+            DisplayName.AddTranslation(GameCulture.Russian, "Огненный Шар");
+            Tooltip.AddTranslation(GameCulture.Russian, "Поджигает ближайших врагов\nПКМ после вызова для всплеска огня\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()

@@ -15,9 +15,11 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lion's Mane");
-			DisplayName.AddTranslation(GameCulture.Russian, "Львиная Грива");
             Tooltip.SetDefault("Damage increases exponentially as it travels\nLeft Click for clockwise, Right Click for counter-clockwise");
-			Tooltip.AddTranslation(GameCulture.Russian, "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Melena de León");
+            Tooltip.AddTranslation(GameCulture.Spanish, "El daño aumenta exponencialmente con la distancia\nHaz Click Derecho para ir en sentido contrarreloj");
+            DisplayName.AddTranslation(GameCulture.Russian, "Львиная Грива");
+            Tooltip.AddTranslation(GameCulture.Russian, "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
         }
 
         public override void SetDefaults()

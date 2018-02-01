@@ -15,9 +15,11 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Blades of Virtue");
-			DisplayName.AddTranslation(GameCulture.Russian, "Клинки Доблести");
             Tooltip.SetDefault("Ethereal swords protect you and raise all damage\nRight Click after summoning for an active attack\nAligns with either magic or melee users");
-			Tooltip.AddTranslation(GameCulture.Russian, "Магические клинки защищают вас и увеличивают урон\nПКМ после вызова - активная атака\nПодходит воинам и магам");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Hoja Virtud");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Las espadas etéreas te protejerán y aumentarán tu daño\nHaz Click Derecho tras invocarlas para realizar un ataque\nEl daño se alínea con magia o cuerpo a cuerpo");
+            DisplayName.AddTranslation(GameCulture.Russian, "Клинки Доблести");
+            Tooltip.AddTranslation(GameCulture.Russian, "Магические клинки защищают вас и увеличивают урон\nПКМ после вызова - активная атака\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()

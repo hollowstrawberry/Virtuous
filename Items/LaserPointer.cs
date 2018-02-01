@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace Virtuous.Items
@@ -10,6 +11,7 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser Pointer");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Puntero Láser");
         }
 
         public override void SetDefaults()

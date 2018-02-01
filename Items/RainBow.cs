@@ -15,11 +15,11 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Rainbow");
             Tooltip.SetDefault("Shoot straight up to rain down on your foes");
-            DisplayName.AddTranslation(GameCulture.Russian, "Радуга");
-			Tooltip.AddTranslation(GameCulture.Russian, "Пустите стрелу вверх для навесной атаки");
             DisplayName.AddTranslation(GameCulture.Spanish, "Arco Iris");
             Tooltip.AddTranslation(GameCulture.Spanish, "Dispara al cielo para hacer llover destrucción sobre tus enemigos");
-        }
+            DisplayName.AddTranslation(GameCulture.Russian, "Радуга");
+			Tooltip.AddTranslation(GameCulture.Russian, "Пустите стрелу вверх для навесной атаки");
+            }
 
         private int nextColor = 0; //Next arrow color being shot by the bow, from 0 to 11
 

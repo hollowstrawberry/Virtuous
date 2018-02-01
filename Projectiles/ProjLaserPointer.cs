@@ -51,11 +51,19 @@ namespace Virtuous.Projectiles
 
             spriteBatch.Draw(texture, drawRect, null, drawLight, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
 
-
-
-            //I'll make it damage the eye of cthulhu in a very stupid way
+            
             if (Main.myPlayer == projectile.owner)
             {
+                //Cat follows the laser
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active && Main.projectile[i].type == ProjectileID.BlackCat)
+                    {
+                        Main.projectile[i].velocity += (endPoint - Main.projectile[i].position).OfLength(0.5f);
+                    }
+                }
+
+                //I'll make it damage the eye of cthulhu in a very stupid way
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].type == NPCID.EyeofCthulhu)

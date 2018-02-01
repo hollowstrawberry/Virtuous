@@ -15,8 +15,10 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Energy Crystal");
-			DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
             Tooltip.SetDefault("The crystals fire at nearby enemies\nGetting hurt causes a momentary overdrive\nAligns with either magic or melee users");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Cristal de Energía");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Los cristales dispararán a enemigos cercanos\nSer herido los sobrecalentará por un momento\nEl daño se alínea con magia o cuerpo a cuerpo");
+            DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
 			Tooltip.AddTranslation(GameCulture.Russian, "Кристаллы стреляют по ближайшим врагам\nПолучение урона вызывает короткую перегрузку\nПодходит воинам и магам");
         }
 

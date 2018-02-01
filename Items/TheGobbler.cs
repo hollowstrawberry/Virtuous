@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
+using Terraria.GameInput;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
 using static Virtuous.Tools;
@@ -101,18 +102,18 @@ namespace Virtuous.Items
                         else if (storedItem.thrown) damageTypeText = "(thrown)";
 
 
-                        line.text = "Current capacity: " + storageFilled + "/" + StorageCapacity; //Capacity
+                        line.text = $"Current capacity: {storageFilled}/{StorageCapacity}"; //Capacity
 
                         if (hasItem)
                         {
-                            line.text += "\nNext item: " + itemName; //Item name, if there is one
+                            line.text += $"\nNext item: {itemName}"; //Item name, if there is one
                             if      (storedItem.ammo == AmmoID.Bullet) line.text += " (The WHOLE bullet)";
                             else if (storedItem.ammo == AmmoID.Rocket) line.text += " (...Non-ignited)";
                         }
 
 
-                        line.text += "\n" + (hasItem ? ("   Damage: " + itemDamage) : ("Variable damage")); //Item damage
-                        if (hasItem) line.text += " " + damageTypeText; //Item damage type
+                        line.text += "\n" + (hasItem ? ($"   Damage: {itemDamage}") : ("Variable damage")); //Item damage
+                        if (hasItem) line.text += $" {damageTypeText}"; //Item damage type
                     }
                     else
                     {
@@ -132,7 +133,7 @@ namespace Virtuous.Items
                         if (hasItem)
                         {
                             knockBack = ProjGobblerItem.ShotKnockBack(storedItem, player);
-                            knockBackText = "   Knockback: " + knockBack.ToString("0.0") + " (";
+                            knockBackText = $"   Knockback: {knockBack.ToString("0.0")} (";
                             
                             if      (knockBack <=  0.0f) knockBackText += "None";
                             else if (knockBack <=  1.5f) knockBackText += "Extremely weak";
@@ -149,7 +150,7 @@ namespace Virtuous.Items
 
                         line.text = knockBackText; //Knockback
 
-                        if (hasItem) line.text += "\n   Preserve chance: " + (100 - (int)(ConsumeChance(storedItem) * 100)) + "%"; //Consume chance, if any
+                        if (hasItem) line.text += $"\n   Preserve chance: {(100 - (int)(ConsumeChance(storedItem) * 100))}%"; //Consume chance, if any
                     }
                     else
                     {
@@ -169,11 +170,11 @@ namespace Virtuous.Items
                     else line.text = defaultText; //Moves forward to align with the item info
 
                     //At the end of the tooltip
-                    line.text += "\nRight Click to suck items from the ground, Left Click to shoot them";
-                    line.text += "\nPress Throw" + (item.favorited ? (" ") : (" while favorited ")) + "to release the storage";
-                    line.text += "\nProjectile damage, properties and behavior vary on the item";
-                    line.text += "\nNon-consumable items always drop after being spent, though they may be damaged";
-                    line.text += "\n[Warning]: Experimental technology. May carry unintended and hilarious consequences";
+                    line.text += $"\nRight Click to suck items from the ground, Left Click to shoot them";
+                    line.text += $"\nPress Throw{" while favorited".If(item.favorited)} to release the storage";
+                    line.text += $"\nProjectile damage, properties and behavior vary on the item";
+                    line.text += $"\nNon-consumable items always drop after being spent, though they may be damaged";
+                    line.text += $"\n[Warning]: Experimental technology. May carry unintended and hilarious consequences";
                 }
             }
         }

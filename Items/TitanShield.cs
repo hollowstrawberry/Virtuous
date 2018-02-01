@@ -14,9 +14,11 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Titan Shield");
-			DisplayName.AddTranslation(GameCulture.Russian, "Щит Титана");
             Tooltip.SetDefault("Use to ram your enemies\nBase damage scales with defense\nWhile held: Reduces 20% of damage taken from the front");
-			Tooltip.AddTranslation(GameCulture.Russian, "Пробивайтесь через врагов\nБазовый урон увеличивается с защитой\nВ руках: Уменьшает получаемый урон с тыла на 20%");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Escudo Titán");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Atropella enemigos\nEl daño aumenta con tu defensa\nAl sostenerlo, reduce en 20% el daño recibido por el frente");
+            DisplayName.AddTranslation(GameCulture.Russian, "Щит Титана");
+            Tooltip.AddTranslation(GameCulture.Russian, "Пробивайтесь через врагов\nБазовый урон увеличивается с защитой\nВ руках: Уменьшает получаемый урон с тыла на 20%");
         }
 
         public const float DamageReduction = 0.2f; //This gets applied multiplicatevely at the end of the damage formula
@@ -40,7 +42,7 @@ namespace Virtuous.Items
 
         //Most of the code is in VirtuousPlayer, as this weapon has no proper useStyle.
 
-        public int GetDamage(Player player) //Used
+        public int GetDamage(Player player)
         {
             return (int)(item.damage * player.meleeDamage * Math.Pow(2, player.statDefense / 50f)); //Doubles every 50 defense
         }
@@ -56,7 +58,8 @@ namespace Virtuous.Items
             {
                 if (line.mod == "Terraria" && line.Name == "Damage")
                 {
-                    line.text = "Weapon, non-equipable\n" + line.text; //Adds a comment above damage
+                    if (Language.ActiveCulture == GameCulture.Spanish) line.text = $"Arma no-equipable\n{line.text}";
+                    else line.text = $"Weapon, non-equipable\n{line.text}"; //Adds a comment above damage
                 }
 
                 if (line.mod == "Terraria" && line.Name == "Knockback")

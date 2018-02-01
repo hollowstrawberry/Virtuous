@@ -14,6 +14,8 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Crusher Mace");
             Tooltip.SetDefault("\"To shreds, you say?\"");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Martillo Apretillo");
+            Tooltip.AddTranslation(GameCulture.Spanish, "\"Aplasta a tus enemigos\"");
             DisplayName.AddTranslation(GameCulture.Russian, "Дробилка");
             Tooltip.AddTranslation(GameCulture.Russian, "\"На кусочки, говоришь?\"");
         }

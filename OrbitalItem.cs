@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
 using static Virtuous.Tools;
@@ -41,7 +42,7 @@ namespace Virtuous
             item.useTurn = true;
 
             SetOrbitalDefaults();
-            if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception("Virtuous: The type of the orbital item " + item.Name + " was set to the orbital ID " + type + ", which is either invalid or doesn't have any matching orbital.");
+            if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception($"Virtuous: The type of the orbital item {item.Name} was set to the orbital ID {type}, which is either invalid or doesn't have any matching orbital.");
 
             item.shoot = mod.OrbitalProjectileType(type); //Sets the orbital projectile to shoot
             if (specialFunctionType != SpecialNone) item.autoReuse = true;
@@ -149,18 +150,21 @@ namespace Virtuous
             {
                 if (line.mod == "Terraria" && line.Name == "Damage") //Cuts the text to say "orbital damage"
                 {
-                    line.text = line.text.Split(' ')[0] + " orbital damage";
+                    if (Language.ActiveCulture == GameCulture.Spanish) line.text = $"{line.text.Split(' ')[0]} daño orbital";
+                    else line.text = $"{line.text.Split(' ')[0]} orbital damage";
                     hasDamage = true;
                 }
             }
 
-            string durationText = (int)((orbitalPlayer.ModifiedOrbitalTime(this) - OrbitalID.Orbital[type].DyingTime) / 60) + " seconds duration";
+            string durationText = ((orbitalPlayer.ModifiedOrbitalTime(this) - OrbitalID.Orbital[type].DyingTime) / 60).ToString();
+            if (Language.ActiveCulture == GameCulture.Spanish) durationText += " segundos de duración";
+            else durationText += " seconds duration";
 
             foreach (TooltipLine line in tooltips) //Adds the duration, with the place depending on whether the item has damage or not
             {
                 if (!hasDamage && line.mod == "Terraria" && line.Name == "UseMana") //Puts it above mana use
                 {
-                    line.text = durationText + "\n" + line.text;
+                    line.text = $"{durationText}\n{line.text}";
                 }
                 else if (hasDamage &&  line.mod == "Terraria" && line.Name == "Speed") //Intentionally replaces use speed
                 {

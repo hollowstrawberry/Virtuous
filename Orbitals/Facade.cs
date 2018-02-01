@@ -14,9 +14,11 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Facade");
-			DisplayName.AddTranslation(GameCulture.Russian, "Преграда");
-            Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
-			Tooltip.AddTranslation(GameCulture.Russian, "Призывает временные защитные барьеры\nПодходит воинам и магам");
+			Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Tapia");
+            Tooltip.AddTranslation(GameCulture.Spanish, "Invoca barreras para protegerte por un corto tiempo\nEl daño se alínea con magia o cuerpo a cuerpo");
+            DisplayName.AddTranslation(GameCulture.Russian, "Преграда");
+            Tooltip.AddTranslation(GameCulture.Russian, "Призывает временные защитные барьеры\nПодходит воинам и магам");
         }
 
         public override void SetOrbitalDefaults()

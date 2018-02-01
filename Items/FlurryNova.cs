@@ -16,6 +16,8 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Flurry Nova");
             Tooltip.SetDefault("\"Over 9000 punches per hour\"\nRight Click for a boring punch");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Golpe Nova");
+            Tooltip.AddTranslation(GameCulture.Spanish, "\"Más de 9000 golpes por hora\"\nHaz Click Derecho para un golpe normal");
             DisplayName.AddTranslation(GameCulture.Russian, "Шквал");
             Tooltip.AddTranslation(GameCulture.Russian, "\"9000 ударов в час\"\nПКМ для обычного удара");
         }

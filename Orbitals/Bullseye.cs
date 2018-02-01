@@ -12,9 +12,11 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bullseye");
-			DisplayName.AddTranslation(GameCulture.Russian, "Бычий Глаз");
             Tooltip.SetDefault("\"Love at first sight\"\nShoot through the magical sight for double ranged damage\nOther ranged shots are weaker");
-			Tooltip.AddTranslation(GameCulture.Russian, "\"Любовь с первого взгляда\"\nУдваивает дальний урон, если стрелять через прицел\nОстальные снаряды будут слабее");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Disparo Certero");
+            Tooltip.AddTranslation(GameCulture.Spanish, "\"Amor a primera vista\"\nDispara por la mira mágica para doble daño a distancia\nOtros daños a distancia serán más débiles");
+            DisplayName.AddTranslation(GameCulture.Russian, "Бычий Глаз");
+            Tooltip.AddTranslation(GameCulture.Russian, "\"Любовь с первого взгляда\"\nУдваивает дальний урон, если стрелять через прицел\nОстальные снаряды будут слабее");
         }
 
         public override void SetOrbitalDefaults()
