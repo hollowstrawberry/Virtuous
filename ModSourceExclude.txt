@@ -1,8 +1,0 @@
-\_misc\
-\.vs\
-\.git\
-.obj
-.gitignore
-.gitattributes
-.user
-.sln
