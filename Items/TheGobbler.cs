@@ -7,7 +7,7 @@ using Terraria.Localization;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Items
 {
@@ -291,7 +291,7 @@ namespace Virtuous.Items
 
                         Main.PlaySound(SoundID.Item5, position);
 
-                        bool consume = RandomFloat() < ConsumeChance(modPlayer.GobblerItem(BaseSlot));
+                        bool consume = Tools.RandomFloat() < ConsumeChance(modPlayer.GobblerItem(BaseSlot));
 
                         if (shotItem.ammo == AmmoID.Arrow)  //Arrows are shot just fine
                         {
@@ -309,7 +309,7 @@ namespace Virtuous.Items
                             {
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY) * RandomFloat(), type, damage, knockBack, player.whoAmI, 0f, itemType);
+                                    Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY) * Tools.RandomFloat(), type, damage, knockBack, player.whoAmI, 0f, itemType);
                                 }
                             }
                         }
@@ -342,7 +342,7 @@ namespace Virtuous.Items
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(RandomFloat(0, 2), RandomFloat(-8, -6)); //Shakes
+            return new Vector2(Tools.RandomFloat(0, 2), Tools.RandomFloat(-8, -6)); //Shakes
         }
     }
 }

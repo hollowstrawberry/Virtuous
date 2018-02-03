@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -48,7 +48,7 @@ namespace Virtuous.Orbitals
         public override int FadeTime => 15;
         public override int OriginalAlpha => 0;
         public override float BaseDistance => _BaseDistance; //Set to a constant so it can be used in other constants
-        public override float OrbitingSpeed => 0.0f * RevolutionPerSecond;
+        public override float OrbitingSpeed => 0.0f * Tools.RevolutionPerSecond;
         public override float OscillationSpeedMax => 15f / 30;
         public override float OscillationAcc => OscillationSpeedMax / 20;
         public override float DyingSpeed => 20;
@@ -81,7 +81,7 @@ namespace Virtuous.Orbitals
 
         private void ShuffleCard()
         {
-            projectile.frame = RandomInt(Main.projFrames[projectile.type]);
+            projectile.frame = Tools.RandomInt(Main.projFrames[projectile.type]);
         }
 
         public override void PlayerEffects()
@@ -126,7 +126,7 @@ namespace Virtuous.Orbitals
 
         public override void FirstTick()
         {
-            RotatePosition(-FullCircle / 4); //Make the first card be above the player instead of to the right
+            RotatePosition(-Tools.FullCircle / 4); //Make the first card be above the player instead of to the right
 
             specialFunctionTimer = CycleTime - ShuffleTime / 2; //Puts the card in the middle of the shuffling motion
             SetDistance(2);
@@ -146,13 +146,13 @@ namespace Virtuous.Orbitals
                 {
                     SetDistance(BaseDistance);
                     oscillationSpeed = ShuffleSpeed;
-                    direction = Inwards;
+                    direction = Tools.Inwards;
                 }
 
                 else if (specialFunctionTimer == CycleTime - ShuffleTime / 2) //Middlepoint of the motion
                 {
                     ShuffleCard();
-                    direction = Outwards;
+                    direction = Tools.Outwards;
                 }
 
                 else if (specialFunctionTimer == CycleTime) //Last tick
@@ -175,7 +175,7 @@ namespace Virtuous.Orbitals
 
         public override void Dying()
         {
-            projectile.rotation += 5 * RevolutionPerSecond;
+            projectile.rotation += 5 * Tools.RevolutionPerSecond;
             projectile.velocity.Y += 2f; //Gravity
             projectile.position += projectile.velocity; //Applies velocity as orbitals normally don't
         }
@@ -188,7 +188,7 @@ namespace Virtuous.Orbitals
             if (projectile.frame == Diamonds && target.lifeMax > 5 && !target.immortal)
             {
                 target.AddBuff(BuffID.Midas, 7 * 60);
-                int newItem = Item.NewItem(target.position, target.width, target.height, (OneIn(10) ? (OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin), RandomInt(3, 15));
+                int newItem = Item.NewItem(target.position, target.width, target.height, (Tools.OneIn(10) ? (Tools.OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin), Tools.RandomInt(3, 15));
                 if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem); //Syncs to multiplayer
             }
         }

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Virtuous.Dusts;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -87,7 +87,7 @@ namespace Virtuous.Projectiles
                 case Rain:
                     type = mod.DustType<RainbowDust>();
                     scale = Burst ? 1.5f : 1.2f; //Bigger size if it's a burst of dust
-                    if (!Burst) velocity = new Vector2(RandomFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is random, Y follows the arrow
+                    if (!Burst) velocity = new Vector2(Tools.RandomFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is Tools.Random, Y follows the arrow
                     break;
             }
 
@@ -131,7 +131,7 @@ namespace Virtuous.Projectiles
             {
                 const int ArrowAmount = 30;
                 float arrowSpacing = projectile.width * 6f;
-                float nextColor = RandomInt(12); //Starts the rainbow of arrows at a random color
+                float nextColor = Tools.RandomInt(12); //Starts the rainbow of arrows at a Tools.Random color
                 for(int i = 1; i <= ArrowAmount; i++)
                 {
                     Vector2 position = projectile.Center;

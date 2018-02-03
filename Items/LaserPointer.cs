@@ -12,6 +12,7 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Laser Pointer");
             DisplayName.AddTranslation(GameCulture.Spanish, "Puntero Láser");
+            //DisplayName.AddTranslation(GameCulture.Russian, "");
         }
 
         public override void SetDefaults()
@@ -29,6 +30,16 @@ namespace Virtuous.Items
         public override Vector2? HoldoutOffset()
         {
             return null;
+        }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+            recipe.AddRecipeGroup("IronBar", 2);
+            recipe.AddIngredient(ItemID.Wire, 1);
+            recipe.AddTile(TileID.WorkBenches);
+            recipe.SetResult(this);
+            recipe.AddRecipe();
         }
     }
 }

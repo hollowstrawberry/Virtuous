@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Items
 {
@@ -99,7 +99,7 @@ namespace Virtuous.Items
             int nextFist = -1;
             for (int i = 0; i < 20; i++) //Makes x attempts at creating a projectile that the player can reach. Gives up otherwise.
             {
-                do {nextFist = RandomInt(9);
+                do {nextFist = Tools.RandomInt(9);
                 } while (nextFist == previousFist); //Can't match the position of the previous one
 
                 switch (nextFist) //One of 9 different spawn points

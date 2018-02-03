@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -57,7 +57,7 @@ namespace Virtuous.Orbitals
         public override int Type => OrbitalID.SpikedBubble;
         public override int DyingTime => 30;
         public override float BaseDistance => 0;
-        public override float RotationSpeed => 0 * RevolutionPerSecond; //I set this to 0 for now so that the sprite doesn't look weird
+        public override float RotationSpeed => 0 * Tools.RevolutionPerSecond; //I set this to 0 for now so that the sprite doesn't look weird
 
         private const float ExpandedScale = 1.5f; //Size when fully expanded
         private const int ExpandedAlpha = 150; //Alpha value when fully expanded
@@ -128,7 +128,7 @@ namespace Virtuous.Orbitals
                 const int DustAmount = 50;
                 for (int i = 0; i < DustAmount; i++)
                 {
-                    Vector2 position = projectile.Center + Vector2.UnitY.RotatedBy(RandomFloat(FullCircle)).OfLength(RandomInt(projectile.width / 2)); //Random rotation, random distance from the center
+                    Vector2 position = projectile.Center + Tools.RandomDirection().OfLength(Tools.RandomInt(projectile.width / 2)); //Tools.Random rotation, Tools.Random distance from the center
                     Dust newDust = Dust.NewDustDirect(position, 0, 0, /*Type*/16, 0, 0, /*Alpha*/100, new Color(255, 200, 245, 150), /*Scale*/1.2f);
                     newDust.velocity *= 2;
                 }

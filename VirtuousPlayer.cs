@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Virtuous.Items;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous
 {
@@ -45,10 +45,10 @@ namespace Virtuous
                     newDust.velocity = player.velocity; //Seems to follow the player around
                     newDust.noGravity = true;
                     newDust.fadeIn = 1f;
-                    if (CoinFlip()) //Half the time
+                    if (Tools.CoinFlip()) //Half the time
                     {
-                        newDust.position += new Vector2(RandomFloat(-3, +3), RandomFloat(-3, +3)); //Slightly different location
-                        newDust.scale += RandomFloat(); //Different size
+                        newDust.position += new Vector2(Tools.RandomFloat(-3, +3), Tools.RandomFloat(-3, +3)); //Slightly different location
+                        newDust.scale += Tools.RandomFloat(); //Different size
                     }
                 }
             }
@@ -84,7 +84,7 @@ namespace Virtuous
             //{
             //    if (Math.Abs(player.velocity.Length()) > 0.1f && !player.mount.Active)
             //    {
-            //        if (CoinFlip() && drawInfo.shadow == 0f)
+            //        if (Tools.CoinFlip() && drawInfo.shadow == 0f)
             //        {
             //            int newDust = Dust.NewDust(player.Center, 0, 0, /*Type*/14, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, /*Alpha*/50, default(Color), /*Scale*/2.0f);
             //            Main.dust[newDust].noGravity = true;
@@ -97,7 +97,7 @@ namespace Virtuous
             //{
             //    if (Math.Abs(player.velocity.Length()) > 0.1f && !player.mount.Active)
             //    {
-            //        if (CoinFlip() && drawInfo.shadow == 0f)
+            //        if (Tools.CoinFlip() && drawInfo.shadow == 0f)
             //        {
             //            int newDust = Dust.NewDust(player.Center, 0, 0, /*Type*/14, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, /*Alpha*/50, default(Color), /*Scale*/2.0f);
             //            Main.dust[newDust].noGravity = true;
@@ -201,7 +201,7 @@ namespace Virtuous
                         TitanShield titanShield = (TitanShield)player.inventory[player.selectedItem].modItem; //Gets the held item
                         int damage = titanShield.GetDamage(player);
                         float knockBack = titanShield.item.knockBack;
-                        bool crit = RandomInt(100) < (titanShield.item.crit + player.meleeCrit);
+                        bool crit = Tools.RandomInt(100) < (titanShield.item.crit + player.meleeCrit);
 
                         //Damages the enemy
                         player.ApplyDamageToNPC(npc, damage, knockBack, player.direction, crit);
@@ -227,8 +227,8 @@ namespace Virtuous
             //Dust
             for (int i = 0; i < 5; i++)
             {
-                Color color = CoinFlip() ? new Color(255, 255, 255) : new Color(255, 255, 255, 0f);
-                Dust newDust = Dust.NewDustDirect(player.position + new Vector2(RandomFloat(-5, +5), RandomFloat(-5, +5)), player.width, player.height, /*Type*/16, 0f, 0f, /*Alpha*/0, color, /*Scale*/RandomFloat(1f, 2f));
+                Color color = Tools.CoinFlip() ? new Color(255, 255, 255) : new Color(255, 255, 255, 0f);
+                Dust newDust = Dust.NewDustDirect(player.position + new Vector2(Tools.RandomFloat(-5, +5), Tools.RandomFloat(-5, +5)), player.width, player.height, /*Type*/16, 0f, 0f, /*Alpha*/0, color, /*Scale*/Tools.RandomFloat(1f, 2f));
                 newDust.velocity *= 0.2f;
                 newDust.noGravity = true;
                 newDust.fadeIn = 0.5f;
@@ -276,10 +276,10 @@ namespace Virtuous
             if (player.HeldItem.type == mod.ItemType<TitanShield>() && hitDirection != player.direction)
             {
                 damage = (int)(damage * (1 - TitanShield.DamageReduction));
-                int dustAmount = RandomInt(15, 20);
+                int dustAmount = Tools.RandomInt(15, 20);
                 for (int i = 0; i < dustAmount; i++)
                 {
-                    Dust newDust = Dust.NewDustDirect(player.Center + new Vector2(10 * player.direction, 0), 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/RandomFloat(1, 2.5f));
+                    Dust newDust = Dust.NewDustDirect(player.Center + new Vector2(10 * player.direction, 0), 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/Tools.RandomFloat(1, 2.5f));
                     newDust.noGravity = true;
                 }
             }

@@ -7,7 +7,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Items;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -15,7 +15,7 @@ namespace Virtuous.Projectiles
     {
         ///* Private projectile fields and properties *///
 
-        private const float RotationSpeed = 1 * RevolutionPerSecond;
+        private const float RotationSpeed = 1 * Tools.RevolutionPerSecond;
         private const int Lifespan = 10 * 60;
 
         private bool Consumed //Whether the item was consumed and will drop from this projectile. Passed as ai[0]
@@ -136,14 +136,14 @@ namespace Virtuous.Projectiles
             Item storedItem = MasterStoredItem;
             if (storedItem.magic)
             {
-                ResizeProjectile(projectile.whoAmI, projectile.width + 50, projectile.height + 50);
+                Tools.ResizeProjectile(projectile.whoAmI, projectile.width + 50, projectile.height + 50);
                 projectile.Damage(); //Applies damage in the area
 
                 Main.PlaySound(SoundID.Item14, projectile.Center);
                 for (int i = 0; i < Math.Max(4, (int)ItemDiagonalSize(storedItem) / 4); i++) //More dust the higher the size
                 {
-                    Gore.NewGore(projectile.position + new Vector2(RandomFloat(projectile.width), RandomFloat(projectile.height)), Vector2.Zero, RandomInt(61, 63), RandomFloat(0.2f, 1.2f));
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), RandomFloat(2));
+                    Gore.NewGore(projectile.position + new Vector2(Tools.RandomFloat(projectile.width), Tools.RandomFloat(projectile.height)), Vector2.Zero, Tools.RandomInt(61, 63), Tools.RandomFloat(0.2f, 1.2f));
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), Tools.RandomFloat(2));
                 }
             }
         }
@@ -226,7 +226,7 @@ namespace Virtuous.Projectiles
                 int projAmount = 1;
                 if (storedItem.damage > 0 && !storedItem.consumable && (!storedItem.melee || storedItem.useStyle == 1) || storedItem.type == ItemID.Clentaminator)
                 {
-                    projAmount = RandomInt(4, 6); //Weapons excluding non-swingable melee weapons shoot a random amount of projectiles
+                    projAmount = Tools.RandomInt(4, 6); //Weapons excluding non-swingable melee weapons shoot a Tools.Random amount of projectiles
                 }
                 if (storedItem.ranged)
                 {
@@ -246,7 +246,7 @@ namespace Virtuous.Projectiles
                 //Spawning the projectiles
                 for (int i = 0; i < projAmount; i++)
                 {
-                    Vector2 rotation = projAmount == 1 ? Vector2.UnitY.RotatedByRandom(FullCircle) : Vector2.UnitY.RotatedBy(FullCircle * i / projAmount); //Weapons shoot in a circle, others shot in a random direction
+                    Vector2 rotation = projAmount == 1 ? Vector2.UnitY.RotatedByRandom(Tools.FullCircle) : Vector2.UnitY.RotatedBy(Tools.FullCircle * i / projAmount); //Weapons shoot in a circle, others shot in a Tools.Random direction
                     Vector2 position = projectile.Center + rotation;
                     Vector2 velocity = rotation * storedItem.shootSpeed;
 
@@ -255,7 +255,7 @@ namespace Virtuous.Projectiles
                     if (storedItem.sentry)
                     {
                         newProj.position.Y -= 20; //So it doesn't sink into the ground
-                        newProj.position.X += RandomInt(-20, +20);
+                        newProj.position.X += Tools.RandomInt(-20, +20);
                         player.UpdateMaxTurrets();
                     }
                     newProj.friendly = true;
@@ -297,7 +297,7 @@ namespace Virtuous.Projectiles
             if (projectile.timeLeft == Lifespan && storedItem.type != ItemID.None)
             {
                 //Inherit properties from the stored item
-                ResizeProjectile(projectile.whoAmI, storedItem.width, storedItem.height);
+                Tools.ResizeProjectile(projectile.whoAmI, storedItem.width, storedItem.height);
                 projectile.damage = ShotDamage(storedItem, player);
                 projectile.knockBack = ShotKnockBack(storedItem, player);
                 projectile.melee  = storedItem.melee;

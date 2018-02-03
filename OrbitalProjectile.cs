@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
-using static Virtuous.Tools;
+
 
 namespace Virtuous
 {
@@ -53,7 +53,7 @@ namespace Virtuous
         public void SetPosition(Vector2? newPos = null) //Moves the orbital relative to the player
         {
             if (newPos != null) relativePosition = (Vector2)newPos;
-            projectile.Center = player.MountedCenter + relativePosition;
+            projectile.Center = player.MountedSpriteCenter() + relativePosition;
         }
         public void RotatePosition(float radians) //Rotates the orbital relative to the player
         {
@@ -131,8 +131,8 @@ namespace Virtuous
         {
             if (OscillationSpeedMax != 0) //Oscillation
             {
-                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  //If it has reached the outwards speed limit, begin to switch direction
-                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards; //If it has reached the inwards speed limit, begin to switch direction
+                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Tools.Inwards;  //If it has reached the outwards speed limit, begin to switch direction
+                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Tools.Outwards; //If it has reached the inwards speed limit, begin to switch direction
                 oscillationSpeed += OscillationAcc * (direction ? +1 : -1); //Accelerate in the corresponding direction
                 AddDistance(oscillationSpeed);
             }

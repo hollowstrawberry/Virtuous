@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -50,15 +50,15 @@ namespace Virtuous.Projectiles
             }
             else if (projectile.timeLeft == Lifespan - moveTime) //Movetime is over, and the pillars have contacted
             {
-                int dustAmount = Crit ? RandomInt(6,9) : RandomInt(12,14); //More dust if it's a crit
+                int dustAmount = Crit ? Tools.RandomInt(6,9) : Tools.RandomInt(12,14); //More dust if it's a crit
                 Vector2 dustoffset; //How far from the projectile center the dust should spawn
                 dustoffset.X = projectile.velocity.X>0 ? +projectile.width/2 : -projectile.width/2; //To the left or right of the pillar depending on where it's coming from
                 for (int i = 1; i <= dustAmount; i++)
                 {
-                    dustoffset.Y = OneIn(3) ? 0 : RandomInt(-projectile.height/2, +projectile.height/2); //Chance of the dust appearing in the center or somewhere else along the two pillars' contact line
+                    dustoffset.Y = Tools.OneIn(3) ? 0 : Tools.RandomInt(-projectile.height/2, +projectile.height/2); //Chance of the dust appearing in the center or somewhere else along the two pillars' contact line
                     
                     Dust newDust = Dust.NewDustDirect(projectile.Center+dustoffset, 0, 0, DustID.Stone, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/2f);
-                    newDust.velocity = projectile.velocity * RandomFloat(-0.5f, +0.5f); //Same direction as pillar before stopping
+                    newDust.velocity = projectile.velocity * Tools.RandomFloat(-0.5f, +0.5f); //Same direction as pillar before stopping
                     newDust.fadeIn = 0.5f;
                     newDust.noGravity = true;
                 }

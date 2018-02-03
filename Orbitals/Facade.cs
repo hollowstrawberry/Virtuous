@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -44,7 +44,7 @@ namespace Virtuous.Orbitals
         public override int OriginalAlpha => 80;
         public override int FadeTime => 30;
         public override float BaseDistance => 50;
-        public override float OscillationSpeedMax => 1 / 15f * RevolutionPerSecond;
+        public override float OscillationSpeedMax => 1 / 15f * Tools.RevolutionPerSecond;
         public override float OscillationAcc => OscillationSpeedMax / 60;
 
 

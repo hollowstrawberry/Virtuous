@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Audio;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 using Terraria.Localization;
 
 namespace Virtuous.Orbitals
@@ -46,7 +46,7 @@ namespace Virtuous.Orbitals
         public override int FadeTime => 60;
         public override int OriginalAlpha => 100;
         public override float BaseDistance => 70;
-        public override float OrbitingSpeed => FullCircle / 5 / CycleMoveTime; //Moves a fifth of a circle over CycleMoveTime ticks
+        public override float OrbitingSpeed => Tools.FullCircle / 5 / CycleMoveTime; //Moves a fifth of a circle over CycleMoveTime ticks
 
         public override bool isDoingSpecial => true; //Always keeps increasing specialFunctionTimer
 
@@ -88,7 +88,7 @@ namespace Virtuous.Orbitals
         {
             base.FirstTick();
             projectile.rotation = 0;
-            RotatePosition(-FullCircle / 4); //The first crystal will be above the player instead of right to it
+            RotatePosition(-Tools.FullCircle / 4); //The first crystal will be above the player instead of right to it
         }
 
         public override bool PreMovement()
@@ -119,12 +119,12 @@ namespace Virtuous.Orbitals
 
             //Firing
             int fireChances = InOverdrive() ? 15 : 5; //How many times in a cycle it gets the chance to shoot
-            if (specialFunctionTimer % (CycleTime / fireChances) == 0 && OneIn(3))
+            if (specialFunctionTimer % (CycleTime / fireChances) == 0 && Tools.OneIn(3))
             {
                 NPC target = FindTarget();
                 if (target != null)
                 {
-                    Main.PlaySound(SoundID.Item12.WithVolume(0.5f).WithPitchVariance(RandomFloat(-0.2f, +0.2f)), projectile.Center);
+                    Main.PlaySound(SoundID.Item12.WithVolume(0.5f).WithPitchVariance(Tools.RandomFloat(-0.2f, +0.2f)), projectile.Center);
                     Projectile.NewProjectileDirect(projectile.Center, (target.Center - projectile.Center).OfLength(10), ProjectileID.LaserMachinegunLaser, projectile.damage / 2, projectile.knockBack, projectile.owner);
                 }
             }

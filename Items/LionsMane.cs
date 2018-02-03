@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Items
 {
@@ -51,7 +51,7 @@ namespace Virtuous.Items
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            Tools.HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
 
             base.GetWeaponDamage(player, ref damage);
         }

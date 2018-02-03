@@ -2,7 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -46,7 +46,7 @@ namespace Virtuous.Projectiles
                 const float DustAmount = 16f;
                 for (int i = 0; i < DustAmount; i++) //We create 16 dusts in an ellipse
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(FullCircle * i / DustAmount); //Divides a circle into a set amount of points and picks the current one in the loop
+                    Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / DustAmount); //Divides a circle into a set amount of points and picks the current one in the loop
                     rotation *= new Vector2(1, 4); // Multiplies the point by a vertical squish factor so the circle becomes an ellipse
                     rotation = rotation.RotatedBy(projectile.rotation); //Rotates the resulting ellipse point to align with the projectile's rotation
                     Vector2 position = projectile.Center + rotation; //The final position of the dust

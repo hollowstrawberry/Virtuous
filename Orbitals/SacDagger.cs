@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -73,7 +73,7 @@ namespace Virtuous.Orbitals
         public override float OscillationAcc => OscillationSpeedMax / 40;
 
         private const int SpecialSpinTime = 15; //Ticks it spends doing a half-orbit when spinning. Needs to be a divisor or multiple of 60
-        private const float SpecialSpinSpeed = (30 / SpecialSpinTime) * RevolutionPerSecond; //Speed at which it will orbit while spinning
+        private const float SpecialSpinSpeed = (30 / SpecialSpinTime) * Tools.RevolutionPerSecond; //Speed at which it will orbit while spinning
 
 
         public override void SetStaticDefaults()

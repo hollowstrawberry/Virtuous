@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -42,12 +42,12 @@ namespace Virtuous.Orbitals
         public override int Type => OrbitalID.Shuriken;
         public override int DyingTime => 30;
         public override float BaseDistance => 120;
-        public override float OrbitingSpeed => 1 * RevolutionPerSecond;
+        public override float OrbitingSpeed => 1 * Tools.RevolutionPerSecond;
         public override float RotationSpeed => -2 * OrbitingSpeed;
         public override float OscillationSpeedMax => 6.0f;
         public override float OscillationAcc => OscillationSpeedMax / 20;
 
-        private const float DyingOrbitingSpeed = 4 * RevolutionPerSecond;
+        private const float DyingOrbitingSpeed = 4 * Tools.RevolutionPerSecond;
         private const float DyingRotationSpeed = -2 * DyingOrbitingSpeed;
 
 
@@ -89,7 +89,7 @@ namespace Virtuous.Orbitals
                 for (int i = 0; i < 10; i++)
                 {
                     Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/74, 0f, 0f, /*Alpha*/150, new Color(50, 255, 100, 150), /*Scale*/1.5f);
-                    newDust.velocity += relativePosition.Perpendicular(10, CounterClockwise); //Tangent linear velocity to the angular velocity
+                    newDust.velocity += relativePosition.Perpendicular(10, Tools.CounterClockwise); //Tangent linear velocity to the angular velocity
                 }
             }
         }

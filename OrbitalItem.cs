@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
-using static Virtuous.Tools;
+
 
 namespace Virtuous
 {
@@ -69,7 +69,7 @@ namespace Virtuous
 
             if (specialFunctionType == SpecialRightClick)
             {
-                HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+                Tools.HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
             }
         }
 
@@ -132,7 +132,7 @@ namespace Virtuous
                 for (int i = 0; i < amount; i++)
                 {
                     Vector2 rotation; //We will pass this as the velocity of the projectile
-                    rotation = Vector2.UnitX.RotatedBy(FullCircle * i / amount); //Divides the circle into a set amount of points and picks the current one in the loop
+                    rotation = Vector2.UnitX.RotatedBy(Tools.FullCircle * i / amount); //Divides the circle into a set amount of points and picks the current one in the loop
                     Projectile.NewProjectile(position, rotation, type, damage, knockBack, player.whoAmI);
                 }
             }

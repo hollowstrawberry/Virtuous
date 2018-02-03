@@ -24,7 +24,11 @@ namespace Virtuous
         public const bool Inwards = false;
 
 
-        //Objects
+        //Game objects
+
+        public static Vector2 SpriteCenter(this NPC npc) => npc.Center + new Vector2(0, npc.gfxOffY);
+        public static Vector2 SpriteCenter(this Player player) => player.Center + new Vector2(0, player.gfxOffY);
+        public static Vector2 MountedSpriteCenter(this Player player) => player.MountedCenter + new Vector2(0, player.gfxOffY);
 
         public static void ResizeProjectile(int projIndex, int newWidth, int newHeight, bool changeDrawPos = false) //Changes the size of the hitbox while keeping its center
         {
@@ -88,22 +92,27 @@ namespace Virtuous
 
         //Random
 
-        public static int RandomInt(int min, int max) //Inclusive min and max
+        public static int RandomInt(int min, int inclusiveMax)
         {
-            return Main.rand.Next(min, max + 1);
+            return Main.rand.Next(min, inclusiveMax + 1);
         }
-        public static int RandomInt(int max) //Exclusive max
+        public static int RandomInt(int max)
         {
             return Main.rand.Next(max);
         }
 
-        public static float RandomFloat(float min, float max) //Inclusive min and max
+        public static float RandomFloat(float min, float max)
         {
             return (float)Main.rand.NextDouble() * (max - min) + min;
         }
-        public static float RandomFloat(float max = 1) //Inclusive max
+        public static float RandomFloat(float max = 1)
         {
             return (float)Main.rand.NextDouble() * max;
+        }
+
+        public static Vector2 RandomDirection(float length = 1)
+        {
+            return Vector2.UnitY.RotatedByRandom(Tools.FullCircle).OfLength(length);
         }
 
         public static bool OneIn(int integer) //Returns true with a 1/<integer> chance

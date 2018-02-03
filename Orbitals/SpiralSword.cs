@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -16,7 +16,7 @@ namespace Virtuous.Orbitals
         {
             DisplayName.SetDefault("Blades of Virtue");
             Tooltip.SetDefault("Ethereal swords protect you and raise all damage\nRight Click after summoning for an active attack\nAligns with either magic or melee users");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Hoja Virtud");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Hojas Virtud");
             Tooltip.AddTranslation(GameCulture.Spanish, "Las espadas etéreas te protejerán y aumentarán tu daño\nHaz Click Derecho tras invocarlas para realizar un ataque\nEl daño se alínea con magia o cuerpo a cuerpo");
             DisplayName.AddTranslation(GameCulture.Russian, "Клинки Доблести");
             Tooltip.AddTranslation(GameCulture.Russian, "Магические клинки защищают вас и увеличивают урон\nПКМ после вызова - активная атака\nПодходит воинам и магам");
@@ -84,7 +84,7 @@ namespace Virtuous.Orbitals
         public override int DyingTime => 30;
         public override float BaseDistance => _BaseDistance; //Set this to a constant so it can be used in other constants
         public override float DyingSpeed => 15;
-        public override float OrbitingSpeed => 0.5f * RevolutionPerSecond;
+        public override float OrbitingSpeed => 0.5f * Tools.RevolutionPerSecond;
         public override float RotationSpeed => OrbitingSpeed;
         public override float OscillationSpeedMax => 0.4f;
         public override float OscillationAcc => OscillationSpeedMax / 40;
@@ -130,7 +130,7 @@ namespace Virtuous.Orbitals
         {
             if (specialFunctionTimer == 0) //First tick
             {
-                direction = Outwards;
+                direction = Tools.Outwards;
                 SetDistance(BaseDistance);
                 projectile.idStaticNPCHitCooldown = 5; //Deals damage more rapidly
                 projectile.netUpdate = true; //Sync to multiplayer
@@ -143,9 +143,9 @@ namespace Virtuous.Orbitals
 
             if (relativeDistance >= SpecialDistance) //If it has reached the set maximum distance for the throw
             {
-                direction = Inwards; //Return
+                direction = Tools.Inwards; //Return
             }
-            else if (direction == Inwards && relativeDistance <= BaseDistance) //If it has returned to the passive zone
+            else if (direction == Tools.Inwards && relativeDistance <= BaseDistance) //If it has returned to the passive zone
             {
                 orbitalPlayer.specialFunctionActive = false;
                 projectile.netUpdate = true; //Sync to multiplayer

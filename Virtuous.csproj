@@ -100,6 +100,10 @@
     <Compile Include=".\VirtuousItem.cs" />
     <Compile Include=".\VirtuousNPC.cs" />
     <Compile Include=".\VirtuousPlayer.cs" />
+    <Compile Include="Items\SpotterGun.cs" />
+    <Compile Include="Projectiles\ProjCrosshair.cs" />
+    <Compile Include="Sounds\Item\SniperShot.cs" />
+    <Compile Include="VirtuousProjectile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">

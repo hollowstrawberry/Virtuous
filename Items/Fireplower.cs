@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Items
 {
@@ -43,9 +43,9 @@ namespace Virtuous.Items
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            float ShootArc = FullCircle / 10f;
+            float ShootArc = Tools.FullCircle / 10f;
             int fireAmount = 9;
-            int gelAmount = RandomInt(1, 3);
+            int gelAmount = Tools.RandomInt(1, 3);
 
             for (int i = 0; i < fireAmount; i++)
             {
@@ -57,18 +57,18 @@ namespace Virtuous.Items
             {
                 Vector2 gelPosition = position + new Vector2(speedX, speedY).OfLength(item.width);
                 if (!Collision.CanHit(player.Center, 0, 0, gelPosition, 0, 0)) gelPosition = position;
-                Vector2 gelVelocity = new Vector2(speedX, speedY).RotatedBy(ShootArc * RandomFloat(-1, +1)) * RandomFloat(0, 2);
+                Vector2 gelVelocity = new Vector2(speedX, speedY).RotatedBy(ShootArc * Tools.RandomFloat(-1, +1)) * Tools.RandomFloat(0, 2);
 
                 Projectile.NewProjectile(gelPosition, gelVelocity, mod.ProjectileType<ProjGelFire>(), damage, 0, player.whoAmI);
             }
 
-            if (OneIn(1000)) Main.NewText("Burn, baby! Burn!", Color.Orange);
+            if (Tools.OneIn(1000)) Main.NewText("Burn, baby! Burn!", Color.Orange);
             return false; //Doesn't shoot normally
         }
 
         public override bool ConsumeAmmo(Player player)
         {
-            return CoinFlip();
+            return Tools.CoinFlip();
         }
 
         /*public override Vector2? HoldoutOffset()

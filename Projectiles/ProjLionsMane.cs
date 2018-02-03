@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -17,8 +17,8 @@ namespace Virtuous.Projectiles
         private const int Updates = 2; //How many updates it makes per tick
         private const int Lifespan = 90 * Updates; //Total timeLeft in ticks of the projectile
         private const int OriginalAlpha = 200; //Alpha value it starts with
-        private const float OrbitingSpeed = FullCircle / (Lifespan / 3f); //Last number is the revolutions over its Lifespan
-        private static float DistanceMultiplier = (float)Math.Pow(GoldenRatio, 1.0 / (Lifespan / 9.0)); //Last number is how many times over its Lifespan the distance gets multiplied by the golden ratio. Multiplying by the golden ratio results in a golden spiral
+        private const float OrbitingSpeed = Tools.FullCircle / (Lifespan / 3f); //Last number is the revolutions over its Lifespan
+        private static float DistanceMultiplier = (float)Math.Pow(Tools.GoldenRatio, 1.0 / (Lifespan / 9.0)); //Last number is how many times over its Lifespan the distance gets multiplied by the golden ratio. Multiplying by the golden ratio results in a golden spiral
         private static float DamageMultiplier = (float)Math.Pow(5.0, 1.0 / Lifespan); //First number is how many times the original damage it will have at the end of its lifespan
 
         private float Distance { get { return projectile.ai[0]; } set { projectile.ai[0] = value; } } //Distance away from the player, stored as ai[0]
@@ -80,14 +80,14 @@ namespace Virtuous.Projectiles
 
             projectile.damage = (int)Math.Ceiling(projectile.damage * DamageMultiplier);
             Distance *= DistanceMultiplier;
-            projectile.Center = player.MountedCenter + RelativePosition; //Puts the projectile around the player
+            projectile.Center = player.SpriteCenter() + RelativePosition; //Puts the projectile around the player
 
             //Dust
             int dustAmount = 1 + (int)(Distance / 15f); //More dust as distance increases
             for (int i = 0; i < dustAmount; i++)
             {
                 Dust newDust;
-                switch (RandomInt(4))
+                switch (Tools.RandomInt(4))
                 {
                     case 0:
                         newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Fire, 0f, 0f, projectile.alpha, default(Color), 0.5f);
@@ -114,7 +114,7 @@ namespace Virtuous.Projectiles
         {
             //for (int i = 0; i < 10; i++)
             //{
-            //    Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), RandomFloat(2f, 3f));
+            //    Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), Tools.RandomFloat(2f, 3f));
             //    newDust.noGravity = true;
             //}
         }

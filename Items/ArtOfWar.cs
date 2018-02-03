@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Items
 {
@@ -16,7 +16,7 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Art of War");
             Tooltip.SetDefault("\"Appear strong when you are, in fact, strong.\"\nWar arrows penetrate armor");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Arte de la Guerra");
+            DisplayName.AddTranslation(GameCulture.Spanish, "El Arte de la Guerra");
             Tooltip.AddTranslation(GameCulture.Spanish, "\"Cuando conoces el cielo y la tierra, la victoria es inagotable.\"\nLas flechas de guerra penetran la armadura enemiga");
             DisplayName.AddTranslation(GameCulture.Russian, "Искусство Войны");
             Tooltip.AddTranslation(GameCulture.Russian, "\"Ты силён, когда ты силён.\"\nСтрелы Войны пробивают броню");
@@ -52,12 +52,12 @@ namespace Virtuous.Items
             Vector2 basePosition = player.Center + new Vector2(-player.direction * (Main.screenWidth / 2), -(Main.screenHeight / 2 + 100)); //Off the corner of the screen
             Vector2 baseVelocity = (Main.MouseWorld - basePosition).OfLength(item.shootSpeed); //Direction and speed of all the arrows
 
-            int projAmount = RandomInt(2, 5);
+            int projAmount = Tools.RandomInt(2, 5);
             for (int i = 0; i < projAmount; i++)
             {
-                int newType = CoinFlip() ? type : mod.ProjectileType<WarArrow>(); //Arrows can be either the shot type or the special type
+                int newType = Tools.CoinFlip() ? type : mod.ProjectileType<WarArrow>(); //Arrows can be either the shot type or the special type
 
-                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(RandomInt(150), CoinFlip()); //Random offset in either direction
+                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Tools.RandomInt(150), Tools.CoinFlip()); //Tools.Random offset in either direction
 
                 Vector2 newVelocity = baseVelocity;
                 if (newType == ProjectileID.HolyArrow) newVelocity = baseVelocity.RotatedBy(-7.ToRadians() * player.direction); //Adjustment for accuracy

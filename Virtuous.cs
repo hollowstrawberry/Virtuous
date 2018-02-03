@@ -65,7 +65,7 @@ namespace Virtuous
                 ItemID.WingsSolar,
                 ItemID.WingsVortex,
                 ItemID.WingsNebula,
-                ItemID.WingsStardust,
+                ItemID.WingsStardust
             });
             RecipeGroup.RegisterGroup("Virtuous:CelestialWings", celestialwingsgroup);
         }

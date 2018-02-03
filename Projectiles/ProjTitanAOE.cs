@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Items;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -44,9 +44,9 @@ namespace Virtuous.Projectiles
                 firstTick = false;
                 for(int i = 0; i < 25; i++)
                 {
-                    Vector2 gorePosition = projectile.position + new Vector2(RandomFloat(projectile.width / 2), RandomFloat(projectile.height / 2));
-                    Gore.NewGore(gorePosition, new Vector2(1, 1), RandomInt(61, 63), RandomFloat(0.2f, 1.5f));
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), RandomFloat(2f));
+                    Vector2 gorePosition = projectile.position + new Vector2(Tools.RandomFloat(projectile.width / 2), Tools.RandomFloat(projectile.height / 2));
+                    Gore.NewGore(gorePosition, new Vector2(1, 1), Tools.RandomInt(61, 63), Tools.RandomFloat(0.2f, 1.5f));
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), Tools.RandomFloat(2f));
                 }
             }
         }

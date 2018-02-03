@@ -4,7 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Items;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous
 {
@@ -62,11 +62,11 @@ namespace Virtuous
                 case NPCID.KingSlime:        break;
                 case NPCID.SkeletronHead:    dropType = mod.ItemType<Orbitals.Facade_Item>(); break;
                 case NPCID.Golem:            dropType = mod.ItemType<Orbitals.HolyLight_Item>(); break;
-                case NPCID.GiantCursedSkull: if(OneIn(15)) dropType = mod.ItemType<Orbitals.SacDagger_Item>(); break;
+                case NPCID.GiantCursedSkull: if(Tools.OneIn(15)) dropType = mod.ItemType<Orbitals.SacDagger_Item>(); break;
                 case NPCID.DukeFishron:      dropType = mod.ItemType<Orbitals.Shuriken_Item>(); break;
                 case NPCID.MoonLordCore:     dropType = mod.ItemType<TheGobbler>(); break;
                 case NPCID.PirateCaptain:
-                case NPCID.PirateShip:       if(OneIn(10)) dropType = mod.ItemType<Orbitals.LuckyBreak_Item>(); break;
+                case NPCID.PirateShip:       if(Tools.OneIn(10)) dropType = mod.ItemType<Orbitals.LuckyBreak_Item>(); break;
             }
 
             if (dropType != ItemID.None) Item.NewItem(npc.Center, dropType, dropAmount);

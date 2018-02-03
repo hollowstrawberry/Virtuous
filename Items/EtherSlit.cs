@@ -6,7 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Projectiles;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Items
 {
@@ -78,7 +78,7 @@ namespace Virtuous.Items
         public override void GetWeaponDamage(Player player, ref int damage)
         {
             CanUseItem(player); //A trick to always display the left-click values when not using the weapon
-            HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            Tools.HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
 
             base.GetWeaponDamage(player, ref damage);
         }
@@ -87,7 +87,7 @@ namespace Virtuous.Items
         {
             for (int i = 0; i < 20; i++) //Makes 20 attempts at finding a projectile position that the player can reach. Gives up otherwise.
             {
-                position = player.MountedCenter + (RandomFloat(FullCircle).ToRotationVector2().OfLength(RandomInt(20, 60))); //Random rotation, random distance from the player
+                position = player.MountedCenter + (Tools.RandomFloat(Tools.FullCircle).ToRotationVector2().OfLength(Tools.RandomInt(20, 60))); //Tools.Random rotation, Tools.Random distance from the player
 
                 if (Collision.CanHit(player.MountedCenter, 0, 0, position, 0, 0)) break;
             }

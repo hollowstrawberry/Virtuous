@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Projectiles
 {
@@ -56,7 +56,7 @@ namespace Virtuous.Projectiles
                 int dustAmount = 16;
                 for (int i = 0; i < dustAmount; i++) //We create 16 dusts in an ellipse
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(FullCircle * i / dustAmount); //A circle of radius 1 is divided into the set amount of points, focusing on the current point in the loop
+                    Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / dustAmount); //A circle of radius 1 is divided into the set amount of points, focusing on the current point in the loop
                     rotation *= new Vector2(1, 4); // Multiplies the points by a vertical squish factor so the circle becomes an ellipse
                     rotation = rotation.RotatedBy(projectile.velocity.ToRotation()); //Rotates the resulting ellipse to align with the projectile's rotation
 
@@ -71,7 +71,7 @@ namespace Virtuous.Projectiles
                 if (!Target.active) projectile.Kill(); //Kills the projectile if the target is dead
                 Target.GetGlobalNPC<VirtuousNPC>().summonedSwordStuck++; //Applies the damage-over-time effect to the target
 
-                projectile.Center = Target.Center - relativeCenter.RotatedBy(Target.rotation - originalTargetRotation); //Moves the projectile to the fixed position around the target, relative to where it originally hit
+                projectile.Center = Target.SpriteCenter() - relativeCenter.RotatedBy(Target.rotation - originalTargetRotation); //Moves the projectile to the fixed position around the target, relative to where it originally hit
                 projectile.rotation = originalProjRotation - originalTargetRotation + Target.rotation; //Rotates the sprite accordingly
                 projectile.position -= projectile.velocity; //Stops velocity from affecting the projectile normally
             }
@@ -101,11 +101,11 @@ namespace Virtuous.Projectiles
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
             Main.PlaySound(SoundID.Item27, projectile.position);
 
-            int dustAmount = RandomInt(4,10);
+            int dustAmount = Tools.RandomInt(4,10);
             for (int i = 1; i <= dustAmount; i++)
             {
                 Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/2f);
-                if (!HasHitEnemy) newDust.velocity -= projectile.velocity*0.5f * (RandomFloat(-1, +1)); //Random direction, mostly aligns with the projectile's
+                if (!HasHitEnemy) newDust.velocity -= projectile.velocity*0.5f * (Tools.RandomFloat(-1, +1)); //Tools.Random direction, mostly aligns with the projectile's
                 newDust.fadeIn = 0.5f;
                 newDust.noGravity = true;
             }

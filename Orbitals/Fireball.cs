@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using static Virtuous.Tools;
+
 
 namespace Virtuous.Orbitals
 {
@@ -55,7 +55,7 @@ namespace Virtuous.Orbitals
         public override int DyingTime => 60;
         public override int FadeTime => DyingTime;
         public override float BaseDistance => 90;
-        public override float OrbitingSpeed => 0.5f * RevolutionPerSecond;
+        public override float OrbitingSpeed => 0.5f * Tools.RevolutionPerSecond;
         public override float RotationSpeed => OrbitingSpeed;
 
         private const int OriginalSize = 30;
@@ -104,7 +104,7 @@ namespace Virtuous.Orbitals
         {
             if (specialFunctionTimer == 0) //First tick
             {
-                ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize, true);
+                Tools.ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize, true);
                 Main.PlaySound(SoundID.Item14, projectile.Center);
                 for (int i = 0; i < 6; i++)
                 {
@@ -118,7 +118,7 @@ namespace Virtuous.Orbitals
 
             else if (specialFunctionTimer > 4) //Last tick
             {
-                ResizeProjectile(projectile.whoAmI, OriginalSize, OriginalSize, true);
+                Tools.ResizeProjectile(projectile.whoAmI, OriginalSize, OriginalSize, true);
                 orbitalPlayer.specialFunctionActive = false;
             }
         }

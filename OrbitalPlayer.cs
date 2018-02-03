@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
-using static Virtuous.Tools;
+
 
 namespace Virtuous
 {
