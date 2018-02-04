@@ -171,7 +171,7 @@ namespace Virtuous.Items
 
                     //At the end of the tooltip
                     line.text += $"\nRight Click to suck items from the ground, Left Click to shoot them";
-                    line.text += $"\nPress Throw{" while favorited".If(item.favorited)} to release the storage";
+                    line.text += $"\nPress Throw{" while favorited".If(!item.favorited)} to release the storage";
                     line.text += $"\nProjectile damage, properties and behavior vary on the item";
                     line.text += $"\nNon-consumable items always drop after being spent, though they may be damaged";
                     line.text += $"\n[Warning]: Experimental technology. May carry unintended and hilarious consequences";
@@ -238,21 +238,20 @@ namespace Virtuous.Items
 
                 for(int i = 0; i < Main.maxItems; i++) //Cycles through all the items in the world
                 {
-                    Item targetItem = Main.item[i];
-                    if (IsGobblableItem(targetItem)) //Finds a valid item
+                    if (Main.item[i].active && IsGobblableItem(Main.item[i])) //Finds a valid item
                     {
-                        VirtuousItem targetModItem = targetItem.GetGlobalItem<VirtuousItem>();
+                        VirtuousItem targetModItem = Main.item[i].GetGlobalItem<VirtuousItem>();
 
-                        if (targetItem.WithinRange(position, 250)) //Within sucking range
+                        if (Main.item[i].WithinRange(position, 250)) //Within sucking range
                         {
-                            targetItem.velocity -= (targetItem.Center - position).OfLength(0.5f); //Attracts item towards the nozzle
+                            Main.item[i].velocity -= (Main.item[i].Center - position).OfLength(0.5f); //Attracts item towards the nozzle
                             targetModItem.beingGobbled = true; //So it can't be picked up
 
-                            if (targetItem.WithinRange(position, 15)) //Absorb range
+                            if (Main.item[i].WithinRange(position, 15)) //Absorb range
                             {
                                 for(int slot = 0; slot < StorageCapacity; slot++) //Cycles through the storage
                                 {
-                                    while (slot < StorageCapacity && modPlayer.GobblerStorage[slot] == Empty && targetItem.stack > 0) //If it finds an empty slot, it starts adding items from the item stack into the storage
+                                    while (slot < StorageCapacity && modPlayer.GobblerStorage[slot] == Empty && Main.item[i].stack > 0) //If it finds an empty slot, it starts adding items from the item stack into the storage
                                     {
                                         if(!sucked)
                                         {
@@ -260,12 +259,12 @@ namespace Virtuous.Items
                                             Main.PlaySound(SoundID.Item3, position);
                                         }
 
-                                        modPlayer.GobblerStorage[slot] = targetItem.type; //Adds the item to the current storage slot
-                                        targetItem.stack--; //Reduces the stack of the item
+                                        modPlayer.GobblerStorage[slot] = Main.item[i].type; //Adds the item to the current storage slot
+                                        Main.item[i].stack--; //Reduces the stack of the item
                                         slot++; //Moves a slot forward
-                                        if (targetItem.stack == 0) //The stack of the item has reached 0
+                                        if (Main.item[i].stack == 0) //The stack of the item has reached 0
                                         {
-                                            targetItem.active = false; //Kills it
+                                            Main.item[i].active = false; //Kills it
                                             slot = StorageCapacity; //Breaks the for loop
                                         }
                                     }
@@ -274,7 +273,7 @@ namespace Virtuous.Items
 
                             if (Main.netMode == NetmodeID.MultiplayerClient) //Syncs to multiplayer
                             {
-                                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, targetItem.whoAmI);
+                                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, Main.item[i].whoAmI);
                             }
                         }
                     }

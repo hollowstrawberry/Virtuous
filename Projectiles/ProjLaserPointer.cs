@@ -11,7 +11,7 @@ namespace Virtuous.Projectiles
 {
     class ProjLaserPointer : ModProjectile
     {
-        private static readonly List<int> eyeNPCs = new List<int>(new int[] { NPCID.ServantofCthulhu, NPCID.CataractEye, NPCID.CataractEye2, NPCID.DemonEye, NPCID.DemonEye2, NPCID.DemonEyeOwl, NPCID.DemonEyeSpaceship, NPCID.DialatedEye, NPCID.DialatedEye2, NPCID.EyeofCthulhu, NPCID.Eyezor, NPCID.GreenEye, NPCID.GreenEye2, NPCID.PurpleEye, NPCID.PurpleEye2, NPCID.SleepyEye, NPCID.SleepyEye2, NPCID.WallofFleshEye, NPCID.WanderingEye });
+        private static readonly List<int> eyeNPCs = new List<int>(new int[] { NPCID.Spazmatism, NPCID.Retinazer, NPCID.ServantofCthulhu });
 
         public override void SetDefaults()
         {
@@ -54,7 +54,7 @@ namespace Virtuous.Projectiles
                 {
                     if (Main.npc[i].active && Main.npc[i].Hitbox.Contains((int)endPoint.X, (int)endPoint.Y))
                     {
-                        if (eyeNPCs.Contains(Main.npc[i].type)) Main.npc[i].StrikeNPC(10, 0, 0); //Hurts eyes
+                        if (eyeNPCs.Contains(Main.npc[i].type) || Main.npc[i].InternalNameContains("eye")) Main.npc[i].StrikeNPC(10, 0, 0); //Hurts eyes
                         return endPoint;
                     }
                 }

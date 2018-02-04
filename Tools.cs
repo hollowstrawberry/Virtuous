@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameInput;
@@ -30,6 +31,14 @@ namespace Virtuous
         public static Vector2 SpriteCenter(this Player player) => player.Center + new Vector2(0, player.gfxOffY);
         public static Vector2 MountedSpriteCenter(this Player player) => player.MountedCenter + new Vector2(0, player.gfxOffY);
 
+        public static string InternalName(this Item item) => Lang.GetItemName(item.type).Key.Split('.').Last();
+        public static string InternalName(this NPC npc) => Lang.GetNPCName(npc.type).Key.Split('.').Last();
+        public static string InternalName(this Projectile proj) => Lang.GetProjectileName(proj.type).Key.Split('.').Last();
+
+        public static bool InternalNameContains(this Item item, params string[] values) => item.InternalName().Contains_IgnoreCase(values);
+        public static bool InternalNameContains(this NPC npc, params string[] values) => npc.InternalName().Contains_IgnoreCase(values);
+        public static bool InternalNameContains(this Projectile proj, params string[] values) => proj.InternalName().Contains_IgnoreCase(values);
+
         public static void ResizeProjectile(int projIndex, int newWidth, int newHeight, bool changeDrawPos = false) //Changes the size of the hitbox while keeping its center
         {
             Projectile projectile = Main.projectile[projIndex];
@@ -39,7 +48,7 @@ namespace Virtuous
                 projectile.modProjectile.drawOffsetX += (newWidth - projectile.width) / 2;
                 projectile.modProjectile.drawOriginOffsetY += (newHeight - projectile.height) / 2;
             }
-
+            
             projectile.position += new Vector2(projectile.width / 2, projectile.height / 2);
             projectile.width = newWidth;
             projectile.height = newHeight;
@@ -89,6 +98,16 @@ namespace Virtuous
         public static string If(this string text, bool condition) => condition ? text : ""; //Conditional strings to help with complex text concatenation
         public static string Unless(this string text, bool condition) => text.If(!condition);
 
+        public static bool Contains(this string text, params string[] values) //Contains any of the values provided as arguments
+        {
+            for (int i = 0; i < values.Length; i++) if (text.Contains(values[i])) return true;
+            return false;
+        }
+        public static bool Contains_IgnoreCase(this string text, params string[] values)
+        {
+            for (int i = 0; i < values.Length; i++) values[i] = values[i].ToUpper();
+            return text.ToUpper().Contains(values);
+        }
 
         //Random
 

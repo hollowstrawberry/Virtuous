@@ -25,7 +25,7 @@ namespace Virtuous
                     if (Main.projectile[i].active && Main.projectile[i].owner == projectile.owner && Main.projectile[i].type == mod.ProjectileType<ProjCrosshair>()) return;
                 } //Doesn't spawn a crosshair if there's already one in the world
 
-                Vector2 position = target.SpriteCenter() + Tools.RandomDirection().OfLength(Tools.RandomInt(300, 500));
+                Vector2 position = target.SpriteCenter() + Tools.RandomDirection().OfLength(Tools.RandomInt(400,600));
                 Projectile.NewProjectile(position, Vector2.Zero, mod.ProjectileType<ProjCrosshair>(), damage * 5, knockback * 2, projectile.owner, target.whoAmI);
             }
         }

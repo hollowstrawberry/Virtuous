@@ -49,7 +49,7 @@ namespace Virtuous.Items
             {
                 if (line.mod == "Terraria" && line.Name == "Knockback")
                 {
-                    line.text = "Flying Knockback";
+                    if (line.text.ToLower().Contains("knockback")) line.text = "Flying Knockback";
                 }
             }
         }

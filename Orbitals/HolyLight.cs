@@ -70,7 +70,7 @@ namespace Virtuous.Orbitals
             if (Tools.OneIn(6))
             {
                 Dust newDust = Dust.NewDustDirect(player.Center, 0, 0, /*Type*/55, 0f, 0f, /*Alpha*/200, default(Color), /*Scale*/0.5f);
-                newDust.velocity = new Vector2(Tools.RandomFloat(-1, +1), Tools.RandomFloat(-1, +1)).OfLength(Tools.RandomFloat(4, 6)); //Tools.Random direction, Tools.Random magnitude
+                newDust.velocity = Tools.RandomDirection().OfLength(Tools.RandomFloat(4, 6)); //Random direction, random magnitude
                 newDust.position -= newDust.velocity.OfLength(50f); //Sets the distance in a position where it will move towards the player
                 newDust.velocity += player.velocity; //Follows the player somewhat
                 newDust.noGravity = true;

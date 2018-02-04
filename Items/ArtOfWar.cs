@@ -57,7 +57,7 @@ namespace Virtuous.Items
             {
                 int newType = Tools.CoinFlip() ? type : mod.ProjectileType<WarArrow>(); //Arrows can be either the shot type or the special type
 
-                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Tools.RandomInt(150), Tools.CoinFlip()); //Tools.Random offset in either direction
+                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Tools.RandomInt(150), Tools.CoinFlip()); //Random offset in either direction
 
                 Vector2 newVelocity = baseVelocity;
                 if (newType == ProjectileID.HolyArrow) newVelocity = baseVelocity.RotatedBy(-7.ToRadians() * player.direction); //Adjustment for accuracy

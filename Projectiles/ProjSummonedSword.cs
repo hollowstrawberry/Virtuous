@@ -57,11 +57,11 @@ namespace Virtuous.Projectiles
                 for (int i = 0; i < dustAmount; i++) //We create 16 dusts in an ellipse
                 {
                     Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / dustAmount); //A circle of radius 1 is divided into the set amount of points, focusing on the current point in the loop
-                    rotation *= new Vector2(1, 4); // Multiplies the points by a vertical squish factor so the circle becomes an ellipse
+                    rotation *= new Vector2(1, 4); //Multiplies the points by a vertical squish factor so the circle becomes an ellipse
                     rotation = rotation.RotatedBy(projectile.velocity.ToRotation()); //Rotates the resulting ellipse to align with the projectile's rotation
 
                     Dust newDust = Dust.NewDustDirect(projectile.Center + rotation, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/0, default(Color), /*Scale*/1.5f);
-                    newDust.velocity = rotation.Normalized(); //Shoots outwards
+                    newDust.velocity = rotation.OfLength(1); //Shoots outwards
                     newDust.noGravity = true;
                 }
             }
@@ -105,7 +105,7 @@ namespace Virtuous.Projectiles
             for (int i = 1; i <= dustAmount; i++)
             {
                 Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/2f);
-                if (!HasHitEnemy) newDust.velocity -= projectile.velocity*0.5f * (Tools.RandomFloat(-1, +1)); //Tools.Random direction, mostly aligns with the projectile's
+                if (!HasHitEnemy) newDust.velocity -= projectile.velocity*0.5f * (Tools.RandomFloat(-1, +1)); //Random direction, mostly aligns with the projectile's
                 newDust.fadeIn = 0.5f;
                 newDust.noGravity = true;
             }

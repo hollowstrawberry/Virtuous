@@ -64,15 +64,14 @@ namespace Virtuous.Projectiles
             switch (State)
             {
                 case Tracking:
-                    projectile.alpha -= 20; //Fades in
-                    float speed = MaxSpeed * 2/5f + MaxSpeed * 3/5f * (1f - ((float)projectile.timeLeft / StateTime[State]));
-                    Main.NewText(speed);
+                    projectile.alpha -= 15; //Fades in
+                    float speed = MaxSpeed * 1/5f + MaxSpeed * 4/5f * (1f - ((float)projectile.timeLeft / StateTime[State]));
                     projectile.velocity = relativePosition.OfLength(Math.Min(relativePosition.Length(), speed)); //Homes on target
                     break;
 
                 case Holding:
-                    projectile.velocity = Vector2.Zero;
                     projectile.alpha = 0;
+                    projectile.velocity = Vector2.Zero;
                     projectile.Center = targetCenter;
                     break;
 

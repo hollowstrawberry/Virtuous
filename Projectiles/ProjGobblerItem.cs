@@ -97,9 +97,11 @@ namespace Virtuous.Projectiles
 
         public static bool IsDepletable(Item item) //Whether the specified item will be lost upon being shot
         {
+            Main.NewText(item.InternalName());
+
             if (item.type == ItemID.Gel || item.type == ItemID.FallenStar || (item.type >= ItemID.CopperCoin && item.type <= ItemID.PlatinumCoin)
                 || item.createTile > 0 || item.createWall > 0 || item.potion || item.healLife > 0 || item.healMana > 0 || item.buffType > 0
-                || item.Name.ToUpper().Contains("TREASURE BAG")
+                || item.InternalNameContains("BossBag", "TreasureBag")
             )
             {
                 return false; //Exceptions
@@ -226,7 +228,7 @@ namespace Virtuous.Projectiles
                 int projAmount = 1;
                 if (storedItem.damage > 0 && !storedItem.consumable && (!storedItem.melee || storedItem.useStyle == 1) || storedItem.type == ItemID.Clentaminator)
                 {
-                    projAmount = Tools.RandomInt(4, 6); //Weapons excluding non-swingable melee weapons shoot a Tools.Random amount of projectiles
+                    projAmount = Tools.RandomInt(4, 6); //Weapons excluding non-swingable melee weapons shoot a random amount of projectiles
                 }
                 if (storedItem.ranged)
                 {
@@ -246,7 +248,7 @@ namespace Virtuous.Projectiles
                 //Spawning the projectiles
                 for (int i = 0; i < projAmount; i++)
                 {
-                    Vector2 rotation = projAmount == 1 ? Vector2.UnitY.RotatedByRandom(Tools.FullCircle) : Vector2.UnitY.RotatedBy(Tools.FullCircle * i / projAmount); //Weapons shoot in a circle, others shot in a Tools.Random direction
+                    Vector2 rotation = projAmount == 1 ? Tools.RandomDirection() : Vector2.UnitY.RotatedBy(Tools.FullCircle * i / projAmount); //Weapons shoot in a circle, others shot in a random direction
                     Vector2 position = projectile.Center + rotation;
                     Vector2 velocity = rotation * storedItem.shootSpeed;
 
@@ -396,40 +398,41 @@ namespace Virtuous.Projectiles
 
             ToolBounce();
 
-            if (!storedItem.Name.ToUpper().Contains("BANNER")) //Generic effects based on keywords
+            if (!storedItem.InternalNameContains("banner")) //Generic effects based on keywords
             {
-                if (storedItem.Name.ToUpper().Contains("SLIME") || storedItem.Name.ToUpper().Contains("GEL")) target.AddBuff(BuffID.Slimed, 120);
-                if (storedItem.Name.ToUpper().Contains("WATER")) target.AddBuff(BuffID.Wet, 120);
-                if (storedItem.Name.ToUpper().Contains("FIRE") || storedItem.Name.ToUpper().Contains("FLAME") || storedItem.Name.ToUpper().Contains("LAVA") || storedItem.Name.ToUpper().Contains("MAGMA") || storedItem.Name.ToUpper().Contains("TORCH")) target.AddBuff(BuffID.OnFire, 120);
-                if (storedItem.Name.ToUpper().Contains("ICE")) target.AddBuff(BuffID.Chilled, 120);
-                if (storedItem.Name.ToUpper().Contains("FROST")) target.AddBuff(BuffID.Frostburn, 120);
-                if (storedItem.Name.ToUpper().Contains("ICHOR")) target.AddBuff(BuffID.Ichor, 120);
-                if (storedItem.Name.ToUpper().Contains("CURSED")) target.AddBuff(BuffID.CursedInferno, 120);
-                if (storedItem.Name.ToUpper().Contains("SHADOWFLAME")) target.AddBuff(BuffID.ShadowFlame, 120);
+                if (storedItem.InternalNameContains("slime", "gel")) target.AddBuff(BuffID.Slimed, 120);
+                if (storedItem.InternalNameContains("water")) target.AddBuff(BuffID.Wet, 120);
+                if (storedItem.InternalNameContains("fire", "flame", "magma", "lava", "torch", "solar")) target.AddBuff(BuffID.OnFire, 120);
+                if (storedItem.InternalNameContains("ice")) target.AddBuff(BuffID.Chilled, 120);
+                if (storedItem.InternalNameContains("frost")) target.AddBuff(BuffID.Frostburn, 120);
+                if (storedItem.InternalNameContains("ichor")) target.AddBuff(BuffID.Ichor, 120);
+                if (storedItem.InternalNameContains("cursed")) target.AddBuff(BuffID.CursedInferno, 120);
+                if (storedItem.InternalNameContains("shadowflame")) target.AddBuff(BuffID.ShadowFlame, 120);
             }
             //More?
         }
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPvp(Player target, int damage, bool crit)
         {
             Item storedItem = MasterStoredItem; //A single copy
 
             ToolBounce();
 
-            if (!storedItem.Name.ToUpper().Contains("BANNER")) //Generic effects based on keywords
+            if (!storedItem.InternalNameContains("banner")) //Generic effects based on keywords
             {
-                if (storedItem.Name.ToUpper().Contains("SLIME") || storedItem.Name.ToUpper().Contains("GEL")) target.AddBuff(BuffID.Slimed, 120);
-                if (storedItem.Name.ToUpper().Contains("WATER")) target.AddBuff(BuffID.Wet, 120);
-                if (storedItem.Name.ToUpper().Contains("FIRE") || storedItem.Name.ToUpper().Contains("FLAME") || storedItem.Name.ToUpper().Contains("LAVA") || storedItem.Name.ToUpper().Contains("MAGMA") || storedItem.Name.ToUpper().Contains("TORCH")) target.AddBuff(BuffID.OnFire, 120);
-                if (storedItem.Name.ToUpper().Contains("ICE")) target.AddBuff(BuffID.Chilled, 120);
-                if (storedItem.Name.ToUpper().Contains("FROST")) target.AddBuff(BuffID.Frostburn, 120);
-                if (storedItem.Name.ToUpper().Contains("ICHOR")) target.AddBuff(BuffID.Ichor, 120);
-                if (storedItem.Name.ToUpper().Contains("CURSED")) target.AddBuff(BuffID.CursedInferno, 120);
-                if (storedItem.Name.ToUpper().Contains("SHADOWFLAME")) target.AddBuff(BuffID.ShadowFlame, 120);
+                if (storedItem.InternalNameContains("slime", "gel")) target.AddBuff(BuffID.Slimed, 120);
+                if (storedItem.InternalNameContains("water")) target.AddBuff(BuffID.Wet, 120);
+                if (storedItem.InternalNameContains("fire", "flame", "magma", "lava", "torch", "solar")) target.AddBuff(BuffID.OnFire, 120);
+                if (storedItem.InternalNameContains("ice")) target.AddBuff(BuffID.Chilled, 120);
+                if (storedItem.InternalNameContains("frost")) target.AddBuff(BuffID.Frostburn, 120);
+                if (storedItem.InternalNameContains("ichor")) target.AddBuff(BuffID.Ichor, 120);
+                if (storedItem.InternalNameContains("cursed")) target.AddBuff(BuffID.CursedInferno, 120);
+                if (storedItem.InternalNameContains("shadowflame")) target.AddBuff(BuffID.ShadowFlame, 120);
             }
             if (storedItem.vanity) target.AddBuff(BuffID.Slow, 120); //Vanity slows down
             if (storedItem.buffType != 0) target.AddBuff(storedItem.buffType, 120); //Why not
             //More?
         }
+
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //Draws the stored item's texture as the projectile's
         {

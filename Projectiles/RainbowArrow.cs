@@ -131,7 +131,7 @@ namespace Virtuous.Projectiles
             {
                 const int ArrowAmount = 30;
                 float arrowSpacing = projectile.width * 6f;
-                float nextColor = Tools.RandomInt(12); //Starts the rainbow of arrows at a Tools.Random color
+                float nextColor = Tools.RandomInt(12); //Starts the rainbow of arrows at a random color
                 for(int i = 1; i <= ArrowAmount; i++)
                 {
                     Vector2 position = projectile.Center;
@@ -139,7 +139,7 @@ namespace Virtuous.Projectiles
                     position.Y += 120; //Distance below the original arrow
                     if (!Main.tile[(int)position.X/16,(int)position.Y/16].active() || !Main.tile[(int)position.X/16,(int)position.Y/16].nactive()) //Only spawns if it's open space
                     {
-                        Projectile.NewProjectile(position, Vector2.UnitY * projectile.velocity.Length(), mod.ProjectileType<RainbowArrow>(), projectile.damage, 0, projectile.owner, Rain, nextColor);
+                        Projectile.NewProjectile(position, new Vector2(0, projectile.velocity.Length()), mod.ProjectileType<RainbowArrow>(), projectile.damage, 0, projectile.owner, Rain, nextColor);
                     }
                     //Cycles through colors as the rainbow progresses
                     if (nextColor < 11) nextColor++;
