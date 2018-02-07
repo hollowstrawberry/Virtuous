@@ -97,8 +97,6 @@ namespace Virtuous.Projectiles
 
         public static bool IsDepletable(Item item) //Whether the specified item will be lost upon being shot
         {
-            Main.NewText(item.InternalName());
-
             if (item.type == ItemID.Gel || item.type == ItemID.FallenStar || (item.type >= ItemID.CopperCoin && item.type <= ItemID.PlatinumCoin)
                 || item.createTile > 0 || item.createWall > 0 || item.potion || item.healLife > 0 || item.healMana > 0 || item.buffType > 0
                 || item.InternalNameContains("BossBag", "TreasureBag")

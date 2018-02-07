@@ -11,7 +11,6 @@ namespace Virtuous.Sounds.Item
             soundInstance = sound.CreateInstance();
             soundInstance.Volume = volume * 1f;
             soundInstance.Pan = pan;
-            soundInstance.Pitch = -1.0f;
             return soundInstance;
         }
     }

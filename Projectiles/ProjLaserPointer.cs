@@ -13,6 +13,26 @@ namespace Virtuous.Projectiles
     {
         private static readonly List<int> eyeNPCs = new List<int>(new int[] { NPCID.Spazmatism, NPCID.Retinazer, NPCID.ServantofCthulhu });
 
+        public const ushort Red = 0, Green = 1, Blue = 3, Yellow = 4, Purple = 5, White = 6, Orange = 7;
+
+        private Color LaserColor
+        {
+            get
+            {
+                switch ((int)projectile.ai[0])
+                {
+                    default:     return Color.Red;
+                    case Green:  return new Color(0, 255, 0);
+                    case Blue:   return Color.Blue;
+                    case Yellow: return Color.Yellow;
+                    case Purple: return new Color(200, 0, 255);
+                    case White:  return Color.White;
+                    case Orange: return Color.OrangeRed;
+                }
+            }
+        }
+
+
         public override void SetDefaults()
         {
             projectile.friendly = false;
@@ -22,6 +42,7 @@ namespace Virtuous.Projectiles
             projectile.ignoreWater = true;
             projectile.width = 2;
             projectile.height = 2;
+            projectile.netImportant = true;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -30,11 +51,11 @@ namespace Virtuous.Projectiles
 
             Texture2D texture = Main.projectileTexture[projectile.type]; //The dot which composes the line
             Rectangle drawRect = new Rectangle((int)Math.Round(projectile.Center.X - Main.screenPosition.X), (int)Math.Round(projectile.Center.Y - Main.screenPosition.Y), (int)Math.Round((endPoint - projectile.Center).Length()), projectile.width); //Where the line will be from corner to corner
-            Color drawLight = Color.White; //Fullbright
+            Color drawColor = LaserColor;
             float drawRotation = projectile.velocity.ToRotation(); //Direction of the line
             Vector2 drawOrigin = new Vector2(projectile.width / 2, projectile.height / 2);
 
-            spriteBatch.Draw(texture, drawRect, null, drawLight, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(texture, drawRect, null, drawColor, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
 
             OtherFunEffects(endPoint);
 

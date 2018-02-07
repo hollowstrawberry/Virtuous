@@ -67,6 +67,10 @@ namespace Virtuous
                 case NPCID.MoonLordCore:     dropType = mod.ItemType<TheGobbler>(); break;
                 case NPCID.PirateCaptain:
                 case NPCID.PirateShip:       if(Tools.OneIn(10)) dropType = mod.ItemType<Orbitals.LuckyBreak_Item>(); break;
+                case NPCID.TheDestroyer:
+                case NPCID.Retinazer:
+                case NPCID.Spazmatism:
+                case NPCID.SkeletronPrime:   if (Tools.OneIn(6)) dropType = mod.ItemType<Orbitals.EnergyCrystal_Item>(); break;
             }
 
             if (dropType != ItemID.None) Item.NewItem(npc.Center, dropType, dropAmount);

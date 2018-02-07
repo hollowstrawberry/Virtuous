@@ -113,10 +113,10 @@ namespace Virtuous.Projectiles
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //Trail
         {
-            Vector2 drawOrigin = new Vector2(Main.projectileTexture[projectile.type].Width * 0.5f, projectile.height * 0.5f);
+            Vector2 drawOrigin = new Vector2(Main.projectileTexture[projectile.type].Width * 0.5f, projectile.height * 0.5f) + new Vector2(drawOffsetX, 0);
             for (int i = 0; i < projectile.oldPos.Length; i++)
             {
-                Vector2 drawPos = projectile.oldPos[i] - Main.screenPosition + drawOrigin + new Vector2(0f, projectile.gfxOffY);
+                Vector2 drawPos = projectile.oldPos[i] - Main.screenPosition + drawOrigin + new Vector2(0, projectile.gfxOffY);
                 Color color = projectile.GetAlpha(lightColor) * 0.8f * ((float)(projectile.oldPos.Length - i) / (float)projectile.oldPos.Length);
                 spriteBatch.Draw(Main.projectileTexture[projectile.type], drawPos, null, color, projectile.rotation, drawOrigin, projectile.scale, SpriteEffects.None, 0f);
             }

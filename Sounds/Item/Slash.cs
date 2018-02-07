@@ -9,9 +9,9 @@ namespace Virtuous.Sounds.Item
         public override SoundEffectInstance PlaySound(ref SoundEffectInstance soundInstance, float volume, float pan, SoundType type)
         {
             soundInstance = sound.CreateInstance();
-            soundInstance.Volume = volume * 0.06f;
+            soundInstance.Volume = volume * 0.1f;
             soundInstance.Pan = pan;
-            soundInstance.Pitch = -1.0f;
+            soundInstance.Pitch = -0.25f;
             return soundInstance;
         }
     }

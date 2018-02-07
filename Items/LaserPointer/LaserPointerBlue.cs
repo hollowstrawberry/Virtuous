@@ -3,10 +3,11 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Virtuous.Projectiles;
 
-namespace Virtuous.Items
+namespace Virtuous.Items.LaserPointer
 {
-    class LaserPointer : ModItem
+    class LaserPointerBlue : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -32,11 +33,18 @@ namespace Virtuous.Items
             return null;
         }
 
+        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+            Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI, ProjLaserPointer.Blue);
+            return false;
+        }
+
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddRecipeGroup("IronBar", 2);
             recipe.AddIngredient(ItemID.Wire, 1);
+            recipe.AddIngredient(ItemID.SapphireGemsparkBlock, 1);
             recipe.AddTile(TileID.WorkBenches);
             recipe.SetResult(this);
             recipe.AddRecipe();

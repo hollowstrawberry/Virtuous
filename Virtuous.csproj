@@ -61,7 +61,13 @@
     <Compile Include=".\Items\EtherSlit.cs" />
     <Compile Include=".\Items\Fireplower.cs" />
     <Compile Include=".\Items\FlurryNova.cs" />
-    <Compile Include=".\Items\LaserPointer.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerGreen.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerOrange.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerYellow.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerPurple.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerWhite.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerBlue.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointer.cs" />
     <Compile Include=".\Items\LionsMane.cs" />
     <Compile Include=".\Items\RainBow.cs" />
     <Compile Include=".\Items\StaffOfFlinging.cs" />
@@ -127,7 +133,10 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\terraria\Terraria.exe</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="build.txt" />
+    <Content Include="description.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>robocopy "$(ProjectDir) " "%25USERPROFILE%25\Documents\My Games\Terraria\ModLoader\Mod Sources\Virtuous\ " * /MIR /IS /XF *.user *.sln .gitignore /XD _misc obj .vs .git

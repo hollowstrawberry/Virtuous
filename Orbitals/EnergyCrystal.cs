@@ -28,8 +28,8 @@ namespace Virtuous.Orbitals
             duration = 30 * 60;
             amount = 5;
 
-            item.width = 30;
-            item.height = 30;
+            item.width = 18;
+            item.height = 32;
             item.damage = 55;
             item.knockBack = 2f;
             item.mana = 40;
