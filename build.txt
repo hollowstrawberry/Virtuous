@@ -1,7 +1,7 @@
 author = Samrux
-version = 1.1
+version = 1.1.0.1
 displayName = Virtuous Weapon Pack
-homepage = https://discord.gg/ymCRQZr
+homepage = https://forums.terraria.org/index.php?threads/virtuous-weapon-pack.63784
 buildIgnore = *.csproj, *.user, *.sln, *.pdn, _misc\*, .vs\*, .git\*
 languageVersion = 6
 includePDB = false

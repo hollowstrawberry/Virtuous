@@ -42,7 +42,7 @@ namespace Virtuous.Orbitals
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ItemID.TatteredCloth, 1);
-            recipe.AddTile(TileID.Bookcases);
+            recipe.AddTile(TileID.Books);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
