@@ -146,13 +146,13 @@ namespace Virtuous.Orbitals
                 {
                     SetDistance(BaseDistance);
                     oscillationSpeed = ShuffleSpeed;
-                    direction = Tools.Inwards;
+                    direction = Inwards;
                 }
 
                 else if (specialFunctionTimer == CycleTime - ShuffleTime / 2) //Middlepoint of the motion
                 {
                     ShuffleCard();
-                    direction = Tools.Outwards;
+                    direction = Outwards;
                 }
 
                 else if (specialFunctionTimer == CycleTime) //Last tick

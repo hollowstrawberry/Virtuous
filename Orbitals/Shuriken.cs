@@ -89,7 +89,7 @@ namespace Virtuous.Orbitals
                 for (int i = 0; i < 10; i++)
                 {
                     Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/74, 0f, 0f, /*Alpha*/150, new Color(50, 255, 100, 150), /*Scale*/1.5f);
-                    newDust.velocity += relativePosition.Perpendicular(10, Tools.CounterClockwise); //Tangent linear velocity to the angular velocity
+                    newDust.velocity += relativePosition.Perpendicular(10, clockwise: false); //Tangent linear velocity to the angular velocity
                 }
             }
         }

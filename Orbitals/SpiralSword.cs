@@ -130,7 +130,7 @@ namespace Virtuous.Orbitals
         {
             if (specialFunctionTimer == 0) //First tick
             {
-                direction = Tools.Outwards;
+                direction = Outwards;
                 SetDistance(BaseDistance);
                 projectile.idStaticNPCHitCooldown = 5; //Deals damage more rapidly
                 projectile.netUpdate = true; //Sync to multiplayer
@@ -143,9 +143,9 @@ namespace Virtuous.Orbitals
 
             if (relativeDistance >= SpecialDistance) //If it has reached the set maximum distance for the throw
             {
-                direction = Tools.Inwards; //Return
+                direction = Inwards; //Return
             }
-            else if (direction == Tools.Inwards && relativeDistance <= BaseDistance) //If it has returned to the passive zone
+            else if (direction == Inwards && relativeDistance <= BaseDistance) //If it has returned to the passive zone
             {
                 orbitalPlayer.specialFunctionActive = false;
                 projectile.netUpdate = true; //Sync to multiplayer

@@ -47,6 +47,8 @@ namespace Virtuous
         public virtual bool isDying => (Main.myPlayer == projectile.owner && DyingTime > 0 && orbitalPlayer.time <= DyingTime); //Whether to treat this projectile as in dying mode
         public virtual bool isDoingSpecial => (Main.myPlayer == projectile.owner && orbitalPlayer.specialFunctionActive && !isDying); //Whether to run the special effect method or not
 
+        //Constants
+        public const bool Outwards = true, Inwards = false; //Direction
 
 
         //Utility methods
@@ -68,7 +70,7 @@ namespace Virtuous
             SetDistance(relativeDistance + distance);
         }
 
-        public static OrbitalProjectile FindFirstOrbital(Mod mod, Player player, int id = OrbitalID.None) //Returns the first orbital found for the given player and type
+        public static OrbitalProjectile FindFirst(Mod mod, Player player, int id = OrbitalID.None) //Returns the first orbital found for the given player and type
         {
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -86,7 +88,7 @@ namespace Virtuous
 
 
 
-
+        //Defaults
         public virtual void SetOrbitalDefaults()
         {
         }
@@ -131,8 +133,8 @@ namespace Virtuous
         {
             if (OscillationSpeedMax != 0) //Oscillation
             {
-                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Tools.Inwards;  //If it has reached the outwards speed limit, begin to switch direction
-                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Tools.Outwards; //If it has reached the inwards speed limit, begin to switch direction
+                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  //If it has reached the outwards speed limit, begin to switch direction
+                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards; //If it has reached the inwards speed limit, begin to switch direction
                 oscillationSpeed += OscillationAcc * (direction ? +1 : -1); //Accelerate in the corresponding direction
                 AddDistance(oscillationSpeed);
             }

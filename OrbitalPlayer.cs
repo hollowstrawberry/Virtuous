@@ -59,7 +59,7 @@ namespace Virtuous
             {
                 if (active[type])
                 {
-                    OrbitalProjectile orbital = OrbitalProjectile.FindFirstOrbital(mod, player, type);
+                    OrbitalProjectile orbital = OrbitalProjectile.FindFirst(mod, player, type);
                     if (orbital != null) orbital.PlayerEffects();
                 }
             }

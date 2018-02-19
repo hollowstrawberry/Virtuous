@@ -19,11 +19,6 @@ namespace Virtuous
         public const float RevolutionPerSecond = FullCircle / 60;
         public const float GoldenRatio = 1.61803398875f;
 
-        public const bool Clockwise = true;
-        public const bool CounterClockwise = false;
-        public const bool Outwards = true;
-        public const bool Inwards = false;
-
 
         //Game objects
 
