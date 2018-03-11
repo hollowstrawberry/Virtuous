@@ -22,7 +22,6 @@ namespace Virtuous.Items
         }
 
         public const float DamageReduction = 0.2f; //This gets applied multiplicatevely at the end of the damage formula
-        public const bool  ExplosionCumulativeMode = false; //Makes explosions stack with each other with independent invincibility frames
         public const int   ExplosionDelay = 10; //Ticks before consecutive explosions can ocurr
         public const int   AoEInvincibility = 8; //How many invincibility frames enemies take when being hit by explosions
         public const int   DashTime = 30; //Time spent dashing

@@ -126,7 +126,7 @@ namespace Virtuous
 
         public static Vector2 RandomDirection(float length = 1)
         {
-            return Vector2.UnitY.RotatedByRandom(Tools.FullCircle).OfLength(length);
+            return Vector2.UnitY.RotatedByRandom(FullCircle).OfLength(length);
         }
 
         public static bool OneIn(int integer) //Returns true with a 1/<integer> chance

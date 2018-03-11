@@ -25,16 +25,10 @@ namespace Virtuous.Projectiles
             projectile.alpha = 255; //Transparent
             projectile.timeLeft = 10;
 
-            if (TitanShield.ExplosionCumulativeMode)
-            {
-                projectile.usesLocalNPCImmunity = true; //Invincibility per individual projectile
-                projectile.localNPCHitCooldown = TitanShield.AoEInvincibility;
-            }
-            else
-            {
-                projectile.usesIDStaticNPCImmunity = true; //Invincibility per projectile type
-                projectile.idStaticNPCHitCooldown = TitanShield.AoEInvincibility;
-            }
+            //projectile.usesLocalNPCImmunity = true; //Invincibility per individual projectile
+            //projectile.localNPCHitCooldown = TitanShield.AoEInvincibility;
+            projectile.usesIDStaticNPCImmunity = true; //Invincibility per projectile type
+            projectile.idStaticNPCHitCooldown = TitanShield.AoEInvincibility;
         }
 
         public override void AI()
