@@ -38,9 +38,9 @@ namespace Virtuous.Projectiles
                 firstTick = false;
                 for(int i = 0; i < 25; i++)
                 {
-                    Vector2 gorePosition = projectile.position + new Vector2(Tools.RandomFloat(projectile.width / 2), Tools.RandomFloat(projectile.height / 2));
-                    Gore.NewGore(gorePosition, new Vector2(1, 1), Tools.RandomInt(61, 63), Tools.RandomFloat(0.2f, 1.5f));
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), Tools.RandomFloat(2f));
+                    Vector2 gorePosition = projectile.position + new Vector2(Main.rand.NextFloat(projectile.width / 2), Main.rand.NextFloat(projectile.height / 2));
+                    Gore.NewGore(gorePosition, new Vector2(1, 1), Main.rand.Next(61, 64), Main.rand.NextFloat(0.2f, 1.5f));
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, /*Type*/31, 0f, 0f, /*Alpha*/0, default(Color), Main.rand.NextFloat(2f));
                 }
             }
         }

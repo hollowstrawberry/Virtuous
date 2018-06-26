@@ -290,7 +290,7 @@ namespace Virtuous.Items
 
                         Main.PlaySound(SoundID.Item5, position);
 
-                        bool consume = Tools.RandomFloat() < ConsumeChance(modPlayer.GobblerItem(BaseSlot));
+                        bool consume = Main.rand.NextFloat() < ConsumeChance(modPlayer.GobblerItem(BaseSlot));
 
                         if (shotItem.ammo == AmmoID.Arrow)  //Arrows are shot just fine
                         {
@@ -308,7 +308,7 @@ namespace Virtuous.Items
                             {
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY) * Tools.RandomFloat(), type, damage, knockBack, player.whoAmI, 0f, itemType);
+                                    Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY) * Main.rand.NextFloat(), type, damage, knockBack, player.whoAmI, 0f, itemType);
                                 }
                             }
                         }
@@ -341,7 +341,7 @@ namespace Virtuous.Items
 
         public override Vector2? HoldoutOffset()
         {
-            return new Vector2(Tools.RandomFloat(0, 2), Tools.RandomFloat(-8, -6)); //Shakes
+            return new Vector2(Main.rand.NextFloat(0, 2), Main.rand.NextFloat(-8, -6)); //Shakes
         }
     }
 }

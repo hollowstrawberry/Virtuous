@@ -18,7 +18,7 @@ namespace Virtuous.Projectiles
         private int State
         {
             get { return (int)projectile.ai[1]; }
-            set { projectile.ai[1] = (int)value; }
+            set { projectile.ai[1] = value; }
         }
 
         private int Target => (int)projectile.ai[0];
@@ -65,7 +65,7 @@ namespace Virtuous.Projectiles
             {
                 case Tracking:
                     projectile.alpha -= 8; //Fades in
-                    float speed = BaseSpeed + (MaxSpeed - BaseSpeed) * (1 - ((float)projectile.timeLeft / StateTime[State]));
+                    float speed = BaseSpeed + (MaxSpeed - BaseSpeed) * (1 - ((float)projectile.timeLeft / StateTime[State])); //Speeds up
                     projectile.velocity = relativePosition.OfLength(Math.Min(relativePosition.Length(), speed)); //Homes on target
                     break;
 
@@ -88,7 +88,7 @@ namespace Virtuous.Projectiles
                 case GoingDown:
                     projectile.friendly = false; //Doesn't damage enemies anymore
                     projectile.alpha += 12; //Fades out
-                    vOffset = new Vector2(0, -(projectile.timeLeft) * MaxVerticalOffset / (StateTime[State]));
+                    vOffset = new Vector2(0, -projectile.timeLeft * MaxVerticalOffset / StateTime[State]);
                     projectile.Center = targetCenter + vOffset;
                     break;
             }

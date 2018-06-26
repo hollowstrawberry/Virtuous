@@ -52,16 +52,21 @@ namespace Virtuous.Items
             Vector2 basePosition = player.Center + new Vector2(-player.direction * (Main.screenWidth / 2), -(Main.screenHeight / 2 + 100)); //Off the corner of the screen
             Vector2 baseVelocity = (Main.MouseWorld - basePosition).OfLength(item.shootSpeed); //Direction and speed of all the arrows
 
-            int projAmount = Tools.RandomInt(2, 5);
+            int projAmount = Main.rand.Next(2, 6);
             for (int i = 0; i < projAmount; i++)
             {
-                int newType = Tools.CoinFlip() ? type : mod.ProjectileType<WarArrow>(); //Arrows can be either the shot type or the special type
+                int newType = Main.rand.OneIn(2) ? type : mod.ProjectileType<WarArrow>(); //Arrows can be either the shot type or the special type
 
-                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Tools.RandomInt(150), Tools.CoinFlip()); //Random offset in either direction
+                float velocityRotation; //Adjustment for accuracy
+                switch (newType)
+                {
+                    case ProjectileID.JestersArrow: velocityRotation = 0; break;
+                    case ProjectileID.HolyArrow:    velocityRotation = 7.ToRadians(); break;
+                    default:                        velocityRotation = 10.ToRadians(); break;
+                }
 
-                Vector2 newVelocity = baseVelocity;
-                if (newType == ProjectileID.HolyArrow) newVelocity = baseVelocity.RotatedBy(-7.ToRadians() * player.direction); //Adjustment for accuracy
-                else if (newType != ProjectileID.JestersArrow) newVelocity = baseVelocity.RotatedBy(-10.ToRadians() * player.direction); //Adjustment for accuracy
+                Vector2 newVelocity = baseVelocity.RotatedBy(velocityRotation * -player.direction);
+                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Main.rand.Next(150), Main.rand.OneIn(2)); //Random offset in either direction
 
                 Projectile newProj = Projectile.NewProjectileDirect(newPosition, newVelocity, newType, damage, knockBack, player.whoAmI);
                 newProj.tileCollide = false; //These arrows won't collide with tiles until we make them
@@ -75,7 +80,7 @@ namespace Virtuous.Items
 
             Main.PlaySound(SoundID.Item5, basePosition);
 
-            //if (player.itemAnimation >= item.useAnimation - item.useTime) //If I wanted to make it shoot regular arrows as well
+            //if (player.itemAnimation >= item.useAnimation - item.useTime) //If I wanted to make it shoot arrows normally as well
             //{
             //    Main.PlaySound(SoundID.Item5, position);
             //    return true;

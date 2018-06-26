@@ -44,16 +44,16 @@ namespace Virtuous.Projectiles
                 projectile.velocity = projectile.velocity.OfLength(ShootSpeed) + Main.player[projectile.owner].velocity; //Sets the defined speed, follows the player's movement
 
                 const float DustAmount = 16f;
-                for (int i = 0; i < DustAmount; i++) //We create 16 dusts in an ellipse
+                for (int i = 0; i < DustAmount; i++)
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / DustAmount); //Divides a circle into a set amount of points and picks the current one in the loop
-                    rotation *= new Vector2(1, 4); // Multiplies the point by a vertical squish factor so the circle becomes an ellipse
-                    rotation = rotation.RotatedBy(projectile.rotation); //Rotates the resulting ellipse point to align with the projectile's rotation
-                    Vector2 position = projectile.Center + rotation; //The final position of the dust
+                    Vector2 offset = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / DustAmount) * new Vector2(1, 4); // Ellipse of dust
+                    offset = offset.RotatedBy(projectile.rotation); //Rotates the resulting ellipse point to align with the projectile's rotation
+
+                    Vector2 position = projectile.Center + offset;
                     position.X -= 10 * Main.player[projectile.owner].direction; //This line needs to change if needed to work with multidirectional fists
 
                     Dust newDust = Dust.NewDustDirect(position, 0, 0, /*Type*/127, 0f, 0f, /*Alpha*/0, new Color(255, 255, 0), /*Scale*/2.0f);
-                    newDust.velocity = rotation.Normalized(); //Shoots outwards
+                    newDust.velocity = offset.Normalized(); //Shoots outwards
                     newDust.noGravity = true;
                 }
             }

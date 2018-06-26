@@ -84,7 +84,7 @@ namespace Virtuous.Projectiles
                 if (!target.noTileCollide && target.knockBackResist != 1 && !IsFlying(target)) //If it's applicable for fall damage
                 {
                     modtarget.fallDamage = 1; //Initiates the fall damage counter
-                    modtarget.startedFalling = false; //Resets any previous fall damage data
+                    modtarget.alreadyStartedFalling = false; //Resets any previous fall damage data
                 }
 
                 target.velocity += new Vector2(0, -originalKnockback); //Lifts the enemy into the air

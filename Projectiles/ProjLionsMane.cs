@@ -87,7 +87,7 @@ namespace Virtuous.Projectiles
             for (int i = 0; i < dustAmount; i++)
             {
                 Dust newDust;
-                switch (Tools.RandomInt(4))
+                switch (Main.rand.Next(4))
                 {
                     case 0:
                         newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Fire, 0f, 0f, projectile.alpha, default(Color), 0.5f);
@@ -114,7 +114,7 @@ namespace Virtuous.Projectiles
         {
             //for (int i = 0; i < 10; i++)
             //{
-            //    Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), Tools.RandomFloat(2f, 3f));
+            //    Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), Main.rand.NextFloat(2f, 3f));
             //    newDust.noGravity = true;
             //}
         }

@@ -37,10 +37,10 @@ namespace Virtuous.Projectiles
             {
                 for (int i = 0; i < Main.maxProjectiles; i++) //Loops through all projectiles
                 {
-                    Projectile proj = Main.projectile[i];
-                    if (proj.owner == projectile.owner && proj.arrow && proj.Center.Y >= projectile.Center.Y && proj.Center.Y >= CollidePositionY)
+                    Projectile p = Main.projectile[i];
+                    if (p.owner == projectile.owner && p.arrow && p.Center.Y >= projectile.Center.Y && p.Center.Y >= CollidePositionY)
                     {
-                        proj.tileCollide = true; //Causes all the arrows below this one to start colliding if they are also below the player's vertical position when this arrow was shot
+                        p.tileCollide = true; //Causes all the arrows below this one to start colliding if they are also below the player's vertical position when this arrow was shot
                     }
                 }
                 projectile.netUpdate = true;

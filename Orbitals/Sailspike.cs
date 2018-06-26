@@ -99,11 +99,11 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 2;
+            if (IsDying) damage *= 2;
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 2;
+            if (IsDying) damage *= 2;
         }
 
         public override Color? GetAlpha(Color newColor)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -27,7 +27,7 @@ namespace Virtuous.Orbitals
             type = OrbitalID.SacDagger;
             duration = 20 * 60;
             amount = 2;
-            specialFunctionType = SpecialReuse; //This makes the orbital's special function activate after using the item again
+            specialType = SpecialType.Reuse; //This makes the orbital's special function activate after using the item again
 
             item.width = 30;
             item.height = 30;
@@ -45,7 +45,7 @@ namespace Virtuous.Orbitals
 
         public override bool CanUseItem(Player player)
         {
-            OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
+            var orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
             if (orbitalPlayer.active[this.type]) //If there is a dagger active
             {
@@ -111,7 +111,7 @@ namespace Virtuous.Orbitals
             }
             else if (Math.Abs(specialFunctionTimer) == SpecialSpinTime - 1) //Last tick
             {
-                orbitalPlayer.specialFunctionActive = false; //Turns off the special effect for all daggers
+                orbitalPlayer.SpecialFunctionActive = false; //Turns off the special effect for all daggers
                 projectile.netUpdate = true; //Syncs to multiplayer
             }
             
@@ -131,13 +131,13 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 3;
-            else if (isDoingSpecial) damage = (int)(damage * 1.5f);
+            if (IsDying) damage *= 3;
+            else if (IsDoingSpecial) damage = (int)(damage * 1.5f);
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 3;
-            else if (isDoingSpecial) damage = (int)(damage * 1.5f);
+            if (IsDying) damage *= 3;
+            else if (IsDoingSpecial) damage = (int)(damage * 1.5f);
         }
 
         private void LifeSteal(Vector2 position, int damage) //Spawns vampire heal projectiles
@@ -161,7 +161,7 @@ namespace Virtuous.Orbitals
 
         public override bool? CanCutTiles()
         {
-            return (isDying || isDoingSpecial); //Only while actively attacking
+            return (IsDying || IsDoingSpecial); //Only while actively attacking
         }
 
         public override Color? GetAlpha(Color newColor)

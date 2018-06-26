@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -27,7 +27,7 @@ namespace Virtuous.Orbitals
             type = OrbitalID.SpiralSword;
             duration = 40 * 60;
             amount = 8;
-            specialFunctionType = SpecialRightClick; //Makes the orbital's special function activate with right click
+            specialType = SpecialType.RightClick; //Makes the orbital's special function activate with right click
 
             item.width = 30;
             item.height = 30;
@@ -147,7 +147,7 @@ namespace Virtuous.Orbitals
             }
             else if (direction == Inwards && relativeDistance <= BaseDistance) //If it has returned to the passive zone
             {
-                orbitalPlayer.specialFunctionActive = false;
+                orbitalPlayer.SpecialFunctionActive = false;
                 projectile.netUpdate = true; //Sync to multiplayer
 
                 //Resets to passive behavior
@@ -166,18 +166,18 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 5;
-            else if (isDoingSpecial) damage *= 2;
+            if (IsDying) damage *= 5;
+            else if (IsDoingSpecial) damage *= 2;
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 5;
-            else if (isDoingSpecial) damage *= 2;
+            if (IsDying) damage *= 5;
+            else if (IsDoingSpecial) damage *= 2;
         }
 
         public override bool? CanCutTiles()
         {
-            return (isDying || isDoingSpecial); //Only while actively attacking
+            return (IsDying || IsDoingSpecial); //Only while actively attacking
         }
 
         public override Color? GetAlpha(Color newColor)

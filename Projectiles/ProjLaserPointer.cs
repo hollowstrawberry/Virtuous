@@ -75,7 +75,7 @@ namespace Virtuous.Projectiles
                 {
                     if (Main.npc[i].active && Main.npc[i].Hitbox.Contains((int)endPoint.X, (int)endPoint.Y))
                     {
-                        if (eyeNPCs.Contains(Main.npc[i].type) || Main.npc[i].InternalNameContains("eye")) Main.npc[i].StrikeNPC(10, 0, 0); //Hurts eyes
+                        if (eyeNPCs.Contains(Main.npc[i].type) || Main.npc[i].InternalNameHas("eye")) Main.npc[i].StrikeNPC(10, 0, 0); //Hurts eyes
                         return endPoint;
                     }
                 }

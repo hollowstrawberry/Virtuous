@@ -53,7 +53,7 @@ namespace Virtuous.Orbitals
         public override float OscillationAcc => OscillationSpeedMax / 20;
         public override float DyingSpeed => 20;
 
-        public override bool isDoingSpecial => true; //Always keeps increasing specialFunctionTimer
+        public override bool IsDoingSpecial => true; //Always keeps increasing specialFunctionTimer
 
         private const int _BaseDistance = 65;
         private const int CycleTime = 7 * 60; //Time between shuffles
@@ -81,13 +81,13 @@ namespace Virtuous.Orbitals
 
         private void ShuffleCard()
         {
-            projectile.frame = Tools.RandomInt(Main.projFrames[projectile.type]);
+            projectile.frame = Main.rand.Next(Main.projFrames[projectile.type]);
         }
 
         public override void PlayerEffects()
         {
             //Shuffle sound
-            if (!isFirstTick && specialFunctionTimer == CycleTime - ShuffleTime / 2)
+            if (!IsFirstTick && specialFunctionTimer == CycleTime - ShuffleTime / 2)
             {
                 Main.PlaySound(18, player.Center);
             }
@@ -135,7 +135,7 @@ namespace Virtuous.Orbitals
 
         public override bool PreMovement()
         {
-            return !isDying;
+            return !IsDying;
         }
 
         public override void Movement()
@@ -183,18 +183,18 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 7;
+            if (IsDying) damage *= 7;
 
             if (projectile.frame == Diamonds && target.lifeMax > 5 && !target.immortal)
             {
                 target.AddBuff(BuffID.Midas, 7 * 60);
-                int newItem = Item.NewItem(target.position, target.width, target.height, (Tools.OneIn(10) ? (Tools.OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin), Tools.RandomInt(3, 15));
+                int newItem = Item.NewItem(target.position, target.width, target.height, (Main.rand.OneIn(10) ? (Main.rand.OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin), Main.rand.Next(3, 16));
                 if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem); //Syncs to multiplayer
             }
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 7;
+            if (IsDying) damage *= 7;
         }
 
         public override Color? GetAlpha(Color lightColor)

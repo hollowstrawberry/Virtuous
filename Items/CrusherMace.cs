@@ -43,7 +43,7 @@ namespace Virtuous.Items
             int type = mod.ProjectileType<ProjCrusherPillar>();
             int offset = ProjCrusherPillar.TargetDistance; //How far from the target the pillars should spawn
             float shootSpeed = !crit ? 5 : 10; //Pillars crush twice as fast if it's a critical hit
-            int appearance = Tools.RandomInt(Main.projFrames[type]);
+            int appearance = Main.rand.Next(Main.projFrames[type]);
 
             Projectile.NewProjectile(new Vector2(target.Center.X+offset, target.Center.Y), new Vector2(-shootSpeed, 0f), type, damage * 2, knockBack*0f, player.whoAmI, appearance, crit ? 1 : 0); //Right pillar
             Projectile.NewProjectile(new Vector2(target.Center.X-offset, target.Center.Y), new Vector2(+shootSpeed, 0f), type, damage * 2, knockBack*0f, player.whoAmI, appearance, crit ? 1 : 0); //Left pillar

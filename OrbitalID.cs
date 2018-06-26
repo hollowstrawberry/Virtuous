@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
@@ -9,7 +9,7 @@ using Virtuous.Orbitals;
 namespace Virtuous
 {
     /*
-     * These get used to manage the player's active orbitals, as well as controlling which items and projectiles are associated.
+     * These are used to manage the player's active orbitals, as well as controlling which items and projectiles are associated.
      * The orbitals must have individual orbital IDs, starting at 0 and being consecutive.
      */
 
@@ -32,10 +32,11 @@ namespace Virtuous
         public const int GelCube        = 13;
 
 
-        public static OrbitalProjectile[] Orbital = CreateOrbitalArray(); //Allows me to access the properties of an orbital type whose orbital ID is the index of the array
+        // Allows me to access the properties of an orbital type whose orbital ID is the index of the array
+        public static readonly OrbitalProjectile[] Orbital = CreateOrbitalArray();
 
 
-        public static int OrbitalProjectileType(this Mod mod, int id) //Returns the projectile type for the given orbital ID
+        public static int OrbitalProjectileType(this Mod mod, int id) // Returns the projectile type for the given orbital ID
         {
             return mod.ProjectileType(Orbital[id].GetType().Name);
         }
@@ -43,23 +44,24 @@ namespace Virtuous
 
         private static OrbitalProjectile[] CreateOrbitalArray()
         {
-            List<OrbitalProjectile> orbitals = new List<OrbitalProjectile>(); //Create a list to manipulate before sending the final array
+            var orbitals = new List<OrbitalProjectile>(); // Create a list to manipulate before sending the final array
 
-            //Obtain all subtypes of OrbitalProjectile
-            foreach (Type type in Assembly.GetAssembly(typeof(OrbitalProjectile)).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(OrbitalProjectile))))
+            // Obtain all subtypes of OrbitalProjectile
+            var types = Assembly.GetAssembly(typeof(OrbitalProjectile)).GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(OrbitalProjectile)));
+
+            // Make empty orbitals then sort them by ID
+            orbitals.AddRange(types.Select(type => Activator.CreateInstance<OrbitalProjectile>()));
+            orbitals = orbitals.OrderBy(orbital => orbital.Type).ToList();
+
+            // Makes sure the list has a one-to-one correspondence
+            if (Enumerable.Range(0, orbitals.Count).Any(i => orbitals[i].Type != i))
             {
-                orbitals.Add((OrbitalProjectile)Activator.CreateInstance(type));
+                throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. " +
+                                    "Valid IDs are positive and consecutive.");
             }
 
-            orbitals = orbitals.OrderBy(orbital => orbital.Type).ToList(); //Sorts the orbitals by Orbital ID
-
-            //Makes sure the list has a one-to-one correspondence
-            for (int i = 0; i < orbitals.Count; i++)
-            {
-                if (orbitals[i].Type != i) throw new Exception($"Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. Valid IDs must start at 0 and be consecutive. The ID that caused the error is {orbitals[i].Type}");
-            }
-
-            return orbitals.ToArray(); //Return the final array
+            return orbitals.ToArray(); // Return the final array
         }
     }
 }

@@ -1,43 +1,41 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
 
-
 namespace Virtuous
 {
     public class OrbitalPlayer : ModPlayer
     {
-        public int time = 0; //Time left, in ticks, of an orbital summon. 0 is inactive
+        public int time; // Time left, in ticks, of an orbital summon. 0 is inactive
         public bool[] active = new bool[OrbitalID.Orbital.Length];
+        public float damageBuffFromOrbitals; // Set every tick by active orbitals
+        public float durationMultiplier = 1f;
+        public float damageMultiplier = 1f;
+        public bool accessoryPermanent;
 
-        private bool[] specialFunction = new bool[2];
-        private const int IsOn = 0; //specialFunction[0] controls whether the special is active or not
-        private const int SafeTurnOff = 1; //specialFunction[1] safely signals the player to itself turn off the special in ResetEffects. Without this protection, orbitals could desync and interfere with one another in their behavior
-        public bool specialFunctionActive
+        private bool specialFunction;
+        private bool specialFunctionTurnOff;
+
+        public bool SpecialFunctionActive // Turning off is handled by the player itself so that orbitals don't desync
         {
-            get { return specialFunction[IsOn]; }
+            get { return specialFunction; }
 
             set
             {
-                if (value) //Set to true
+                if (value) // When set to true
                 {
-                    if (!specialFunction[SafeTurnOff]) specialFunction[IsOn] = true;
+                    if (!specialFunctionTurnOff) specialFunction = true;
                 }
-                else //Set to false
+                else // When set to false
                 {
-                    specialFunction[SafeTurnOff] = true;
+                    specialFunctionTurnOff = true;
                 }
             }
         }
 
-        public float damageBuffFromOrbitals = 0f; //Increased every tick by orbitals that don't want their damage buff to increase other orbitals' damage
-
-        public float durationMultiplier = 1f;
-        public float damageMultiplier = 1f;
-        public bool accessoryPermanent = false; //Orbitals last forever
 
 
         public int ModifiedOrbitalTime(OrbitalItem item)
@@ -45,11 +43,13 @@ namespace Virtuous
             return (int)(item.duration * durationMultiplier + OrbitalID.Orbital[item.type].DyingTime);
         }
 
-        public void ResetOrbitals() //Resets all active orbital data on the player, killing orbitals in the process
+
+        public void ResetOrbitals() // Resets all active orbital data for the player
         {
             time = 0;
-            specialFunction = new bool[2]; //Sets all to false
-            active = new bool[active.Length]; //Sets all to false
+            specialFunction = false;
+            specialFunctionTurnOff = false;
+            active = new bool[active.Length]; // Sets all to false
         }
 
 
@@ -59,12 +59,12 @@ namespace Virtuous
             {
                 if (active[type])
                 {
-                    OrbitalProjectile orbital = OrbitalProjectile.FindFirst(mod, player, type);
-                    if (orbital != null) orbital.PlayerEffects();
+                    OrbitalProjectile.FindFirst(mod, player, type)?.PlayerEffects();
                 }
             }
         }
         
+
         public override void ResetEffects()
         {
             if (time > 0) time--;
@@ -76,8 +76,13 @@ namespace Virtuous
             damageMultiplier   = 1f;
             accessoryPermanent = false;
 
-            if (specialFunction[SafeTurnOff]) specialFunction = new bool[2]; //Shuts down special effect
+            if (specialFunctionTurnOff)
+            {
+                specialFunction = false;
+                specialFunctionTurnOff = false;
+            }
         }
+
 
         public override void UpdateDead()
         {

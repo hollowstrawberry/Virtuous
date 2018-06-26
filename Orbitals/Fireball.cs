@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -24,7 +24,7 @@ namespace Virtuous.Orbitals
             type = OrbitalID.Fireball;
             duration = 20 * 60;
             amount = 1;
-            specialFunctionType = SpecialRightClick;
+            specialType = SpecialType.RightClick;
 
             item.width = 30;
             item.height = 30;
@@ -73,6 +73,20 @@ namespace Virtuous.Orbitals
             projectile.height = OriginalSize;
         }
 
+
+        private void MakeDust()
+        {
+            for (int i = 0; i < 7; i++) 
+            {
+                int dustType = Utils.SelectRandom(Main.rand, new int[] { DustID.Fire, DustID.SolarFlare, 158 });
+                Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, dustType, 0f, 0f, projectile.alpha, default(Color), 1f);
+                if (newDust.type == DustID.SolarFlare) newDust.scale = 1.5f;
+                else newDust.velocity *= 2;
+                newDust.noGravity = true;
+            }
+        }
+
+
         public override void FirstTick()
         {
             base.FirstTick();
@@ -84,53 +98,51 @@ namespace Virtuous.Orbitals
             }
         }
 
+
         public override bool PreMovement()
         {
             return true; //Always move even during special effect or death
         }
 
-        public override void PostMovement()
+
+        public override void Movement()
         {
-            for (int i = 0; i < 7; i++) //Dust
-            {
-                Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, Utils.SelectRandom<int>(Main.rand, new int[] { DustID.Fire, DustID.SolarFlare, 158 }), 0f, 0f, projectile.alpha, default(Color), 1f);
-                if (newDust.type == DustID.SolarFlare) newDust.scale = 1.5f;
-                else newDust.velocity *= 2;
-                newDust.noGravity = true;
-            }
+            base.Movement();
+            MakeDust();
         }
+
 
         public override void SpecialFunction()
         {
-            if (specialFunctionTimer == 0) //First tick
+            if (specialFunctionTimer == 0) // First tick
             {
                 Tools.ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize, true);
                 Main.PlaySound(SoundID.Item14, projectile.Center);
                 for (int i = 0; i < 6; i++)
                 {
-                    PostMovement(); //Dust
+                    MakeDust();
                     Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), 2.5f);
                     newDust.noGravity = true;
                 }
 
-                projectile.Damage(); //Damages enemies instantly
+                projectile.Damage(); // Damages enemies instantly
             }
-
-            else if (specialFunctionTimer > 4) //Last tick
+            else if (specialFunctionTimer >= 5) // Last tick
             {
                 Tools.ResizeProjectile(projectile.whoAmI, OriginalSize, OriginalSize, true);
-                orbitalPlayer.specialFunctionActive = false;
+                orbitalPlayer.SpecialFunctionActive = false;
             }
         }
 
-        public override void DyingFirstTick() //Nothing
+
+        public override void DyingFirstTick()
         {
         }
 
         public override void Dying()
         {
-            //Gains more orbiting speed
-            float extraRotationFactor = 7f * (DyingTime - projectile.timeLeft) / (float)DyingTime;
+            // Gains more orbiting speed
+            float extraRotationFactor = 7f * (DyingTime - projectile.timeLeft) / DyingTime;
             RotatePosition(OrbitingSpeed * extraRotationFactor);
             projectile.rotation += RotationSpeed * extraRotationFactor;
         }
@@ -138,12 +150,13 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying || isDoingSpecial) damage *= 2;
+            if (IsDying || IsDoingSpecial) damage *= 2;
             target.AddBuff(BuffID.OnFire, 5 * 60);
         }
+
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying || isDoingSpecial) damage *= 2;
+            if (IsDying || IsDoingSpecial) damage *= 2;
             target.AddBuff(BuffID.OnFire, 5 * 60);
         }
     }

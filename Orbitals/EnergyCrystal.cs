@@ -48,7 +48,7 @@ namespace Virtuous.Orbitals
         public override float BaseDistance => 70;
         public override float OrbitingSpeed => Tools.FullCircle / 5 / CycleMoveTime; //Moves a fifth of a circle over CycleMoveTime ticks
 
-        public override bool isDoingSpecial => true; //Always keeps increasing specialFunctionTimer
+        public override bool IsDoingSpecial => true; //Always keeps increasing specialFunctionTimer
 
         public const int CycleTime = 60; //Time between cycles
         public const int CycleMoveTime = 15; //Part of CycleTime where the crystals move
@@ -119,12 +119,12 @@ namespace Virtuous.Orbitals
 
             //Firing
             int fireChances = InOverdrive() ? 15 : 5; //How many times in a cycle it gets the chance to shoot
-            if (specialFunctionTimer % (CycleTime / fireChances) == 0 && Tools.OneIn(3))
+            if (specialFunctionTimer % (CycleTime / fireChances) == 0 && Main.rand.OneIn(3))
             {
                 NPC target = FindTarget();
                 if (target != null)
                 {
-                    Main.PlaySound(SoundID.Item12.WithVolume(0.5f).WithPitchVariance(Tools.RandomFloat(-0.2f, +0.2f)), projectile.Center);
+                    Main.PlaySound(SoundID.Item12.WithVolume(0.5f).WithPitchVariance(Main.rand.NextFloat(-0.2f, +0.2f)), projectile.Center);
                     Projectile.NewProjectileDirect(projectile.Center, (target.Center - projectile.Center).OfLength(10), ProjectileID.LaserMachinegunLaser, projectile.damage / 2, projectile.knockBack, projectile.owner);
                 }
             }
@@ -146,11 +146,11 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 2;
+            if (IsDying) damage *= 2;
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 2;
+            if (IsDying) damage *= 2;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) //Trail

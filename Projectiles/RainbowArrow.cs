@@ -69,7 +69,7 @@ namespace Virtuous.Projectiles
         {
             int type=0;
             float scale=0;
-            Vector2 velocity = Vector2.Zero; //Changed if we want the dust to have a special velocity
+            Vector2 velocity = Vector2.Zero;
 
             switch(arrowMode)
             {
@@ -87,7 +87,7 @@ namespace Virtuous.Projectiles
                 case Rain:
                     type = mod.DustType<RainbowDust>();
                     scale = Burst ? 1.5f : 1.2f; //Bigger size if it's a burst of dust
-                    if (!Burst) velocity = new Vector2(Tools.RandomFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is Tools.Random, Y follows the arrow
+                    if (!Burst) velocity = new Vector2(Main.rand.NextFloat(-0.25f, +0.25f), projectile.velocity.Length()/2); //X is random, Y follows the arrow
                     break;
             }
 
@@ -95,7 +95,7 @@ namespace Virtuous.Projectiles
             for (int i = 0; i < dustAmount; i++)
             {
                 Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, type, 0f, 0f, /*Alpha*/0, projectileColor, scale);
-                if (velocity != Vector2.Zero) newDust.velocity = velocity; //If a special velocity was defined, apply it
+                if (velocity != Vector2.Zero) newDust.velocity = velocity; //If a special velocity was set, apply it
                 if (arrowMode == Rain) newDust.position.Y -= projectile.height/2; //Trails behind
             }
         }
@@ -131,7 +131,7 @@ namespace Virtuous.Projectiles
             {
                 const int ArrowAmount = 30;
                 float arrowSpacing = projectile.width * 6f;
-                float nextColor = Tools.RandomInt(12); //Starts the rainbow of arrows at a random color
+                float nextColor = Main.rand.Next(12); //Starts the rainbow of arrows at a random color
                 for(int i = 1; i <= ArrowAmount; i++)
                 {
                     Vector2 position = projectile.Center;

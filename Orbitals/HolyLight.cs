@@ -67,10 +67,10 @@ namespace Virtuous.Orbitals
         {
             player.lifeRegen += 5;
 
-            if (Tools.OneIn(6))
+            if (Main.rand.OneIn(6))
             {
                 Dust newDust = Dust.NewDustDirect(player.Center, 0, 0, /*Type*/55, 0f, 0f, /*Alpha*/200, default(Color), /*Scale*/0.5f);
-                newDust.velocity = Tools.RandomDirection().OfLength(Tools.RandomFloat(4, 6)); //Random direction, random magnitude
+                newDust.velocity = Main.rand.NextVector2(4, 5); // Random direction, random magnitude
                 newDust.position -= newDust.velocity.OfLength(50f); //Sets the distance in a position where it will move towards the player
                 newDust.velocity += player.velocity; //Follows the player somewhat
                 newDust.noGravity = true;
@@ -84,7 +84,7 @@ namespace Virtuous.Orbitals
 
             for (int i = 0; i < 15; i++) //Dust
             {
-                Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/55, 0f, 0f, /*Alpha*/50, default(Color), Tools.RandomFloat(1.2f, 1.5f));
+                Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/55, 0f, 0f, /*Alpha*/50, default(Color), Main.rand.NextFloat(1.2f, 1.5f));
                 newDust.velocity *= 0.8f;
                 newDust.noLight = false;
                 newDust.noGravity = true;
@@ -116,18 +116,18 @@ namespace Virtuous.Orbitals
 
         public override void PostAll()
         {
-            if (isDying) Lighting.AddLight(projectile.Center, 2.0f, 2.0f, 1.2f);
+            if (IsDying) Lighting.AddLight(projectile.Center, 2.0f, 2.0f, 1.2f);
             else Lighting.AddLight(projectile.Center, 1.0f, 1.0f, 0.6f);
         }
 
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 3;
+            if (IsDying) damage *= 3;
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 3;
+            if (IsDying) damage *= 3;
         }
 
         public override Color? GetAlpha(Color newColor)

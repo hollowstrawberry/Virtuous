@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,20 +12,14 @@ namespace Virtuous
         public override bool InstancePerEntity => true;
         public override bool CloneNewInstances => true;
 
-        //Gobbler
+
+        // Gobbler
 
         public bool beingGobbled = false;
 
         public override bool CanPickup(Item item, Player player)
         {
-            if (beingGobbled) return false;
-
-            else return base.CanPickup(item, player);
-        }
-
-        public override void Update(Item item, ref float gravity, ref float maxFallSpeed)
-        {
-            base.Update(item, ref gravity, ref maxFallSpeed);
+            return beingGobbled ? false : base.CanPickup(item, player);
         }
     }
 }

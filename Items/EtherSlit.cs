@@ -87,7 +87,7 @@ namespace Virtuous.Items
         {
             for (int i = 0; i < 20; i++) //Makes 20 attempts at finding a projectile position that the player can reach. Gives up otherwise.
             {
-                position = player.MountedCenter + Tools.RandomDirection().OfLength(Tools.RandomInt(20, 60)); //Random rotation, random distance from the player
+                position = player.MountedCenter + Main.rand.NextVector2(20, 60); //Random rotation, random distance from the player
 
                 if (Collision.CanHit(player.MountedCenter, 0, 0, position, 0, 0)) break;
             }

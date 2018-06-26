@@ -5,9 +5,9 @@ using Terraria.ModLoader;
 
 namespace Virtuous
 {
-    class Virtuous : Mod
+    class VirtuousMod : Mod
     {
-        public Virtuous()
+        public VirtuousMod()
         {
             Properties = new ModProperties()
             {
@@ -17,10 +17,10 @@ namespace Virtuous
             };
         }
 
+
         public override void AddRecipeGroups()
         {
-            RecipeGroup wingsgroup = new RecipeGroup(() => "Any Wings", new int[]
-            {
+            RecipeGroup.RegisterGroup("Virtuous:Wings", new RecipeGroup(() => "Any Wings", new int[] {
                 ItemID.DemonWings,
                 ItemID.AngelWings,
                 ItemID.RedsWings,
@@ -56,24 +56,21 @@ namespace Virtuous
                 ItemID.LokisWings,
                 ItemID.BetsyWings,
                 ItemID.ArkhalisWings,
-                ItemID.LeinforsWings
-            });
-            RecipeGroup.RegisterGroup("Virtuous:Wings", wingsgroup);
+                ItemID.LeinforsWings,
+            }));
 
-            RecipeGroup celestialwingsgroup = new RecipeGroup(() => "Any Celestial Wings", new int[]
-            {
+            RecipeGroup.RegisterGroup("Virtuous:CelestialWings", new RecipeGroup(() => "Any Celestial Wings", new int[] {
                 ItemID.WingsSolar,
                 ItemID.WingsVortex,
                 ItemID.WingsNebula,
-                ItemID.WingsStardust
-            });
-            RecipeGroup.RegisterGroup("Virtuous:CelestialWings", celestialwingsgroup);
+                ItemID.WingsStardust,
+            }));
         }
 
 
-        public static void DontCrashMyGame() //The mere presence of this magical method stops a compiling error
+        public static void DontCrashMyGame() // The mere presence of this magical method stops a compiling error
         {
-            var thanks = System.Linq.Enumerable.Range(1, 10);
+            var thanks = Enumerable.Range(1, 10);
         }
     }
 }

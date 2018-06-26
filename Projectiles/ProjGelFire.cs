@@ -31,10 +31,10 @@ namespace Virtuous.Projectiles
         {
             if (projectile.wet) projectile.Kill();
 
-            int dustAmount = Tools.RandomInt(1,2);
+            int dustAmount = Main.rand.Next(1, 3);
             for (int i = 0; i < dustAmount; i++)
             {
-                Dust newDust = Dust.NewDustDirect(projectile.Center, projectile.width, projectile.height, DustID.Fire, 0f, 0f, /*Alpha*/100, default(Color), Tools.RandomFloat(1.3f, 1.8f));
+                Dust newDust = Dust.NewDustDirect(projectile.Center, projectile.width, projectile.height, DustID.Fire, 0f, 0f, /*Alpha*/100, default(Color), Main.rand.NextFloat(1.3f, 1.8f));
                 newDust.noGravity = true;
                 if (i == 0) newDust.velocity.Y -= 2f;
                 else newDust.velocity.Y *= 0.1f;

@@ -128,7 +128,7 @@ namespace Virtuous.Orbitals
                 const int DustAmount = 50;
                 for (int i = 0; i < DustAmount; i++)
                 {
-                    Vector2 position = projectile.Center + Tools.RandomDirection().OfLength(Tools.RandomInt(projectile.width / 2)); //Random rotation, random distance from the center
+                    Vector2 position = projectile.Center + Main.rand.NextVector2(0, projectile.width / 2); //Random rotation, random distance from the center
                     Dust newDust = Dust.NewDustDirect(position, 0, 0, /*Type*/16, 0, 0, /*Alpha*/100, new Color(255, 200, 245, 150), /*Scale*/1.2f);
                     newDust.velocity *= 2;
                 }
@@ -138,11 +138,11 @@ namespace Virtuous.Orbitals
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (isDying) damage *= 2;
+            if (IsDying) damage *= 2;
         }
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
-            if (isDying) damage *= 2;
+            if (IsDying) damage *= 2;
         }
 
         public override Color? GetAlpha(Color newColor)

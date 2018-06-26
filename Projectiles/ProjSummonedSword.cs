@@ -49,19 +49,18 @@ namespace Virtuous.Projectiles
 
         public override void AI()
         {
-            if (projectile.timeLeft == Lifespan) //First tick
+            if (projectile.timeLeft == Lifespan) // First tick
             {
                 projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians(); //45 degrees because of the sprite
 
                 int dustAmount = 16;
-                for (int i = 0; i < dustAmount; i++) //We create 16 dusts in an ellipse
+                for (int i = 0; i < dustAmount; i++)
                 {
-                    Vector2 rotation = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / dustAmount); //A circle of radius 1 is divided into the set amount of points, focusing on the current point in the loop
-                    rotation *= new Vector2(1, 4); //Multiplies the points by a vertical squish factor so the circle becomes an ellipse
-                    rotation = rotation.RotatedBy(projectile.velocity.ToRotation()); //Rotates the resulting ellipse to align with the projectile's rotation
+                    Vector2 offset = Vector2.UnitY.RotatedBy(Tools.FullCircle * i / dustAmount) * new Vector2(1, 4); // Ellipse of dust
+                    offset = offset.RotatedBy(projectile.velocity.ToRotation()); // Rotates the ellipse to align with the projectile's rotation
 
-                    Dust newDust = Dust.NewDustDirect(projectile.Center + rotation, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/0, default(Color), /*Scale*/1.5f);
-                    newDust.velocity = rotation.OfLength(1); //Shoots outwards
+                    Dust newDust = Dust.NewDustDirect(projectile.Center + offset, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/0, default(Color), /*Scale*/1.5f);
+                    newDust.velocity = offset.OfLength(1); //Shoots outwards
                     newDust.noGravity = true;
                 }
             }
@@ -101,11 +100,11 @@ namespace Virtuous.Projectiles
             Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
             Main.PlaySound(SoundID.Item27, projectile.position);
 
-            int dustAmount = Tools.RandomInt(4,10);
+            int dustAmount = Main.rand.Next(4, 11);
             for (int i = 1; i <= dustAmount; i++)
             {
                 Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/2f);
-                if (!HasHitEnemy) newDust.velocity -= projectile.velocity*0.5f * (Tools.RandomFloat(-1, +1)); //Random direction, mostly aligns with the projectile's
+                if (!HasHitEnemy) newDust.velocity -= projectile.velocity*0.5f * (Main.rand.NextFloat(-1, +1)); //Random direction, mostly aligns with the projectile's
                 newDust.fadeIn = 0.5f;
                 newDust.noGravity = true;
             }

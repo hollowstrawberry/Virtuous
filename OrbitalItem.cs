@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -7,30 +8,35 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Virtuous.Orbitals;
 
-
 namespace Virtuous
 {
     public abstract class OrbitalItem : ModItem
     {
-        public override bool CloneNewInstances => true; //So the defaults are copied to new items
+        public override bool CloneNewInstances => true; // The defaults are copied to new items
 
-        //Characteristics set in defaults
-        public int type = OrbitalID.None; //The orbital this item spawns. Failing to provide a valid one will cause an exception
-        public int duration = 5 * 60; //How long the summoned orbital will last, in ticks
-        public int amount = 1; //The amount of orbitals that will be spawned in a circle
-        public int specialFunctionType = SpecialNone; //Whether this orbital has a special effect, and whether it triggers by reusing it or by right-clicking
-        public const int SpecialNone = 0;
-        public const int SpecialReuse = 1;
-        public const int SpecialRightClick = 2;
+        // Traits set in defaults
+        public int type = OrbitalID.None; // The orbital this item spawns. Failing to provide a valid one will cause an exception
+        public int duration = 5 * 60; // How long the summoned orbital will last, in ticks
+        public int amount = 1; // The amount of orbitals that will be spawned in a circle
+        public SpecialType specialType = SpecialType.None; // If and how an orbital special effect triggers
+
+
+        public enum SpecialType
+        {
+            None,
+            Reuse,
+            RightClick,
+        }
+
+
 
 
         public virtual void SetOrbitalDefaults()
         {
         }
 
-        public sealed override void SetDefaults() //Safe way of setting item defaults
+        public sealed override void SetDefaults() // Safe way of setting standard default values
         {
-            //Default values
             item.width = 30;
             item.height = 30;
             item.useStyle = 4;
@@ -42,10 +48,15 @@ namespace Virtuous
             item.useTurn = true;
 
             SetOrbitalDefaults();
-            if (type < 0 || type >= OrbitalID.Orbital.Length) throw new Exception($"Virtuous: The type of the orbital item {item.Name} was set to the orbital ID {type}, which is either invalid or doesn't have any matching orbital.");
+
+            if (type < 0 || type >= OrbitalID.Orbital.Length)
+            {
+                throw new Exception($"Virtuous: The type of the orbital item {item.Name} was set to the orbital ID {type}, " +
+                                    $"which is either invalid or doesn't have any matching orbital.");
+            }
 
             item.shoot = mod.OrbitalProjectileType(type); //Sets the orbital projectile to shoot
-            if (specialFunctionType != SpecialNone) item.autoReuse = true;
+            if (specialType != SpecialType.None) item.autoReuse = true;
 
             //Overwrites
             item.crit = 0;
@@ -56,40 +67,42 @@ namespace Virtuous
             item.summon = false;
         }
 
+
         public override bool AltFunctionUse(Player player)
         {
-            return specialFunctionType == SpecialRightClick;
+            return specialType == SpecialType.RightClick;
         }
+
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            //Gets boosted by the player's strongest damage between magic and melee, and ignores buffs from other orbitals
-            OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
-            damage = (int)(item.damage * orbitalPlayer.damageMultiplier * (Math.Max(player.meleeDamage, player.magicDamage) - orbitalPlayer.damageBuffFromOrbitals));
+            var orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (specialFunctionType == SpecialRightClick)
+            float highestDamage = Math.Max(player.meleeDamage, player.magicDamage);
+            damage = (int)(item.damage * orbitalPlayer.damageMultiplier * (highestDamage - orbitalPlayer.damageBuffFromOrbitals));
+
+            if (specialType == SpecialType.RightClick)
             {
-                Tools.HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+                Tools.HandleAltUseAnimation(player);
             }
         }
 
+
         public override bool CanUseItem(Player player)
         {
-            OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
+            var orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            //Can't use the right click special function with the orbital not active
-            if (specialFunctionType == SpecialRightClick && player.altFunctionUse == 2 && !orbitalPlayer.active[this.type])
+            // Can't use the right click special function with the orbital not active
+            if (specialType == SpecialType.RightClick && player.altFunctionUse == 2 && !orbitalPlayer.active[this.type])
             {
                 return false;
             }
 
-            //Can't use an orbital if any other orbital is in the process of dying
-            for (int id = 0; id < OrbitalID.Orbital.Length; id++)
+            // Can't use an orbital if any other orbital is in the process of dying
+            if (Enumerable.Range(0, OrbitalID.Orbital.Length)
+                    .Any(id => orbitalPlayer.active[id] && orbitalPlayer.time <= OrbitalID.Orbital[id].DyingTime))
             {
-                if (orbitalPlayer.active[id] && orbitalPlayer.time <= OrbitalID.Orbital[id].DyingTime)
-                {
-                    return false;
-                }
+                return false;
             }
 
             return base.CanUseItem(player);
@@ -97,82 +110,73 @@ namespace Virtuous
 
         public sealed override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            OrbitalPlayer orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
+            var orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
 
-            if (orbitalPlayer.active[this.type]) //The orbital is already active
+            if (orbitalPlayer.active[this.type]) // The orbital is already active
             {
-                if (specialFunctionType != SpecialNone) //Alternate use mechanics
+                if (specialType != SpecialType.None) // Alternate use mechanics
                 {
-                    if (specialFunctionType == SpecialRightClick) //Right-click mode
+                    if (specialType == SpecialType.RightClick)
                     {
-                        if (player.altFunctionUse != 2) //Left click: Resets duration
-                        {
-                            orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this);
-                        }
-                        else //Right click: Special function
-                        {
-                            orbitalPlayer.specialFunctionActive = true;
-                        }
-                        return false;
+                        // Left-click resets duration, right-click activates special
+                        if (player.altFunctionUse != 2) orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this);
+                        else orbitalPlayer.SpecialFunctionActive = true;
                     }
-                    else if (specialFunctionType == SpecialReuse) //Reuse mode
+                    else if (specialType == SpecialType.Reuse)
                     {
-                        orbitalPlayer.specialFunctionActive = true; //Special function
-                        orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this); //Resets duration
-                        return false;
+                        // Activates special and resets duration
+                        orbitalPlayer.SpecialFunctionActive = true;
+                        orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this);
                     }
                 }
             }
-            else //The orbital is not active
+            else // The orbital is not active
             {
                 orbitalPlayer.ResetOrbitals();
                 orbitalPlayer.active[this.type] = true;
                 orbitalPlayer.time = orbitalPlayer.ModifiedOrbitalTime(this);
 
-                for (int i = 0; i < amount; i++)
+                for (int i = 0; i < this.amount; i++)
                 {
-                    Vector2 rotation; //We will pass this as the velocity of the projectile
-                    rotation = Vector2.UnitX.RotatedBy(Tools.FullCircle * i / amount); //Divides the circle into a set amount of points and picks the current one in the loop
+                    // The desired rotation will be passed as velocity
+                    Vector2 rotation = Vector2.UnitX.RotatedBy(Tools.FullCircle * i / this.amount);
                     Projectile.NewProjectile(position, rotation, type, damage, knockBack, player.whoAmI);
                 }
             }
 
-            return false; //Doesn't shoot normally
+            return false; // Doesn't shoot normally
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            OrbitalPlayer orbitalPlayer = Main.player[item.owner].GetModPlayer<OrbitalPlayer>();
+            var orbitalPlayer = Main.player[item.owner].GetModPlayer<OrbitalPlayer>();
 
-            bool hasDamage = false;
+            TooltipLine critLine = tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "CritChance");
+            if (critLine != null) tooltips.Remove(critLine); // Removes the critical chance line
 
-            foreach (TooltipLine line in tooltips)
+            TooltipLine damageLine = tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "Damage");
+            if (damageLine != null)
             {
-                if (line.mod == "Terraria" && line.Name == "Damage") //Cuts the text to say "orbital damage"
-                {
-                    if (Language.ActiveCulture == GameCulture.Spanish) line.text = $"{line.text.Split(' ')[0]} daño orbital";
-                    else line.text = $"{line.text.Split(' ')[0]} orbital damage";
-                    hasDamage = true;
-                }
+                string damage = damageLine.text.Split(' ')[0];
+                if (Language.ActiveCulture == GameCulture.Spanish) damageLine.text = $"{damage} daño orbital";
+                else damageLine.text = $"{damage} orbital damage";
             }
 
             string durationText = ((orbitalPlayer.ModifiedOrbitalTime(this) - OrbitalID.Orbital[type].DyingTime) / 60).ToString();
-            if (Language.ActiveCulture == GameCulture.Spanish) durationText += " segundos de duración";
-            else durationText += " seconds duration";
+            durationText += Language.ActiveCulture == GameCulture.Spanish ? " segundos de duración" : " seconds duration";
 
-            foreach (TooltipLine line in tooltips) //Adds the duration, with the place depending on whether the item has damage or not
+            int durationIndex;
+            if (damageLine == null) // Above mana
             {
-                if (!hasDamage && line.mod == "Terraria" && line.Name == "UseMana") //Puts it above mana use
-                {
-                    line.text = $"{durationText}\n{line.text}";
-                }
-                else if (hasDamage &&  line.mod == "Terraria" && line.Name == "Speed") //Intentionally replaces use speed
-                {
-                    line.text = durationText;
-                }
+                durationIndex = tooltips.IndexOf(tooltips.FirstOrDefault(line => line.mod == "Teraria" && line.Name == "UseMana"));
+            }
+            else // Replaces speed
+            {
+                durationIndex = tooltips.IndexOf(tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "Speed"));
+                tooltips.RemoveAt(durationIndex);
             }
 
-            tooltips.RemoveAll(line => line.mod == "Terraria" && line.Name.StartsWith("CritChance")); //Removes the critical chance line
+            tooltips.Insert(Math.Max(durationIndex, 0), new TooltipLine(mod, "OrbitalDuration", durationText));
         }
     }
 }
