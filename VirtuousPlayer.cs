@@ -2,8 +2,8 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Virtuous.Items;
@@ -13,7 +13,6 @@ namespace Virtuous
 {
     public class VirtuousPlayer : ModPlayer
     {
-
         // TODO: Change GlobblerStorage into a list
         public int[] GobblerStorage = new int[TheGobbler.StorageCapacity]; // Stores the types of items sucked by the gobbler
 
@@ -43,16 +42,16 @@ namespace Virtuous
 
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust newDust = Dust.NewDustDirect(
+                    var dust = Dust.NewDustDirect(
                         position, 0, 0, /*Type*/180, 2f * player.direction, 0f, /*Alpha*/150, Color.Black, 0.5f);
-                    newDust.velocity = player.velocity; // So that it seems to follow the player
-                    newDust.noGravity = true;
-                    newDust.fadeIn = 1f;
+                    dust.velocity = player.velocity; // So that it seems to follow the player
+                    dust.noGravity = true;
+                    dust.fadeIn = 1f;
 
                     if (Main.rand.OneIn(2))
                     {
-                        newDust.position += new Vector2(Main.rand.NextFloat(-3, +3), Main.rand.NextFloat(-3, +3));
-                        newDust.scale += Main.rand.NextFloat();
+                        dust.position += new Vector2(Main.rand.NextFloat(-3, +3), Main.rand.NextFloat(-3, +3));
+                        dust.scale += Main.rand.NextFloat();
                     }
                 }
             }
@@ -124,7 +123,7 @@ namespace Virtuous
 
         public Item GobblerItem(int slot) // Returns an item of the type stored in the gobbler storage slot provided
         {
-            Item item = new Item();
+            var item = new Item();
             if (GobblerStorage[slot] != ItemID.None) item.SetDefaults(GobblerStorage[slot]);
             return item;
         }
@@ -227,7 +226,7 @@ namespace Virtuous
                 {
                     titanShieldLastExplosion = Math.Abs(titanShieldDashing);
                     Main.PlaySound(SoundID.Item14, npc.Center);
-                    Projectile newProj = Projectile.NewProjectileDirect(
+                    var newProj = Projectile.NewProjectileDirect(
                         npc.Center, Vector2.Zero, mod.ProjectileType<ProjTitanAOE>(), damage, knockBack / 2,
                         player.whoAmI, /*ai[0]*/crit ? 1 : 0);
                 }
@@ -242,12 +241,12 @@ namespace Virtuous
             for (int i = 0; i < 5; i++)
             {
                 Color color = Main.rand.OneIn(2) ? new Color(255, 255, 255) : new Color(255, 255, 255, 0f);
-                Dust newDust = Dust.NewDustDirect(
+                var dust = Dust.NewDustDirect(
                     player.position + new Vector2(Main.rand.NextFloat(-5, +5), Main.rand.NextFloat(-5, +5)), player.width, player.height,
                     /*Type*/16, 0f, 0f, /*Alpha*/0, color, /*Scale*/Main.rand.NextFloat(1, 2));
-                newDust.velocity *= 0.2f;
-                newDust.noGravity = true;
-                newDust.fadeIn = 0.5f;
+                dust.velocity *= 0.2f;
+                dust.noGravity = true;
+                dust.fadeIn = 0.5f;
             }
 
             if (Math.Abs(titanShieldDashing) > TitanShield.DashTime - 8)
@@ -298,10 +297,10 @@ namespace Virtuous
                 int dustAmount = Main.rand.Next(15, 21);
                 for (int i = 0; i < dustAmount; i++)
                 {
-                    Dust newDust = Dust.NewDustDirect(
+                    var dust = Dust.NewDustDirect(
                         player.Center + new Vector2(10 * player.direction, 0), 0, 0, /*Type*/180, 0f, 0f, /*Alpha*/100,
                         default(Color), /*Scale*/Main.rand.NextFloat(1, 2.5f));
-                    newDust.noGravity = true;
+                    dust.noGravity = true;
                 }
             }
             return true;

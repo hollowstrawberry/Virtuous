@@ -1,52 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class Sailspike_Item : OrbitalItem
-    {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Sailspike");
-            Tooltip.SetDefault("Summons a spike for a short time\nAligns with either magic or melee users");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Picabichos");
-            Tooltip.AddTranslation(GameCulture.Spanish, "\nInvoca una pica por unos segundos\nEl daño se alínea con magia o cuerpo a cuerpo");
-            DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
-            Tooltip.AddTranslation(GameCulture.Russian, "Призывает временный шип\nПодходит воинам и магам");
-        }
-
-        public override void SetOrbitalDefaults()
-        {
-            type = OrbitalID.Sailspike;
-            duration = 5 * 60;
-            amount = 1;
-
-            item.width = 30;
-            item.height = 30;
-            item.damage = 15;
-            item.knockBack = 1f;
-            item.mana = 15;
-            item.rare = 3;
-            item.value = Item.sellPrice(0, 2, 0, 0);
-        }
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.Gel, 15);
-            recipe.AddIngredient(ItemID.Silk, 2);
-            recipe.AddIngredient(ItemID.Star, 1);
-            recipe.AddTile(TileID.WorkBenches);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-        }
-    }
-
-
-    public class Sailspike_Proj : OrbitalProjectile
+    public class Sailspike : OrbitalProjectile
     {
         public override int Type => OrbitalID.Sailspike;
         public override int DyingTime => 30;
@@ -59,7 +19,8 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sailspike");
-			DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Picabichos");
+            DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
         }
 
         public override void SetOrbitalDefaults()
@@ -74,26 +35,30 @@ namespace Virtuous.Orbitals
             base.FirstTick();
             Movement();
 
-            for (int i = 0; i < 15; i++) //Dust
+            for (int i = 0; i < 15; i++)
             {
-                Dust newDust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, /*Type*/172, 0f, 0f, /*Alpha*/50, default(Color), 1.5f);
-                newDust.velocity *= 0.2f;
-                newDust.noLight = false;
-                newDust.noGravity = true;
+                var dust = Dust.NewDustDirect(
+                    projectile.position, projectile.width, projectile.height,
+                    /*Type*/172, 0f, 0f, /*Alpha*/50, default(Color), 1.5f);
+                dust.velocity *= 0.2f;
+                dust.noLight = false;
+                dust.noGravity = true;
             }
         }
 
+
         public override void Movement()
         {
-            //Stays in front of the player
+            // Stays in front of the player
             projectile.spriteDirection = player.direction;
             SetPosition(new Vector2(player.direction * relativeDistance, 0));
         }
 
+
         public override void PostAll()
         {
             Lighting.AddLight(projectile.Center, 0.15f, 0.5f, 1.5f);
-            base.PostAll(); //Fades
+            base.PostAll(); // Fades
         }
 
 
@@ -101,10 +66,12 @@ namespace Virtuous.Orbitals
         {
             if (IsDying) damage *= 2;
         }
+
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
             if (IsDying) damage *= 2;
         }
+
 
         public override Color? GetAlpha(Color newColor)
         {

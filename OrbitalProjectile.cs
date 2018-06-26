@@ -28,7 +28,7 @@ namespace Virtuous
 
         // Constant traits
 
-        public virtual int Type => OrbitalID.None; // The orbital ID associated with the projectile. An invalid ID will throw an exception
+        public abstract int Type { get; } // The orbital ID associated with the projectile. An invalid ID will throw an exception
         public virtual int FadeTime => 0; // How many ticks, if any, the projectile fades away for
         public virtual int DyingTime => 0; // How many ticks, if any, the projectile spends in "dying mode" at the end of its lifespan, during which no orbital items can be used
         public virtual int OriginalAlpha => 50; // Original alpha value of the projectile
@@ -123,8 +123,7 @@ namespace Virtuous
 
 
 
-        //Defaults
-
+        // Projectile traits
         public virtual void SetOrbitalDefaults()
         {
         }
@@ -173,14 +172,14 @@ namespace Virtuous
         {
             if (OscillationSpeedMax != 0) // Oscillation
             {
-                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  //If it has reached the outwards speed limit, begin to switch direction
-                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards; //If it has reached the inwards speed limit, begin to switch direction
-                oscillationSpeed += OscillationAcc * (direction ? +1 : -1); //Accelerate in the corresponding direction
+                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  // Changes direction when it reaches the limit
+                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards;
+                oscillationSpeed += OscillationAcc * (direction ? +1 : -1); // Accelerate in the corresponding direction
                 AddDistance(oscillationSpeed);
             }
 
-            RotatePosition(OrbitingSpeed); //Rotates the projectile around the player
-            projectile.rotation += RotationSpeed; //Rotates the projectile itself
+            RotatePosition(OrbitingSpeed); // Rotates the projectile around the player
+            projectile.rotation += RotationSpeed; // Rotates the projectile itself
         }
 
 
@@ -212,18 +211,19 @@ namespace Virtuous
             {
                 if (orbitalPlayer.time <= FadeTime)
                 {
-                    projectile.alpha += Math.Max(1, (int)((255f - OriginalAlpha) / FadeTime)); //Fades away completely over fadeTime
+                    projectile.alpha += Math.Max(1, (int)((255f - OriginalAlpha) / FadeTime)); // Fades away completely over fadeTime
                 }
                 else
                 {
-                    projectile.alpha = OriginalAlpha; //Resets the alpha in case the time resets during fading time
+                    projectile.alpha = OriginalAlpha; // Resets the alpha in case the time resets during fading time
                 }
             }
         }
 
 
 
-        //Head of the operation
+
+        // Main method
         public sealed override void AI()
         {
             if (!orbitalPlayer.active[Type] && Main.myPlayer == projectile.owner) // Keep it alive only while the summon is active
@@ -277,10 +277,12 @@ namespace Virtuous
         }
 
 
+
         public override bool? CanCutTiles()
         {
             return false; // So they don't become a lawnmower
         }
+
 
         public override Color? GetAlpha(Color lightColor)
         {

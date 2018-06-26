@@ -8,21 +8,18 @@ using Terraria.Utilities;
 
 namespace Virtuous
 {
-    /*
-     * This class contains many tools, mostly shorthands for Terraria utils and some constant keywords.
-     * They help me feel like my code is clean, understandable and more personal.
-     */
+    // This class contains many utilities that help make the code cleaner
 
     public static class Tools
     {
         // Constants
 
-        public const float FullCircle = 2 * (float)Math.PI;
-        public const float RevolutionPerSecond = FullCircle / 60;
         public const float GoldenRatio = 1.61803398875f;
+        public const float FullCircle = 2 * (float)Math.PI; // Really just an alias that is also a float
+        public const float RevolutionPerSecond = FullCircle / 60; // 60 game ticks = 1 second
 
 
-        // Game objects
+        // Game object utilities
 
         public static Vector2 SpriteCenter(this NPC npc) => npc.Center + new Vector2(0, npc.gfxOffY);
         public static Vector2 SpriteCenter(this Player player) => player.Center + new Vector2(0, player.gfxOffY);
@@ -94,7 +91,7 @@ namespace Virtuous
             return vector.Normalized() * length;
         }
 
-        public static Vector2 Perpendicular(this Vector2 oldVector, float? length = null, bool clockwise = true) // Returns a vector perpendicular to the original
+        public static Vector2 Perpendicular(this Vector2 oldVector, float? length = null, bool clockwise = true)
         {
             Vector2 vector = new Vector2(oldVector.Y, -oldVector.X);
             if (!clockwise) vector *= new Vector2(-1, -1);
@@ -133,6 +130,14 @@ namespace Virtuous
         public static bool OneIn(this UnifiedRandom rand, int amount) // Returns true with a 1/amount chance
         {
             return rand.Next(amount) == 0;
+        }
+
+        public static T Choose<T>(this UnifiedRandom rand, IList<T> items)
+        {
+            if (items.Count == 0) return default(T);
+            if (items.Count == 1) return items[0];
+
+            return items[rand.Next(items.Count)];
         }
 
 

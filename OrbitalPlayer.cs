@@ -49,11 +49,11 @@ namespace Virtuous
             time = 0;
             specialFunction = false;
             specialFunctionTurnOff = false;
-            active = new bool[active.Length]; // Sets all to false
+            active = new bool[active.Length]; // All to false
         }
 
 
-        public override void PostUpdateEquips() //Applies orbital buffs
+        public override void PostUpdateEquips() // Applies orbital buffs
         {
             for (int type = 0; type < OrbitalID.Orbital.Length; type++)
             {

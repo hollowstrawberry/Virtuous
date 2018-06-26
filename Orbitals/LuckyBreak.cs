@@ -1,74 +1,44 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-
+using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class LuckyBreak_Item : OrbitalItem
-    {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Lucky Break");
-            Tooltip.SetDefault($"The cards shuffle every few seconds, each giving individual effects\nHearts increase movement speed and life regeneration\nDiamonds make enemies drop more coins\nSpades increase all critical strike chance by {LuckyBreak_Proj.CritBuff}%\nClubs REDUCE all damage by {LuckyBreak_Proj.DamageDebuff}%\nAligns with either magic or melee users");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Golpe de Suerte");
-            Tooltip.AddTranslation(GameCulture.Spanish, $"Nueva baraja cada poco tiempo, cada carta dando efectos distintos\nCorazones aumentan la regeneración de vida y velocidad\nDiamantes entregan más monedas\nPicas aumentan el golpe crítico en {LuckyBreak_Proj.CritBuff}%\nTréboles REDUCEN el daño en {LuckyBreak_Proj.DamageDebuff}%\nEl daño se alínea con magia o cuerpo a cuerpo");
-            DisplayName.AddTranslation(GameCulture.Russian, "Lucky Break");
-            Tooltip.AddTranslation(GameCulture.Russian, $"Карты перемешиваются каждые несколько секунд, давая разные эффекты\nЧервы увеличивают скорость передвижения и регенерации здоровья\nБубны увеличивают количество монет, выпадаемых с врагов\nПики увеличивают шанс критического удара на {LuckyBreak_Proj.CritBuff}%\nТрефы уменьшают получаемый урон на {LuckyBreak_Proj.DamageDebuff}%\nПодходит воинам и магам");
-        }
-
-        public override void SetOrbitalDefaults()
-        {
-            type = OrbitalID.LuckyBreak;
-            duration = 42 * 60;
-            amount = 5;
-
-            item.width = 40;
-            item.height = 34;
-            item.damage = 35;
-            item.knockBack = 2f;
-            item.mana = 50;
-            item.rare = 7;
-            item.value = Item.sellPrice(0, 20, 0, 0);
-            item.useStyle = 2;
-            item.useTime = 15;
-            item.useAnimation = item.useTime;
-        }
-    }
-
-
-
-    public class LuckyBreak_Proj : OrbitalProjectile
+    public class LuckyBreak : OrbitalProjectile
     {
         public override int Type => OrbitalID.LuckyBreak;
         public override int DyingTime => 30;
         public override int FadeTime => 15;
         public override int OriginalAlpha => 0;
-        public override float BaseDistance => _BaseDistance; //Set to a constant so it can be used in other constants
+        public override float BaseDistance => _BaseDistance; // Set to a constant so it can be used in other constants
         public override float OrbitingSpeed => 0.0f * Tools.RevolutionPerSecond;
         public override float OscillationSpeedMax => 15f / 30;
         public override float OscillationAcc => OscillationSpeedMax / 20;
         public override float DyingSpeed => 20;
 
-        public override bool IsDoingSpecial => true; //Always keeps increasing specialFunctionTimer
-
-        private const int _BaseDistance = 65;
-        private const int CycleTime = 7 * 60; //Time between shuffles
-        private const int ShuffleTime = 30; //Part of CycleTime in which the cards do the shuffle motion
-        private const int ShuffleSpeed = (_BaseDistance - 2) * 2 / ShuffleTime;
-        private const int Hearts = 0, Diamonds = 1, Spades = 2, Clubs = 3; //Frames
+        public override bool IsDoingSpecial => true; // Always keeps increasing specialFunctionTimer
 
         public const int CritBuff = 7;
-        public const int DamageDebuff = 7; //In percent
+        public const int DamageDebuff = 7; // In percentage
+
+        private const int _BaseDistance = 65;
+        private const int CycleTime = 7 * 60; // Time between shuffles
+        private const int ShuffleTime = 30; // Part of CycleTime in which the cards do the shuffle motion
+        private const int ShuffleSpeed = (_BaseDistance - 2) * 2 / ShuffleTime;
+
+        private const int Hearts = 0, Diamonds = 1, Spades = 2, Clubs = 3; // Frames
 
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Card");
-			DisplayName.AddTranslation(GameCulture.Russian, "Карта");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Carta");
+            DisplayName.AddTranslation(GameCulture.Russian, "Карта");
+
             Main.projFrames[projectile.type] = 4;
         }
 
@@ -79,59 +49,61 @@ namespace Virtuous.Orbitals
         }
 
 
+
         private void ShuffleCard()
         {
             projectile.frame = Main.rand.Next(Main.projFrames[projectile.type]);
         }
 
+
+
         public override void PlayerEffects()
         {
-            //Shuffle sound
+            // Shuffle sound
             if (!IsFirstTick && specialFunctionTimer == CycleTime - ShuffleTime / 2)
             {
                 Main.PlaySound(18, player.Center);
             }
             
-            //Individual card buffs
-            for (int i = 0; i < Main.maxProjectiles; i++)
+            // Individual card buffs
+            foreach (var proj in Main.projectile.Where(x => x.active && x.owner == projectile.owner && x.type == projectile.type))
             {
-                if (Main.projectile[i].active && Main.projectile[i].owner == projectile.owner && Main.projectile[i].type == projectile.type)
+                switch (proj.frame)
                 {
-                    switch (Main.projectile[i].frame)
-                    {
-                        case Hearts:
-                            player.runAcceleration *= 1.15f;
-                            player.maxRunSpeed *= 1.15f;
-                            player.lifeRegen += 1;
-                            break;
+                    case Hearts:
+                        player.runAcceleration *= 1.15f;
+                        player.maxRunSpeed *= 1.15f;
+                        player.lifeRegen += 1;
+                        break;
 
-                        case Spades:
-                            player.meleeCrit  += CritBuff;
-                            player.magicCrit  += CritBuff;
-                            player.rangedCrit += CritBuff;
-                            player.thrownCrit += CritBuff;
-                            break;
+                    case Spades:
+                        player.meleeCrit  += CritBuff;
+                        player.magicCrit  += CritBuff;
+                        player.rangedCrit += CritBuff;
+                        player.thrownCrit += CritBuff;
+                        break;
 
-                        case Clubs:
-                            player.meleeDamage  -= DamageDebuff / 100f;
-                            player.magicDamage  -= DamageDebuff / 100f;
-                            player.rangedDamage -= DamageDebuff / 100f;
-                            player.thrownDamage -= DamageDebuff / 100f;
-                            orbitalPlayer.damageBuffFromOrbitals -= DamageDebuff / 100f;
-                            break;
-                    }
+                    case Clubs:
+                        player.meleeDamage  -= DamageDebuff / 100f;
+                        player.magicDamage  -= DamageDebuff / 100f;
+                        player.rangedDamage -= DamageDebuff / 100f;
+                        player.thrownDamage -= DamageDebuff / 100f;
+                        orbitalPlayer.damageBuffFromOrbitals -= DamageDebuff / 100f;
+                        break;
                 }
             }
         }
 
+
         public override void FirstTick()
         {
-            RotatePosition(-Tools.FullCircle / 4); //Make the first card be above the player instead of to the right
+            RotatePosition(-Tools.FullCircle / 4); // Make the first card be above the player instead of to the right
 
-            specialFunctionTimer = CycleTime - ShuffleTime / 2; //Puts the card in the middle of the shuffling motion
+            specialFunctionTimer = CycleTime - ShuffleTime / 2; // Puts the card in the middle of the shuffling motion
             SetDistance(2);
             oscillationSpeed = ShuffleSpeed;
         }
+
 
         public override bool PreMovement()
         {
@@ -140,44 +112,43 @@ namespace Virtuous.Orbitals
 
         public override void Movement()
         {
-            if (specialFunctionTimer >= CycleTime - ShuffleTime) //Shuffling motion
+            if (specialFunctionTimer >= CycleTime - ShuffleTime) // Shuffling motion
             {
-                if (specialFunctionTimer == CycleTime - ShuffleTime) //First tick
+                if (specialFunctionTimer == CycleTime - ShuffleTime) // First tick
                 {
                     SetDistance(BaseDistance);
                     oscillationSpeed = ShuffleSpeed;
                     direction = Inwards;
                 }
-
-                else if (specialFunctionTimer == CycleTime - ShuffleTime / 2) //Middlepoint of the motion
+                else if (specialFunctionTimer == CycleTime - ShuffleTime/2) // Middle of the motion
                 {
                     ShuffleCard();
                     direction = Outwards;
                 }
-
-                else if (specialFunctionTimer == CycleTime) //Last tick
+                else if (specialFunctionTimer == CycleTime) // Last tick
                 {
                     SetDistance(BaseDistance);
                     oscillationSpeed = OscillationSpeedMax;
                     specialFunctionTimer = 0;
-                    base.Movement();
+                    base.Movement(); // Starts moving inward. TODO: Find out why I put this here
                     return;
                 }
 
                 AddDistance(oscillationSpeed * (direction ? +1 : -1));
                 RotatePosition(OrbitingSpeed);
             }
-            else //Normal movement
+            else // Normal movement
             {
                 base.Movement();
             }
         }
 
+
         public override void Dying()
         {
             projectile.rotation += 5 * Tools.RevolutionPerSecond;
-            projectile.velocity.Y += 2f; //Gravity
-            projectile.position += projectile.velocity; //Applies velocity as orbitals normally don't
+            projectile.velocity.Y += 2f; // Gravity
+            projectile.position += projectile.velocity;
         }
 
 
@@ -188,14 +159,25 @@ namespace Virtuous.Orbitals
             if (projectile.frame == Diamonds && target.lifeMax > 5 && !target.immortal)
             {
                 target.AddBuff(BuffID.Midas, 7 * 60);
-                int newItem = Item.NewItem(target.position, target.width, target.height, (Main.rand.OneIn(10) ? (Main.rand.OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin), Main.rand.Next(3, 16));
-                if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem); //Syncs to multiplayer
+
+                int newItem = Item.NewItem(
+                    target.position, target.width, target.height,
+                    (Main.rand.OneIn(10) ? (Main.rand.OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin),
+                    Main.rand.Next(3, 16));
+
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem);
+                }
             }
         }
+
+
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
             if (IsDying) damage *= 7;
         }
+
 
         public override Color? GetAlpha(Color lightColor)
         {

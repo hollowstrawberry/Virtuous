@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.Localization;
 using Virtuous.Orbitals;
 
 namespace Virtuous
@@ -108,6 +108,7 @@ namespace Virtuous
             return base.CanUseItem(player);
         }
 
+
         public sealed override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
             var orbitalPlayer = player.GetModPlayer<OrbitalPlayer>();
@@ -146,6 +147,7 @@ namespace Virtuous
 
             return false; // Doesn't shoot normally
         }
+
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {

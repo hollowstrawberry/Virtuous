@@ -44,7 +44,7 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files %28x86%29\Steam\SteamApps\common\Terraria\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -78,17 +78,29 @@
     <Compile Include="OrbitalItem.cs" />
     <Compile Include="OrbitalPlayer.cs" />
     <Compile Include="OrbitalProjectile.cs" />
+    <Compile Include="Orbitals\BubbleItem.cs" />
     <Compile Include="Orbitals\Bubble.cs" />
+    <Compile Include="Orbitals\BullseyeItem.cs" />
     <Compile Include="Orbitals\Bullseye.cs" />
+    <Compile Include="Orbitals\EnergyCrystalItem.cs" />
     <Compile Include="Orbitals\EnergyCrystal.cs" />
+    <Compile Include="Orbitals\FacadeItem.cs" />
     <Compile Include="Orbitals\Facade.cs" />
+    <Compile Include="Orbitals\FireballItem.cs" />
     <Compile Include="Orbitals\Fireball.cs" />
+    <Compile Include="Orbitals\HolyLightItem.cs" />
     <Compile Include="Orbitals\HolyLight.cs" />
+    <Compile Include="Orbitals\LuckyBreakItem.cs" />
     <Compile Include="Orbitals\LuckyBreak.cs" />
+    <Compile Include="Orbitals\SacDaggerItem.cs" />
     <Compile Include="Orbitals\SacDagger.cs" />
+    <Compile Include="Orbitals\SailspikeItem.cs" />
     <Compile Include="Orbitals\Sailspike.cs" />
+    <Compile Include="Orbitals\ShurikenItem.cs" />
     <Compile Include="Orbitals\Shuriken.cs" />
+    <Compile Include="Orbitals\SpikedBubbleItem.cs" />
     <Compile Include="Orbitals\SpikedBubble.cs" />
+    <Compile Include="Orbitals\SpiralSwordItem.cs" />
     <Compile Include="Orbitals\SpiralSword.cs" />
     <Compile Include="Projectiles\ProjCrusherPillar.cs" />
     <Compile Include="Projectiles\ProjFist.cs" />
