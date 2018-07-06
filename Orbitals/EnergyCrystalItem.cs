@@ -19,11 +19,11 @@ namespace Virtuous.Orbitals
                 "El daño se alínea con magia o cuerpo a cuerpo");
 
             DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
-			Tooltip.AddTranslation(GameCulture.Russian,
+            Tooltip.AddTranslation(GameCulture.Russian,
                 "Кристаллы стреляют по ближайшим врагам\nПолучение урона вызывает короткую перегрузку\nПодходит воинам и магам");
 
             DisplayName.AddTranslation(GameCulture.Chinese, "能量水晶");
-			Tooltip.AddTranslation(GameCulture.Chinese,
+            Tooltip.AddTranslation(GameCulture.Chinese,
                 "能量水晶会向附近的敌人射击\n受到伤害会瞬间过载\n" +
                 "更适合战士或法师使用");
         }
