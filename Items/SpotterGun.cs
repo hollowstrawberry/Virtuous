@@ -19,6 +19,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "\"No lo verán venir\"");
             //DisplayName.AddTranslation(GameCulture.Russian, "");
             //Tooltip.AddTranslation(GameCulture.Russian, "");
+            DisplayName.AddTranslation(GameCulture.Chinese, "零点");
+            Tooltip.AddTranslation(GameCulture.Chinese, "它们将看不到未来");
         }
 
         public override void SetDefaults()

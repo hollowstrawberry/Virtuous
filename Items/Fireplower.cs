@@ -18,7 +18,9 @@ namespace Virtuous.Items
             DisplayName.AddTranslation(GameCulture.Spanish, "Arrasallamas");
             Tooltip.AddTranslation(GameCulture.Spanish, "50% probabilidad de no consumir gel\nDeja restos de gel ardiente");
             DisplayName.AddTranslation(GameCulture.Russian, "Огнеплюв");
-            DisplayName.AddTranslation(GameCulture.Russian, "50% не потратить гель\nОставляет горящий гель на земле");
+            Tooltip.AddTranslation(GameCulture.Russian, "50% не потратить гель\nОставляет горящий гель на земле");
+            DisplayName.AddTranslation(GameCulture.Chinese, "烈焰之星");
+            Tooltip.AddTranslation(GameCulture.Chinese, "50%几率不消耗凝胶\n在地上留下徐徐花瓣");
         }
 
         public override void SetDefaults()

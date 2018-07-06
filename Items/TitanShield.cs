@@ -19,6 +19,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "Atropella enemigos\nEl daño aumenta con tu defensa\nAl sostenerlo, reduce en 20% el daño recibido por el frente");
             DisplayName.AddTranslation(GameCulture.Russian, "Щит Титана");
             Tooltip.AddTranslation(GameCulture.Russian, "Пробивайтесь через врагов\nБазовый урон увеличивается с защитой\nВ руках: Уменьшает получаемый урон с тыла на 20%");
+            DisplayName.AddTranslation(GameCulture.Chinese, "泰坦圣盾");
+            Tooltip.AddTranslation(GameCulture.Chinese, "撞飞你的敌人\n基础伤害与防御力成比例\n持有时:减少20%正面伤害");
         }
 
         public const float DamageReduction = 0.2f; //This gets applied multiplicatevely at the end of the damage formula

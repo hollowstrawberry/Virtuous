@@ -20,6 +20,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "El daño aumenta exponencialmente con la distancia\nHaz Click Derecho para ir en sentido contrarreloj");
             DisplayName.AddTranslation(GameCulture.Russian, "Львиная Грива");
             Tooltip.AddTranslation(GameCulture.Russian, "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
+            DisplayName.AddTranslation(GameCulture.Chinese, "雄狮鬃毛");
+            Tooltip.AddTranslation(GameCulture.Chinese, "随着持续时间成倍增加伤害\n左键顺时针释放,右键逆时针释放");
         }
 
         public override void SetDefaults()

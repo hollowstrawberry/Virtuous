@@ -20,6 +20,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "\"Cuando conoces el cielo y la tierra, la victoria es inagotable.\"\nLas flechas de guerra penetran la armadura enemiga");
             DisplayName.AddTranslation(GameCulture.Russian, "Искусство Войны");
             Tooltip.AddTranslation(GameCulture.Russian, "\"Ты силён, когда ты силён.\"\nСтрелы Войны пробивают броню");
+            DisplayName.AddTranslation(GameCulture.Chinese, "战争艺术");
+            Tooltip.AddTranslation(GameCulture.Chinese, "\"当你真正强大时,再去证明你的强大.\"\n战争之箭会穿透护甲");
         }
 
         public override void SetDefaults()
