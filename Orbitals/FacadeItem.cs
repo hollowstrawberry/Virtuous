@@ -9,7 +9,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Facade");
-			Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
+            Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
 
             DisplayName.AddTranslation(GameCulture.Spanish, "Tapia");
             Tooltip.AddTranslation(GameCulture.Spanish,
@@ -20,7 +20,7 @@ namespace Virtuous.Orbitals
                 "Призывает временные защитные барьеры\nПодходит воинам и магам");
 
             DisplayName.AddTranslation(GameCulture.Chinese, "禁制屏障");
-			Tooltip.AddTranslation(GameCulture.Chinese,
+            Tooltip.AddTranslation(GameCulture.Chinese,
                 "召唤障碍来保护你一段时间\n更适合战士与法师使用");
         }
 
