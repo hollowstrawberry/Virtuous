@@ -20,6 +20,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Summoned Sight");
             DisplayName.AddTranslation(GameCulture.Spanish, "Mira Mágica");
             DisplayName.AddTranslation(GameCulture.Russian, "Призванный Прицел");
+            DisplayName.AddTranslation(GameCulture.Chinese, "召唤真视");
         }
 
         public override void SetOrbitalDefaults()

@@ -23,6 +23,7 @@ namespace Virtuous.Orbitals
         {
             DisplayName.SetDefault("Fireball");
             DisplayName.AddTranslation(GameCulture.Spanish, "Bola de Fuego");
+            DisplayName.AddTranslation(GameCulture.Chinese, "火球");
         }
 
         public override void SetOrbitalDefaults()

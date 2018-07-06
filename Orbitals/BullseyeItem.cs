@@ -23,6 +23,10 @@ namespace Virtuous.Orbitals
             Tooltip.AddTranslation(GameCulture.Russian,
                 "\"Любовь с первого взгляда\"\nУдваивает дальний урон, если стрелять через прицел\n" +
                 "Остальные снаряды будут слабее");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "魔法靶眼");
+			bTooltip.AddTranslation(GameCulture.Chinese, "\"一见钟情\"\n过魔法标靶会获得两倍远程伤害\n" +
+                "从其他方向射击伤害将会削弱");
         }
 
 

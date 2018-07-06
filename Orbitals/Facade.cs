@@ -23,6 +23,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Summoned Barrier");
             DisplayName.AddTranslation(GameCulture.Spanish, "Barrera Mágica");
             DisplayName.AddTranslation(GameCulture.Russian, "Призванный Барьер");
+            DisplayName.AddTranslation(GameCulture.Chinese, "召唤屏障");
         }
 
         public override void SetOrbitalDefaults()

@@ -21,6 +21,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Sailspike");
             DisplayName.AddTranslation(GameCulture.Spanish, "Picabichos");
             DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
+            DisplayName.AddTranslation(GameCulture.Chinese, "飞梭尖刺");
         }
 
         public override void SetOrbitalDefaults()

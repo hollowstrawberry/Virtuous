@@ -31,6 +31,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Blade of Virtue");
             DisplayName.AddTranslation(GameCulture.Spanish, "Hojas Virtud");
             DisplayName.AddTranslation(GameCulture.Russian, "Клинок Доблести");
+            DisplayName.AddTranslation(GameCulture.Chinese, "空灵圣剑");
         }
 
         public override void SetOrbitalDefaults()

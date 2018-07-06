@@ -38,6 +38,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Card");
             DisplayName.AddTranslation(GameCulture.Spanish, "Carta");
             DisplayName.AddTranslation(GameCulture.Russian, "Карта");
+            DisplayName.AddTranslation(GameCulture.Chinese, "卡牌");
 
             Main.projFrames[projectile.type] = 4;
         }

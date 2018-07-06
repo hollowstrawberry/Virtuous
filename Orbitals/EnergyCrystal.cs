@@ -30,6 +30,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Energy Crystal");
             DisplayName.AddTranslation(GameCulture.Spanish, "Cristal de Energía");
             DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
+            DisplayName.AddTranslation(GameCulture.Chinese, "能量水晶");
 
             Main.projFrames[projectile.type] = 12;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = TrailLength; // Length of projectile.oldPos array

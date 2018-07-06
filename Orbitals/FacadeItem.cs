@@ -18,6 +18,10 @@ namespace Virtuous.Orbitals
             DisplayName.AddTranslation(GameCulture.Russian, "Преграда");
             Tooltip.AddTranslation(GameCulture.Russian,
                 "Призывает временные защитные барьеры\nПодходит воинам и магам");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "禁制屏障");
+			Tooltip.AddTranslation(GameCulture.Chinese,
+                "召唤障碍来保护你一段时间\n更适合战士与法师使用");
         }
 
 

@@ -19,6 +19,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Bubble");
             DisplayName.AddTranslation(GameCulture.Spanish, "Burbuja");
             DisplayName.AddTranslation(GameCulture.Russian, "Пузырь");
+            DisplayName.AddTranslation(GameCulture.Chinese, "泡泡");
         }
 
         public override void SetOrbitalDefaults()
