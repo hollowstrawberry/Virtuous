@@ -19,7 +19,7 @@ namespace Virtuous.Orbitals
             Tooltip.AddTranslation(GameCulture.Russian, "Призывает временный шип\nПодходит воинам и магам");
 
             DisplayName.AddTranslation(GameCulture.Chinese, "飞梭尖刺");
-			Tooltip.AddTranslation(GameCulture.Chinese, "召唤持续短时间的尖刺\n更适合战士与法师使用");
+            Tooltip.AddTranslation(GameCulture.Chinese, "召唤持续短时间的尖刺\n更适合战士与法师使用");
         }
 
 
