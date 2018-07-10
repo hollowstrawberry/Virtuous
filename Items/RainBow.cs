@@ -19,6 +19,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "Dispara al cielo para hacer llover destrucción sobre tus enemigos");
             DisplayName.AddTranslation(GameCulture.Russian, "Радуга");
 			Tooltip.AddTranslation(GameCulture.Russian, "Пустите стрелу вверх для навесной атаки");
+            DisplayName.AddTranslation(GameCulture.Chinese, "彩虹");
+            Tooltip.AddTranslation(GameCulture.Chinese, "向天空射击会降临彩虹箭雨");
             }
 
         private int nextColor = 0; //Next arrow color being shot by the bow, from 0 to 11

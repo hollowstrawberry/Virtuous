@@ -27,6 +27,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Spiked Bubble");
             DisplayName.AddTranslation(GameCulture.Spanish, "Burbuja Claveta");
             DisplayName.AddTranslation(GameCulture.Russian, "Колючий Пузырь");
+            DisplayName.AddTranslation(GameCulture.Chinese, "尖刺泡泡");
         }
 
         public override void SetOrbitalDefaults()

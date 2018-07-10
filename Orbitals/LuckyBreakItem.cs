@@ -28,6 +28,13 @@ namespace Virtuous.Orbitals
                 $"Червы увеличивают скорость передвижения и регенерации здоровья\nБубны увеличивают количество монет, выпадаемых с врагов\n" +
                 $"Пики увеличивают шанс критического удара на {LuckyBreak.CritBuff}%\n" +
                 $"Трефы уменьшают получаемый урон на {LuckyBreak.DamageDebuff}%\nПодходит воинам и магам");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "时来运转");
+            Tooltip.AddTranslation(GameCulture.Chinese,
+                $"卡牌会每隔几秒会自动洗牌,每一副牌都有不同的效果\n" +
+                $"[红心]提高移动速度及生命再生\n[方块]使敌人掉落会更多钱币\n" +
+                $"[黑桃]增加{LuckyBreak.CritBuff}%所有暴击率\n" +
+                $"[梅花]减少{LuckyBreak.DamageDebuff}%所有伤害\n更适合战士与法师使用");
         }
 
 

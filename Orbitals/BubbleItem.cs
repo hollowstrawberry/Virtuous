@@ -17,6 +17,9 @@ namespace Virtuous.Orbitals
 
             DisplayName.AddTranslation(GameCulture.Russian, "Пузырь");
             Tooltip.AddTranslation(GameCulture.Russian, "\"У меня должно быть личное пространство!\"\nОтталкивает врагов и увеличивает защиту");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "泡泡");
+            Tooltip.AddTranslation(GameCulture.Chinese, "\"远离我的私人空间\"\n泡泡会排斥敌人,增加防御");
         }
 
 

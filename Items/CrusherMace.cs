@@ -18,6 +18,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "\"Aplasta a tus enemigos\"");
             DisplayName.AddTranslation(GameCulture.Russian, "Дробилка");
             Tooltip.AddTranslation(GameCulture.Russian, "\"На кусочки, говоришь?\"");
+            DisplayName.AddTranslation(GameCulture.Chinese, "粉碎战锤");
+            Tooltip.AddTranslation(GameCulture.Chinese, "去粉碎它,你说呢?");
         }
 
         public override void SetDefaults()

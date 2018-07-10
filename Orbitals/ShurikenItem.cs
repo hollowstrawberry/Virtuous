@@ -9,7 +9,7 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Twilight");
-			Tooltip.SetDefault(
+            Tooltip.SetDefault(
                 "Shuriken defend you, raising melee speed and mana regeneration\nAligns with either magic or melee users");
 
             DisplayName.AddTranslation(GameCulture.Spanish, "Crepúsculo");
@@ -20,6 +20,11 @@ namespace Virtuous.Orbitals
             DisplayName.AddTranslation(GameCulture.Russian, "Сумерки");
             Tooltip.AddTranslation(GameCulture.Russian,
                 "Сюрикены защищают вас, увеличивая скорость ближнего боя и регенерации маны\nПодходит воинам и магам");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "暮色旋镖");
+            Tooltip.AddTranslation(GameCulture.Chinese,
+                "暮色旋镖将保护你,提高近战攻速及法力再生\n" +
+                "更适合战士与法师使用");
         }
 
 

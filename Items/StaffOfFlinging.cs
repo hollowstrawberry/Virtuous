@@ -20,6 +20,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "Los enemigos terrestres reciben daño por caída");
             DisplayName.AddTranslation(GameCulture.Russian, "Посох Броска");
             Tooltip.AddTranslation(GameCulture.Russian, "Наземные враги получают урон от падения");
+            DisplayName.AddTranslation(GameCulture.Chinese, "抛掷法杖");
+            Tooltip.AddTranslation(GameCulture.Chinese, "地面上的敌人扔上天,使它们摔死");
         }
 
         public override void SetDefaults()

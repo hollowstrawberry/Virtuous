@@ -18,6 +18,10 @@ namespace Virtuous.Orbitals
             DisplayName.AddTranslation(GameCulture.Russian, "Круг Защиты");
             Tooltip.AddTranslation(GameCulture.Russian,
                 "Святые огни окружают вас, увеличивая регенерацию здоровья\nПодходит воинам и магам");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "圣光庇护");
+            Tooltip.AddTranslation(GameCulture.Chinese,
+                "圣光将围绕着你,提高生命再生\n更适合战士与法师使用");
         }
 
 

@@ -26,6 +26,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Sacrificial Dagger");
             DisplayName.AddTranslation(GameCulture.Spanish, "Daga de Sacrificio");
             DisplayName.AddTranslation(GameCulture.Russian, "Жертвенный Кинжал");
+            DisplayName.AddTranslation(GameCulture.Chinese, "牺牲匕首");
         }
 
         public override void SetOrbitalDefaults()

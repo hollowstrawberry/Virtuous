@@ -20,6 +20,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "\"Más de 9000 golpes por hora\"\nHaz Click Derecho para un golpe normal");
             DisplayName.AddTranslation(GameCulture.Russian, "Шквал");
             Tooltip.AddTranslation(GameCulture.Russian, "\"9000 ударов в час\"\nПКМ для обычного удара");
+            DisplayName.AddTranslation(GameCulture.Chinese, "疾风新星");
+            Tooltip.AddTranslation(GameCulture.Chinese, "\"每小时拳击可超过9000次\"\n右键出\"石头\");
         }
 
         private int previousFist = -1; //The position ID of the previous fist shot, so it won't be used twice in a row

@@ -26,6 +26,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Summoned Shuriken");
             DisplayName.AddTranslation(GameCulture.Spanish, "Shuriken Mágico");
             DisplayName.AddTranslation(GameCulture.Russian, "Призванный Сюрикен");
+            DisplayName.AddTranslation(GameCulture.Chinese, "召唤飞镖");
         }
 
         public override void SetOrbitalDefaults()

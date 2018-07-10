@@ -17,6 +17,7 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("The Gobbler");
             Tooltip.SetDefault(""); //Added in ModifyTooltips
+            DisplayName.AddTranslation(GameCulture.Chinese, "吞噬者");
         }
 
         //Some constants for easy use

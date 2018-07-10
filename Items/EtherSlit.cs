@@ -20,6 +20,8 @@ namespace Virtuous.Items
             Tooltip.AddTranslation(GameCulture.Spanish, "Haz Click Derecho para un ataque concentrado de mayor potencia");
             DisplayName.AddTranslation(GameCulture.Russian, "Небесная Скважина");
             Tooltip.AddTranslation(GameCulture.Russian, "ПКМ для стихийной атаки\nУ стихийных клинков повышены скорость, шанс критического удара и время застревания");
+            DisplayName.AddTranslation(GameCulture.Chinese, "苍穹裂痕");
+            Tooltip.AddTranslation(GameCulture.Chinese, "右键释放空灵剑诀\n空灵剑诀拥有更高的攻速,暴击率及持续时间");
         }
 
         public override void SetDefaults()

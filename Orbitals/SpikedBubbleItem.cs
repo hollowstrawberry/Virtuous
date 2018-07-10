@@ -21,6 +21,10 @@ namespace Virtuous.Orbitals
             DisplayName.AddTranslation(GameCulture.Russian, "Колючий Пузырь");
             Tooltip.AddTranslation(GameCulture.Russian,
                 "Пузырь немного увеличивает урон и защиту\nВраги отталкиваются и получают урон\nПодходит воинам и магам");
+
+            DisplayName.AddTranslation(GameCulture.Chinese, "尖刺泡泡");
+            Tooltip.AddTranslation(GameCulture.Chinese,
+                "尖刺泡泡会略微增加伤害及防御\n碰到泡泡的敌人会受到排斥\n更适合战士与法师使用");
         }
 
 

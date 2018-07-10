@@ -26,6 +26,7 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Holy Light");
             DisplayName.AddTranslation(GameCulture.Spanish, "Luz Santa");
             DisplayName.AddTranslation(GameCulture.Russian, "Святое Сияние");
+            DisplayName.AddTranslation(GameCulture.Chinese, "圣光");
         }
 
         public override void SetOrbitalDefaults()
