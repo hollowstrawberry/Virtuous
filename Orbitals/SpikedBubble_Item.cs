@@ -5,7 +5,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class SpikedBubbleItem : OrbitalItem
+    public class SpikedBubble_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {
@@ -50,7 +50,7 @@ namespace Virtuous.Orbitals
         public override void AddRecipes()
         {
             var recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType<BubbleItem>());
+            recipe.AddIngredient(mod.ItemType<Bubble_Item>());
             recipe.AddIngredient(ItemID.CrystalShard, 10);
             recipe.AddIngredient(ItemID.PinkGel, 20);
             recipe.AddIngredient(ItemID.LifeFruit);

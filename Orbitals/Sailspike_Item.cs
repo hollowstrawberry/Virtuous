@@ -5,7 +5,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class SailspikeItem : OrbitalItem
+    public class Sailspike_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

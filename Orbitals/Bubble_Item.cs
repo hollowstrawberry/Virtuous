@@ -5,7 +5,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class BubbleItem : OrbitalItem
+    public class Bubble_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

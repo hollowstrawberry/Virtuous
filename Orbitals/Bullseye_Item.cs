@@ -5,7 +5,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class BullseyeItem : OrbitalItem
+    public class Bullseye_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

@@ -5,7 +5,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    class FireballItem : OrbitalItem
+    class Fireball_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

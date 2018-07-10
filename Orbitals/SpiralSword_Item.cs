@@ -6,7 +6,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class SpiralSwordItem : OrbitalItem
+    public class SpiralSword_Item : OrbitalItem
     {
         private const int ManaCost = 100;
 

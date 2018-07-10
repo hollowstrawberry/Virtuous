@@ -4,7 +4,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class HolyLightItem : OrbitalItem
+    public class HolyLight_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

@@ -4,7 +4,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class LuckyBreakItem : OrbitalItem
+    public class LuckyBreak_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

@@ -4,7 +4,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class FacadeItem : OrbitalItem
+    public class Facade_Item : OrbitalItem
     {
         public override void SetStaticDefaults()
         {

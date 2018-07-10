@@ -5,7 +5,7 @@ using Terraria.Localization;
 
 namespace Virtuous.Orbitals
 {
-    public class SacDaggerItem : OrbitalItem
+    public class SacDagger_Item : OrbitalItem
     {
         private const int ManaCost = 50;
 
