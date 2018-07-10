@@ -29,8 +29,7 @@ namespace Virtuous.Orbitals
 
             DisplayName.AddTranslation(GameCulture.Chinese, "空灵圣剑");
             Tooltip.AddTranslation(GameCulture.Chinese,
-                "空灵圣剑将保护你,并增加所有伤害\n召唤后右键可主动攻击\n" +
-                "更适合战士与法师使用");
+                "空灵圣剑将保护你,并增加所有伤害\n召唤后右键可主动攻击\n更适合战士与法师使用");
         }
 
 

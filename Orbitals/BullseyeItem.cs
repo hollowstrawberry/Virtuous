@@ -26,8 +26,7 @@ namespace Virtuous.Orbitals
 
             DisplayName.AddTranslation(GameCulture.Chinese, "魔法靶眼");
             Tooltip.AddTranslation(GameCulture.Chinese,
-	    	"\"一见钟情\"\n过魔法标靶会获得两倍远程伤害\n" +
-                "从其他方向射击伤害将会削弱");
+	    	    "\"一见钟情\"\n过魔法标靶会获得两倍远程伤害\n从其他方向射击伤害将会削弱");
         }
 
 

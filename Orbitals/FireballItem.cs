@@ -25,8 +25,7 @@ namespace Virtuous.Orbitals
 
             DisplayName.AddTranslation(GameCulture.Chinese, "火球术");
             Tooltip.AddTranslation(GameCulture.Chinese,
-                "使附近的敌人燃烧\n右键使火球爆炸\n" +
-                "更适合战士与法师使用");
+                "使附近的敌人燃烧\n右键使火球爆炸\n更适合战士与法师使用");
         }
 
 
