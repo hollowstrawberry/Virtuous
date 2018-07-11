@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.DataStructures;
 using Virtuous.Items;
 using Virtuous.Projectiles;
 
@@ -13,8 +14,13 @@ namespace Virtuous
 {
     public class VirtuousPlayer : ModPlayer
     {
-        // TODO: Change GlobblerStorage into a list of objects containing type and prefix
-        public int[] GobblerStorage = new int[TheGobbler.StorageCapacity]; // Stores the types of items sucked by the gobbler
+        const string DeprecatedGobblerStorageKey = "GobblerStorage";
+        const string GobblerItemTypesKey = "GobblerStorageTypes";
+        const string GobblerItemPrefixesKey = "GobblerStoragePrefixes";
+
+
+        // Stores the types of items sucked by the gobbler
+        public List<GobblerStoredItem> GobblerStorage = new List<GobblerStoredItem>(TheGobbler.StorageCapacity);
 
         public int titanShieldDashing = 0; // Time left and direction of the dash. 0 is inactive
         public int titanShieldCoolDown = TitanShield.CoolDown; // Time left until the dash can be used again
@@ -121,72 +127,60 @@ namespace Virtuous
 
         // The Gobbler
 
-        public Item GobblerItem(int slot) // Returns an item of the type stored in the gobbler storage slot provided
-        {
-            var item = new Item();
-            if (GobblerStorage[slot] != ItemID.None) item.SetDefaults(GobblerStorage[slot]);
-            return item;
-        }
-
-
-        public int GobblerStorageFilled() // How many slots in the gobbler storage are filled
-        {
-            int slot = 0;
-            while (slot < TheGobbler.StorageCapacity && GobblerStorage[slot] != ItemID.None)
-            {
-                slot++;
-            }
-            return slot;
-        }
-
-
         public override void PreUpdate()
         {
-            // The Gobbler special mechanics
-
             if (player.HeldItem.type == mod.ItemType<TheGobbler>())
             {
-                if (player.controlThrow && GobblerStorage[TheGobbler.BaseSlot] != ItemID.None) // Release storage
+                if (player.controlThrow && GobblerStorage.Count > 0) // Release storage
                 {
                     Main.PlaySound(SoundID.Item3, player.Center);
-                    for (int slot = 0; slot < TheGobbler.StorageCapacity; slot++)
+                    foreach (var storedItem in GobblerStorage)
                     {
-                        if (GobblerStorage[slot] != ItemID.None)
+                        int itemIndex = Item.NewItem(player.Center, storedItem.type, prefixGiven: storedItem.prefix);
+                        if (Main.netMode == NetmodeID.MultiplayerClient) // Syncs to multiplayer
                         {
-                            Item storedItem = GobblerItem(slot);
-                            int newItem = Item.NewItem(
-                                player.Center, storedItem.type, 1, false,
-                                ProjGobblerItem.IsReforgeableWeapon(storedItem) ? PrefixID.Broken : 0);
-
-                            if (Main.netMode == NetmodeID.MultiplayerClient) // Syncs to multiplayer
-                            {
-                                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, newItem);
-                            }
+                            NetMessage.SendData(MessageID.SyncItem, number: itemIndex);
                         }
-                        GobblerStorage[slot] = ItemID.None; // Clears the item from the storage
                     }
+
+                    GobblerStorage.Clear();
                 }
             }
+        }
 
-            if (Main.GameUpdateCount % 120 == 0 && player.altFunctionUse != 2) // Every 2 seconds, if the player is not right clicking
+
+        public override TagCompound Save()
+        {
+            return new TagCompound {
+                { GobblerItemTypesKey, GobblerStorage.Select(x => x.type).ToArray() },
+                { GobblerItemPrefixesKey, GobblerStorage.Select(x => x.prefix).ToArray() }
+            };
+        }
+
+
+        public override void Load(TagCompound tag) // Grabs the gobbler storage from the savefile
+        {
+            GobblerStorage.Clear();
+
+            int[] itemTypes;
+            if (tag.ContainsKey(GobblerItemTypesKey))
             {
-                foreach (var item in Main.item.Where(x => x.active && x.WithinRange(player.Center, 300)))
-                {
-                    item.GetGlobalItem<VirtuousItem>().beingGobbled = false; // Makes the items able to be picked up again
-                }
+                itemTypes = tag.GetIntArray(GobblerItemTypesKey);
             }
-        }
+            else if (tag.ContainsKey(DeprecatedGobblerStorageKey)) // Backwards compatibility
+            {
+                itemTypes = tag.GetIntArray(DeprecatedGobblerStorageKey).Where(x => x != ItemID.None).ToArray();
+            }
+            else itemTypes = new int[0];
 
+            if (itemTypes.Length == 0) return; // Nothing to add
 
-        public override TagCompound Save() // Stores the gobbler storage into the savefile
-        {
-            return new TagCompound { { "GobblerStorage", GobblerStorage } };
-        }
+            byte[] itemPrefixes;
+            if (tag.ContainsKey(GobblerItemPrefixesKey)) itemPrefixes = tag.GetByteArray(GobblerItemPrefixesKey);
+            else itemPrefixes = new byte[itemTypes.Length];
 
-
-        public override void Load(TagCompound tag) // Withdraws the gobbler storage from the savefile
-        {
-            GobblerStorage = tag.GetIntArray("GobblerStorage");
+            var items = Enumerable.Range(0, itemTypes.Length).Select(i => new GobblerStoredItem(itemTypes[i], itemPrefixes[i]));
+            GobblerStorage.AddRange(items);
         }
 
 
@@ -226,7 +220,7 @@ namespace Virtuous
                 {
                     titanShieldLastExplosion = Math.Abs(titanShieldDashing);
                     Main.PlaySound(SoundID.Item14, npc.Center);
-                    var newProj = Projectile.NewProjectileDirect(
+                    Projectile.NewProjectileDirect(
                         npc.Center, Vector2.Zero, mod.ProjectileType<ProjTitanAOE>(), damage, knockBack / 2,
                         player.whoAmI, /*ai[0]*/crit ? 1 : 0);
                 }
