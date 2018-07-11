@@ -1,24 +1,28 @@
 ﻿using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.Localization;
 
 namespace Virtuous.Items.Accessories
 {
-
     [AutoloadEquip(EquipType.Wings)]
     public class Archangel : ModItem
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Archangel");
-            Tooltip.SetDefault("Sublime flight and speed!\nExtreme mobility on all surfaces\nTemporary immunity to lava");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Arcángel");
-            Tooltip.AddTranslation(GameCulture.Spanish, "Vuelo y velocidad sublimes\nMobilidad extrema en toda superficie\nInmunidad temoral a la lava");
-            DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
-            Tooltip.AddTranslation(GameCulture.Russian, "андиозный полёт и ско ость!\nМобильность на вс пов ност\nВ м нна н у звимость к лав");
+            Tooltip.SetDefault(
+                "TEST ITEM\nSublime flight and speed!\nExtreme mobility on all surfaces\nTemporary immunity to lava");
 
+            DisplayName.AddTranslation(GameCulture.Spanish, "Arcángel");
+            Tooltip.AddTranslation(GameCulture.Spanish,
+                "TEST ITEM\nVuelo y velocidad sublimes\nMobilidad extrema en toda superficie\nInmunidad temoral a la lava");
+
+            DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
+            Tooltip.AddTranslation(GameCulture.Russian,
+                "TEST ITEM\nандиозный полёт и ско ость!\nМобильность на вс пов ност\nВ м нна н у звимость к лав");
         }
+
 
         public override void SetDefaults()
         {
@@ -30,9 +34,12 @@ namespace Virtuous.Items.Accessories
             item.expert = true;
         }
         
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            VirtuousPlayer modPlayer = player.GetModPlayer<VirtuousPlayer>();
+            var modPlayer = player.GetModPlayer<VirtuousPlayer>();
+            modPlayer.accessoryArchangel = !hideVisual;
+
             player.wingTimeMax = 300;
             player.accRunSpeed = 16f;
             player.runAcceleration += 0.2f;
@@ -40,8 +47,8 @@ namespace Virtuous.Items.Accessories
             player.waterWalk = true;
             player.fireWalk = true;
             player.lavaMax += 900;
-            modPlayer.accessoryArchangel  = !hideVisual;
         }
+
 
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
             ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
@@ -53,11 +60,13 @@ namespace Virtuous.Items.Accessories
             constantAscend = 0.135f;
         }
 
+
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
             speed = 15.0f;
             acceleration *= 3.0f;
         }
+
 
         /*public override bool WingUpdate(Player player, bool inUse)
         {
@@ -66,9 +75,10 @@ namespace Virtuous.Items.Accessories
             return false;
         }*/
 
+
         public override void AddRecipes()
         {
-            //ModRecipe recipe = new ModRecipe(mod);
+            //var recipe = new ModRecipe(mod);
             //recipe.AddIngredient(null, "AstroBoots");
             //recipe.AddRecipeGroup("Virtuous:CelestialWings");
             //recipe.AddIngredient(ItemID.FishronWings);
@@ -78,6 +88,5 @@ namespace Virtuous.Items.Accessories
             //recipe.SetResult(this);
             //recipe.AddRecipe();
         }
-        
     }
 }

@@ -1,8 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-
+using Terraria.Localization;
 
 namespace Virtuous.Items.Accessories
 {
@@ -12,12 +11,18 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astro Boots");
-            Tooltip.SetDefault("Fantastic flight and slow fall\nExtreme mobility on all surfaces\nTemporary immunity to lava");
+            Tooltip.SetDefault(
+                "TEST ITEM\nFantastic flight and slow fall\nExtreme mobility on all surfaces\nTemporary immunity to lava");
+
             DisplayName.AddTranslation(GameCulture.Spanish, "Astrobotas");
-            Tooltip.AddTranslation(GameCulture.Spanish, "Vuelo y velocidad excelentes\nMobilidad extrema en toda superficie\nInmunidad temporal a la lava");
+            Tooltip.AddTranslation(GameCulture.Spanish,
+                "TEST ITEM\nVuelo y velocidad excelentes\nMobilidad extrema en toda superficie\nInmunidad temporal a la lava");
+
             DisplayName.AddTranslation(GameCulture.Russian, "Космич ски Ботинки");
-            Tooltip.AddTranslation(GameCulture.Russian, "Фантастич ский полёт и м ко п из мл ни \nМобильность на вс пов ност \nВ м нна н у звимость к лав ");
+            Tooltip.AddTranslation(GameCulture.Russian,
+                "TEST ITEM\nФантастич ский полёт и м ко п из мл ни \nМобильность на вс пов ност \nВ м нна н у звимость к лав ");
         }
+
 
         public override void SetDefaults()
         {
@@ -28,9 +33,12 @@ namespace Virtuous.Items.Accessories
             item.accessory = true;
         }
         
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            VirtuousPlayer modPlayer = player.GetModPlayer<VirtuousPlayer>();
+            var modPlayer = player.GetModPlayer<VirtuousPlayer>();
+            modPlayer.accessoryAstroBoots = !hideVisual;
+
             player.wingTimeMax = 180;
             player.accRunSpeed = 13.0f;
             player.runAcceleration += 0.07f;
@@ -38,8 +46,8 @@ namespace Virtuous.Items.Accessories
             player.waterWalk = true;
             player.fireWalk = true;
             player.lavaMax = player.lavaMax + 420;
-            modPlayer.accessoryAstroBoots = !hideVisual;
         }
+
 
         public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising, ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
         {
@@ -50,12 +58,14 @@ namespace Virtuous.Items.Accessories
             constantAscend = 0.135f;
         }
 
+
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
             speed = 11.0f;
             acceleration *= 2.0f;
         }
         
+
         /*public override bool WingUpdate(Player player, bool inUse)
         {
             if (inUse) Dust.NewDust(player.position, player.width, player.height, 107, 0, 0, 0, Color.Cyan);
@@ -63,9 +73,10 @@ namespace Virtuous.Items.Accessories
             return false;
         }*/
 
+
         public override void AddRecipes()
         {
-            //ModRecipe recipe = new ModRecipe(mod);
+            //var recipe = new ModRecipe(mod);
             //recipe.AddIngredient(null, "TerraWalkers");
             //recipe.AddRecipeGroup("Virtuous:Wings");
             //recipe.AddIngredient(ItemID.Ectoplasm, 20);
@@ -75,6 +86,5 @@ namespace Virtuous.Items.Accessories
             //recipe.SetResult(this);
             //recipe.AddRecipe();
         }
-        
     }
 }

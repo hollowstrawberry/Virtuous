@@ -1,8 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-
+using Terraria.Localization;
 
 namespace Virtuous.Items.Accessories
 {
@@ -12,12 +11,18 @@ namespace Virtuous.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Terra Walkers");
-            Tooltip.SetDefault("Extreme mobility on all surfaces\nIncreased wing time\nTemporary immunity to lava");
+            Tooltip.SetDefault(
+                "TEST ITEM\nExtreme mobility on all surfaces\nIncreased wing time\nTemporary immunity to lava");
+
             DisplayName.AddTranslation(GameCulture.Spanish, "Botas Terra");
-            Tooltip.AddTranslation(GameCulture.Spanish, "Mobilidad extrema en toda superficie\nVuelo mejorado\nInmunidad temporal a la lava");
+            Tooltip.AddTranslation(GameCulture.Spanish,
+                "TEST ITEM\nMobilidad extrema en toda superficie\nVuelo mejorado\nInmunidad temporal a la lava");
+
             DisplayName.AddTranslation(GameCulture.Russian, "Терра Боты");
-            Tooltip.AddTranslation(GameCulture.Russian, "Мобильность на всех поверхностях\nУвеличено время полёта\nВременная неуязвимость к лаве");
+            Tooltip.AddTranslation(GameCulture.Russian,
+                "TEST ITEM\nМобильность на всех поверхностях\nУвеличено время полёта\nВременная неуязвимость к лаве");
         }
+
 
         public override void SetDefaults()
         {
@@ -27,6 +32,7 @@ namespace Virtuous.Items.Accessories
             item.rare = 7;
             item.accessory = true;
         }
+
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
@@ -41,9 +47,10 @@ namespace Virtuous.Items.Accessories
             player.wingTimeMax += 50;
         }
 
+
         public override void AddRecipes()
         {
-            //ModRecipe recipe = new ModRecipe(mod);
+            //var recipe = new ModRecipe(mod);
             //recipe.AddIngredient(ItemID.FrostsparkBoots);
             //recipe.AddIngredient(ItemID.LavaWaders);
             //recipe.AddIngredient(ItemID.SoulofMight, 1);
@@ -53,6 +60,5 @@ namespace Virtuous.Items.Accessories
             //recipe.SetResult(this);
             //recipe.AddRecipe();
         }
-        
     }
 }
