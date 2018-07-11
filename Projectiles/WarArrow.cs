@@ -8,7 +8,8 @@ namespace Virtuous.Projectiles
 {
     public class WarArrow : ModProjectile
     {
-        private float CollidePositionY => projectile.ai[1]; //The player's vertical position when this arrow was shot, past which arrows will start coliding with tiles again
+        // The player's vertical position when this arrow was shot, past which arrows will start coliding with tiles again
+        public float CollidePositionY { get { return projectile.ai[1]; } set { projectile.ai[1] = value; } }
 
         private const int ArmorPenetration = 42;
 

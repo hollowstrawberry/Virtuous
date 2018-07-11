@@ -16,12 +16,12 @@ namespace Virtuous.Projectiles
             Main.projFrames[projectile.type] = 3;
         }
 
-        public  const int TargetDistance = 100; //How far from the target the projectile spawns. Used by the item's class
+        public  const int SpawnDistance = 100; //How far from the target the projectile spawns. Used by the item's class
         private const int Lifespan = 40; //Total duration of the projectile
         private const int FadeTime = 20; //How long it fades away for
         private int moveTime; //How long the projectile will move for
-        private int Appearance { get { return (int)projectile.ai[0]; } set { projectile.ai[0] = value; } } //How long it moves for before stopping. Stored as the projectile's native ai[0]
-        private bool Crit { get { return projectile.ai[1] > 0; } } //Whether the original hit was a critical hit or not, passed as ai[1]
+        public int Appearance { get { return (int)projectile.ai[0]; } set { projectile.ai[0] = value; } } //How long it moves for before stopping. Stored as the projectile's native ai[0]
+        public bool Crit { get { return projectile.ai[1] != 0; } set { projectile.ai[1] = value ? 1 : 0;  } } //Whether the original hit was a critical hit or not, passed as ai[1]
 
         public override void SetDefaults()
         {
@@ -42,7 +42,7 @@ namespace Virtuous.Projectiles
         {
             if (projectile.timeLeft == Lifespan) //If projectile has just spawned
             {
-                moveTime = (int)Math.Ceiling((TargetDistance-projectile.width/2) / projectile.velocity.Length()); //It'll move until its edge reaches the edge of the opposite pillar
+                moveTime = (int)Math.Ceiling((SpawnDistance-projectile.width/2) / projectile.velocity.Length()); //It'll move until its edge reaches the edge of the opposite pillar
                 moveTime += 1; //Overshoot as the sprites are irregular
                 if (projectile.velocity.X < 0) projectile.spriteDirection = -1; //Going left
                 projectile.frame = Appearance;

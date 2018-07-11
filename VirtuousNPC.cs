@@ -64,15 +64,15 @@ namespace Virtuous
             switch (npc.type)
             {
                 case NPCID.SkeletronHead:
-                    dropType = mod.ItemType<Orbitals.FacadeItem>();
+                    dropType = mod.ItemType<Orbitals.Facade_Item>();
                     break;
 
                 case NPCID.Golem:
-                    dropType = mod.ItemType<Orbitals.HolyLightItem>();
+                    dropType = mod.ItemType<Orbitals.HolyLight_Item>();
                     break;
 
                 case NPCID.GiantCursedSkull:
-                    if (Main.rand.OneIn(15)) dropType = mod.ItemType<Orbitals.SacDaggerItem>();
+                    if (Main.rand.OneIn(15)) dropType = mod.ItemType<Orbitals.SacDagger_Item>();
                     break;
 
                 case NPCID.DukeFishron:
@@ -85,14 +85,14 @@ namespace Virtuous
 
                 case NPCID.PirateCaptain:
                 case NPCID.PirateShip:
-                    if (Main.rand.OneIn(10)) dropType = mod.ItemType<Orbitals.LuckyBreakItem>();
+                    if (Main.rand.OneIn(10)) dropType = mod.ItemType<Orbitals.LuckyBreak_Item>();
                     break;
 
                 case NPCID.TheDestroyer:
                 case NPCID.Retinazer:
                 case NPCID.Spazmatism:
                 case NPCID.SkeletronPrime:
-                    if (Main.rand.OneIn(6)) dropType = mod.ItemType<Orbitals.EnergyCrystalItem>();
+                    if (Main.rand.OneIn(6)) dropType = mod.ItemType<Orbitals.EnergyCrystal_Item>();
                     break;
             }
 

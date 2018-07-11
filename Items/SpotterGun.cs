@@ -2,10 +2,9 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.Localization;
 using Virtuous.Projectiles;
-
 
 namespace Virtuous.Items
 {
@@ -15,13 +14,18 @@ namespace Virtuous.Items
         {
             DisplayName.SetDefault("Spotter");
             Tooltip.SetDefault("\"They won't see it coming\"");
+
             DisplayName.AddTranslation(GameCulture.Spanish, "Pistola Señuelo");
             Tooltip.AddTranslation(GameCulture.Spanish, "\"No lo verán venir\"");
+
+            // TODO: Missing Russian translation
             //DisplayName.AddTranslation(GameCulture.Russian, "");
             //Tooltip.AddTranslation(GameCulture.Russian, "");
+
             DisplayName.AddTranslation(GameCulture.Chinese, "零点");
             Tooltip.AddTranslation(GameCulture.Chinese, "它们将看不到未来");
         }
+
 
         public override void SetDefaults()
         {
@@ -44,21 +48,22 @@ namespace Virtuous.Items
             item.value = Item.sellPrice(0, 15, 0, 0);
         }
 
-        public override Vector2? HoldoutOffset()
-        {
-            return new Vector2(5, 0);
-        }
+
+        public override Vector2? HoldoutOffset() => new Vector2(5, 0);
+
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            Projectile newProj = Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
-            newProj.GetGlobalProjectile<VirtuousProjectile>().spotter = true; //Projectile carries the spotter flag
+            var proj = Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
+            proj.GetGlobalProjectile<VirtuousProjectile>().spotter = true; // Projectile can spawn a Crosshair
+
             return false;
         }
 
+
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.IllegalGunParts);
             recipe.AddIngredient(ItemID.Nanites, 50);
             recipe.AddIngredient(ItemID.Ectoplasm, 10);
@@ -66,7 +71,5 @@ namespace Virtuous.Items
             recipe.SetResult(this);
             recipe.AddRecipe();
         }
-
-        //Crosshair spawning code in VirtuousProjectile
     }
 }

@@ -51,7 +51,7 @@ namespace Virtuous
                 .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(OrbitalProjectile)));
 
             // Make empty orbitals then sort them by ID
-            orbitals.AddRange(types.Select(type => Activator.CreateInstance<OrbitalProjectile>()));
+            orbitals.AddRange(types.Select(type => (OrbitalProjectile)Activator.CreateInstance(type)));
             orbitals = orbitals.OrderBy(orbital => orbital.Type).ToList();
 
             // Makes sure the list has a one-to-one correspondence

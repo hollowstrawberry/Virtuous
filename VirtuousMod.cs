@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,6 +18,19 @@ namespace Virtuous
                 AutoloadSounds = true
             };
         }
+
+
+        //public override void Load()
+        //{
+        //    var translatable = Assembly.GetAssembly(typeof(VirtuousMod)).GetTypes()
+        //        .Where(x => x.IsClass && !x.IsAbstract && x.IsSubclassOf(typeof(ITranslatable)))
+        //        .Select(x => (ITranslatable)Activator.CreateInstance(x));
+
+        //    foreach (var obj in translatable)
+        //    {
+        //        obj.AddTranslations(this);
+        //    }
+        //}
 
 
         public override void AddRecipeGroups()

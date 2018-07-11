@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameInput;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.GameInput;
+using Terraria.Localization;
 using Virtuous.Projectiles;
-
 
 namespace Virtuous.Items
 {
@@ -15,14 +14,21 @@ namespace Virtuous.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lion's Mane");
-            Tooltip.SetDefault("Damage increases exponentially as it travels\nLeft Click for clockwise, Right Click for counter-clockwise");
+            Tooltip.SetDefault(
+                "Damage increases exponentially as it travels\nLeft Click for clockwise, Right Click for counter-clockwise");
+
             DisplayName.AddTranslation(GameCulture.Spanish, "Melena de León");
-            Tooltip.AddTranslation(GameCulture.Spanish, "El daño aumenta exponencialmente con la distancia\nHaz Click Derecho para ir en sentido contrarreloj");
+            Tooltip.AddTranslation(GameCulture.Spanish,
+                "El daño aumenta exponencialmente con la distancia\nHaz Click Derecho para ir en sentido contrarreloj");
+
             DisplayName.AddTranslation(GameCulture.Russian, "Львиная Грива");
-            Tooltip.AddTranslation(GameCulture.Russian, "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
+            Tooltip.AddTranslation(GameCulture.Russian,
+                "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
+
             DisplayName.AddTranslation(GameCulture.Chinese, "雄狮鬃毛");
             Tooltip.AddTranslation(GameCulture.Chinese, "随着持续时间成倍增加伤害\n左键顺时针释放,右键逆时针释放");
         }
+
 
         public override void SetDefaults()
         {
@@ -46,34 +52,34 @@ namespace Virtuous.Items
             item.value = Item.sellPrice(0, 20, 0, 0);
         }
 
-        public override bool AltFunctionUse(Player player)
-        {
-            return true;
-        }
+
+        public override bool AltFunctionUse(Player player) => true;
+
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            Tools.HandleAltUseAnimation(player); //A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+            Tools.HandleAltUseAnimation(player);
 
             base.GetWeaponDamage(player, ref damage);
         }
 
+
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            const int distance = 5;
-            int direction;
+            float cursorAngle = (Main.MouseWorld - player.Center).ToRotation().ToDegrees();
 
-            float cursorAngle = (Main.MouseWorld - player.Center).ToRotation();
-            if      (cursorAngle >= -135.ToRadians() && cursorAngle <=  -45.ToRadians()) direction = 1; //Up
-            else if (cursorAngle >=  -45.ToRadians() && cursorAngle <=  +45.ToRadians()) direction = 2; //Right
-            else if (cursorAngle >=  +45.ToRadians() && cursorAngle <= +135.ToRadians()) direction = 3; //Down
-            else direction = 4; //Left
+            if (cursorAngle >= -135 && cursorAngle <= -45) position = -Vector2.UnitY; // Up
+            else if (cursorAngle >= -45 && cursorAngle <= +45) position = Vector2.UnitX; // Right
+            else if (cursorAngle >= +45 && cursorAngle <= +135) position = Vector2.UnitY; // Down
+            else position = -Vector2.UnitX; // Left
 
-            if (player.altFunctionUse == 2) direction *= -1; //Right click, counter-clockwise
-
-            Projectile.NewProjectile(position, Vector2.Zero, type, damage, knockBack, player.whoAmI, /*ai[0] and ai[1]*/ distance, direction);
+            var proj = Projectile.NewProjectileDirect(Vector2.Zero, Vector2.Zero, type, damage, knockBack, player.whoAmI);
+            var mane = proj.modProjectile as ProjLionsMane;
+            mane.RelativePosition = position.OfLength(5);
+            mane.Direction = player.altFunctionUse == 2 ? -1 : +1;
             return false;
         }
+
 
         public override void AddRecipes()
         {

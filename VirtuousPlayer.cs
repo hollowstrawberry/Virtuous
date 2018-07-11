@@ -13,7 +13,7 @@ namespace Virtuous
 {
     public class VirtuousPlayer : ModPlayer
     {
-        // TODO: Change GlobblerStorage into a list
+        // TODO: Change GlobblerStorage into a list of objects containing type and prefix
         public int[] GobblerStorage = new int[TheGobbler.StorageCapacity]; // Stores the types of items sucked by the gobbler
 
         public int titanShieldDashing = 0; // Time left and direction of the dash. 0 is inactive
@@ -213,7 +213,7 @@ namespace Virtuous
                 var titanShield = (TitanShield)player.inventory[player.selectedItem].modItem; // Gets the held item
                 if (titanShield == null) return; // Shouldn't happen
 
-                int damage = titanShield.GetDamage(player);
+                int damage = 0; titanShield.GetWeaponDamage(player, ref damage);
                 float knockBack = titanShield.item.knockBack;
                 bool crit = Main.rand.Next(100) < (titanShield.item.crit + player.meleeCrit);
 

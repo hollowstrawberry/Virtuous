@@ -153,19 +153,28 @@ namespace Virtuous
         {
             var orbitalPlayer = Main.player[item.owner].GetModPlayer<OrbitalPlayer>();
 
-            TooltipLine critLine = tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "CritChance");
-            if (critLine != null) tooltips.Remove(critLine); // Removes the critical chance line
+            int duration = ((orbitalPlayer.ModifiedOrbitalTime(this) - OrbitalID.Orbital[type].DyingTime) / 60);
 
-            TooltipLine damageLine = tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "Damage");
-            if (damageLine != null)
+            string damageText;
+            string durationText;
+
+            if (Language.ActiveCulture == GameCulture.Spanish)
             {
-                string damage = damageLine.text.Split(' ')[0];
-                if (Language.ActiveCulture == GameCulture.Spanish) damageLine.text = $"{damage} daño orbital";
-                else damageLine.text = $"{damage} orbital damage";
+                damageText = "daño orbital";
+                durationText = $"{duration} segundos de duracion";
+            }
+            else
+            {
+                damageText = "orbital damage";
+                durationText = $"{duration} seconds duration";
             }
 
-            string durationText = ((orbitalPlayer.ModifiedOrbitalTime(this) - OrbitalID.Orbital[type].DyingTime) / 60).ToString();
-            durationText += Language.ActiveCulture == GameCulture.Spanish ? " segundos de duración" : " seconds duration";
+
+            TooltipLine critLine = tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "CritChance");
+            if (critLine != null) tooltips.Remove(critLine);
+
+            TooltipLine damageLine = tooltips.FirstOrDefault(line => line.mod == "Terraria" && line.Name == "Damage");
+            if (damageLine != null) damageLine.text = $"{damageLine.text.Split(' ')[0]} {damageText}";
 
             int durationIndex;
             if (damageLine == null) // Above mana

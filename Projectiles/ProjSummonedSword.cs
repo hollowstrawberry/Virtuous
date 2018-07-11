@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.Localization;
 
 namespace Virtuous.Projectiles
 {
@@ -14,6 +14,8 @@ namespace Virtuous.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Summoned Sword");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Espada etérea");
+
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
@@ -123,7 +125,7 @@ namespace Virtuous.Projectiles
             return true;
         }
 
-        //Syncs local ai slots in multiplayer
+        // Syncs local ai slots in multiplayer
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(projectile.localAI[0]);
