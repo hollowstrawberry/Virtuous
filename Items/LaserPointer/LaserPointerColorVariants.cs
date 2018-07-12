@@ -1,8 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Localization;
+﻿using Terraria.ID;
 using Virtuous.Projectiles;
 
 namespace Virtuous.Items.LaserPointer
