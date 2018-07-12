@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,28 +10,50 @@ using Terraria.ModLoader;
 
 namespace Virtuous.Projectiles
 {
+    enum LaserColor
+    {
+        Red,
+        Green,
+        Blue,
+        Yellow,
+        Purple,
+        White,
+        Orange
+    }
+
+
     class ProjLaserPointer : ModProjectile
     {
-        private static readonly List<int> eyeNPCs = new List<int>(new int[] { NPCID.Spazmatism, NPCID.Retinazer, NPCID.ServantofCthulhu });
 
-        public const ushort Red = 0, Green = 1, Blue = 3, Yellow = 4, Purple = 5, White = 6, Orange = 7;
+        private static readonly int[] EyeNPCs = new[] {
+            NPCID.Spazmatism, NPCID.Retinazer, NPCID.ServantofCthulhu,
+        }.Select(x => (int)x).ToArray(); // Please tell me why these were shorts in the first place
 
-        private Color LaserColor
+
+
+        public LaserColor LaserColor // Stored as ai[0]
+        {
+            get { return (LaserColor)(int)projectile.ai[0]; }
+            set { projectile.ai[0] = (int)value; }
+        }
+
+        private Color RgbColor
         {
             get
             {
-                switch ((int)projectile.ai[0])
+                switch (LaserColor)
                 {
-                    default:     return Color.Red;
-                    case Green:  return new Color(0, 255, 0);
-                    case Blue:   return Color.Blue;
-                    case Yellow: return Color.Yellow;
-                    case Purple: return new Color(200, 0, 255);
-                    case White:  return Color.White;
-                    case Orange: return Color.OrangeRed;
+                    default:                return Color.Red;
+                    case LaserColor.Green:  return new Color(0, 255, 0);
+                    case LaserColor.Blue:   return Color.Blue;
+                    case LaserColor.Yellow: return Color.Yellow;
+                    case LaserColor.Purple: return new Color(230, 0, 255);
+                    case LaserColor.White:  return Color.White;
+                    case LaserColor.Orange: return Color.OrangeRed;
                 }
             }
         }
+
 
 
         public override void SetDefaults()
@@ -45,60 +68,74 @@ namespace Virtuous.Projectiles
             projectile.netImportant = true;
         }
 
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 endPoint = GetEndPoint();
 
-            Texture2D texture = Main.projectileTexture[projectile.type]; //The dot which composes the line
-            Rectangle drawRect = new Rectangle((int)Math.Round(projectile.Center.X - Main.screenPosition.X), (int)Math.Round(projectile.Center.Y - Main.screenPosition.Y), (int)Math.Round((endPoint - projectile.Center).Length()), projectile.width); //Where the line will be from corner to corner
-            Color drawColor = LaserColor;
+            Texture2D texture = Main.projectileTexture[projectile.type]; // The dot which composes the line
             float drawRotation = projectile.velocity.ToRotation(); //Direction of the line
             Vector2 drawOrigin = new Vector2(projectile.width / 2, projectile.height / 2);
 
-            spriteBatch.Draw(texture, drawRect, null, drawColor, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
+            Rectangle drawRect = new Rectangle( // Where the line will be from corner to corner
+                (int)Math.Round(projectile.Center.X - Main.screenPosition.X),
+                (int)Math.Round(projectile.Center.Y - Main.screenPosition.Y),
+                (int)Math.Round((endPoint - projectile.Center).Length()),
+                projectile.width);
+
+            spriteBatch.Draw(texture, drawRect, null, RgbColor, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
 
             OtherFunEffects(endPoint);
 
-            return false; //Don't draw normally
+            return false;
         }
+
 
         private Vector2 GetEndPoint()
         {
             Vector2 endPoint = projectile.Center;
 
-            //We scan along a line to see how far the laser can go before hitting something
-            while ((endPoint - projectile.Center).Length() < Main.screenWidth && Collision.CanHit(projectile.Center, 1, 1, endPoint, 1, 1))
+            // We scan along a line to see how far the laser can go before hitting something
+            while ((endPoint - projectile.Center).Length() < Main.screenWidth
+                   && Collision.CanHit(projectile.Center, 1, 1, endPoint, 1, 1))
             {
-                endPoint += projectile.velocity.Normalized();
+                endPoint += projectile.velocity.OfLength(1);
 
-                for (int i = 0; i < Main.maxNPCs; i++) //Returns if it collides with an entity
+                foreach (var npc in Main.npc) // Returns if it collides with an entity
                 {
-                    if (Main.npc[i].active && Main.npc[i].Hitbox.Contains((int)endPoint.X, (int)endPoint.Y))
+                    if (npc.active && npc.Hitbox.Contains((int)endPoint.X, (int)endPoint.Y))
                     {
-                        if (eyeNPCs.Contains(Main.npc[i].type) || Main.npc[i].InternalNameHas("eye")) Main.npc[i].StrikeNPC(10, 0, 0); //Hurts eyes
+                        if (EyeNPCs.Contains(npc.type) || npc.InternalNameHas("eye"))
+                        {
+                            npc.StrikeNPC(10, 0, 0); // Hurts eyes
+                        }
+
                         return endPoint;
                     }
                 }
-                for (int i = 0; i < Main.maxPlayers; i++)
+
+                foreach (var player in Main.player)
                 {
-                    if (Main.player[i].active && Main.player[i].whoAmI != projectile.owner && Main.player[i].Hitbox.Contains((int)endPoint.X, (int)endPoint.Y)) return endPoint;
+                    if (player.active && player.whoAmI != projectile.owner
+                        && player.Hitbox.Contains((int)endPoint.X, (int)endPoint.Y))
+                    {
+                        return endPoint;
+                    }
                 }
             }
 
             return endPoint;
         }
 
+
         private void OtherFunEffects(Vector2 endPoint)
         {
             if (Main.myPlayer == projectile.owner)
             {
-                //Cat follows the laser
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                var cat = Main.projectile.FirstOrDefault(x => x.active && x.type == ProjectileID.BlackCat);
+                if (cat != null) // Cat follows the laser
                 {
-                    if (Main.projectile[i].active && Main.projectile[i].type == ProjectileID.BlackCat)
-                    {
-                        Main.projectile[i].velocity += (endPoint - Main.projectile[i].position).OfLength(1);
-                    }
+                    cat.velocity += (endPoint - Main.projectile[i].position).OfLength(1);
                 }
             }
         }

@@ -9,6 +9,11 @@ namespace Virtuous.Items.LaserPointer
 {
     class LaserPointer : ModItem
     {
+        protected virtual LaserColor LaserColor => LaserColor.Red;
+        protected virtual short ColorMaterial => ItemID.RubyGemsparkBlock;
+
+
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Laser Pointer");
@@ -16,6 +21,7 @@ namespace Virtuous.Items.LaserPointer
             DisplayName.AddTranslation(GameCulture.Russian, "Лазерный Указатель");
             //DisplayName.AddTranslation(GameCulture.Chinese, "");
         }
+
 
         public override void SetDefaults()
         {
@@ -32,7 +38,9 @@ namespace Virtuous.Items.LaserPointer
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            Projectile.NewProjectile(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI, ProjLaserPointer.Red);
+            var proj = Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
+            var laser = proj.modProjectile as ProjLaserPointer;
+            laser.LaserColor = LaserColor;
             return false;
         }
 
@@ -42,7 +50,7 @@ namespace Virtuous.Items.LaserPointer
             var recipe = new ModRecipe(mod);
             recipe.AddRecipeGroup("IronBar", 2);
             recipe.AddIngredient(ItemID.Wire, 1);
-            recipe.AddIngredient(ItemID.RubyGemsparkBlock, 1);
+            recipe.AddIngredient(ColorMaterial, 1);
             recipe.AddTile(TileID.WorkBenches);
             recipe.SetResult(this);
             recipe.AddRecipe();
