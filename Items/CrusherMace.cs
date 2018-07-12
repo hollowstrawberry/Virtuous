@@ -54,7 +54,7 @@ namespace Virtuous.Items
             foreach (int direction in new[] { +1, -1 })
             {
                 var position = new Vector2(target.Center.X + ProjCrusherPillar.SpawnDistance * direction, target.Center.Y);
-                var velocity = new Vector2(direction * (crit ? 10 : 5), 0f);
+                var velocity = new Vector2(-direction * (crit ? 10 : 5), 0f);
 
                 var proj = Projectile.NewProjectileDirect(position, velocity, type, damage, knockBack, player.whoAmI);
                 var pillar = proj.modProjectile as ProjCrusherPillar;

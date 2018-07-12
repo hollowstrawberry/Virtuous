@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
-using Terraria.Graphics;
 using Terraria.ModLoader;
 
 namespace Virtuous.Projectiles
@@ -135,7 +133,7 @@ namespace Virtuous.Projectiles
                 var cat = Main.projectile.FirstOrDefault(x => x.active && x.type == ProjectileID.BlackCat);
                 if (cat != null) // Cat follows the laser
                 {
-                    cat.velocity += (endPoint - Main.projectile[i].position).OfLength(1);
+                    cat.velocity += (endPoint - cat.position).OfLength(1);
                 }
             }
         }

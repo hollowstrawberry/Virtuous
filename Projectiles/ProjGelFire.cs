@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.Localization;
 
 namespace Virtuous.Projectiles
 {
@@ -11,8 +11,10 @@ namespace Virtuous.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gel Fire");
+            DisplayName.SetDefault("Flaming gel");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Gel ardiente");
         }
+
 
         public override void SetDefaults()
         {
@@ -23,9 +25,10 @@ namespace Virtuous.Projectiles
             projectile.penetrate = -1;
             projectile.friendly = true;
             projectile.tileCollide = true;
-            projectile.usesIDStaticNPCImmunity = true; //Doesn't conflict with other piercing damage
+            projectile.usesIDStaticNPCImmunity = true; // Doesn't conflict with other piercing damage
             projectile.idStaticNPCHitCooldown = 10;
         }
+
 
         public override void AI()
         {
@@ -34,32 +37,40 @@ namespace Virtuous.Projectiles
             int dustAmount = Main.rand.Next(1, 3);
             for (int i = 0; i < dustAmount; i++)
             {
-                Dust newDust = Dust.NewDustDirect(projectile.Center, projectile.width, projectile.height, DustID.Fire, 0f, 0f, /*Alpha*/100, default(Color), Main.rand.NextFloat(1.3f, 1.8f));
-                newDust.noGravity = true;
-                if (i == 0) newDust.velocity.Y -= 2f;
-                else newDust.velocity.Y *= 0.1f;
+                var dust = Dust.NewDustDirect(
+                    projectile.Center, projectile.width, projectile.height, DustID.Fire,
+                    Alpha: 100, Scale: Main.rand.NextFloat(1.3f, 1.8f));
+                dust.noGravity = true;
+
+                if (i == 0) dust.velocity.Y -= 2f;
+                else dust.velocity.Y *= 0.1f;
             }
 
-            if (projectile.velocity.Y == 0f && projectile.velocity.X != 0f)
+            if (projectile.velocity.Y == 0f && projectile.velocity.X != 0f) // Slows down on the ground
             {
                 projectile.velocity.X = projectile.velocity.X * 0.97f;
                 if (Math.Abs(projectile.velocity.X) < 0.01)
                 {
                     projectile.velocity.X = 0f;
-                    projectile.netUpdate = true;
                 }
             }
-            projectile.velocity.Y += 0.2f;
 
-            if (projectile.velocity.Y < 0.25 && projectile.velocity.Y > 0.15) projectile.velocity.X *= 0.8f;
+            projectile.velocity.Y += 0.2f; // Gravity
+
+            if (projectile.velocity.Y < 0.25 && projectile.velocity.Y > 0.15) // No idea why this is here
+            {
+                projectile.velocity.X *= 0.8f;
+            }
         }
+
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            projectile.velocity.Y *= -0.3f;
+            projectile.velocity.Y *= -0.3f; // Bounce
             projectile.velocity.X *=  0.3f;
-            return false; //Don't die
+            return false; // Don't die
         }
+
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {

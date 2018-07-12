@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -20,6 +19,7 @@ namespace Virtuous.Projectiles
         private static readonly float DamageMultiplier = (float)Math.Pow(FinalDamageFactor, 1.0 / Lifespan);
 
 
+
         public int Direction // +1 for clockwise, -1 for counterclockwise, stored as ai[0]
         {
             get { return (int)projectile.ai[0]; }
@@ -35,7 +35,6 @@ namespace Virtuous.Projectiles
                 projectile.position = Main.player[projectile.owner].SpriteCenter() + value;
             }
         }
-
 
 
 
@@ -63,12 +62,9 @@ namespace Virtuous.Projectiles
         public override void AI()
         {
             projectile.damage = (int)Math.Ceiling(projectile.damage * DamageMultiplier);
+            RelativePosition = RelativePosition.RotatedBy(OrbitingSpeed * Direction) * DistanceMultiplier;
 
-            RelativePosition = RelativePosition
-                .RotatedBy(OrbitingSpeed * Direction)
-                * DistanceMultiplier;
-
-            //Dust
+            // Dust
             int dustAmount = 1 + (int)(RelativePosition.Length() / 15f); // More dust as distance increases
             for (int i = 0; i < dustAmount; i++)
             {

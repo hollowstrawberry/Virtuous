@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -78,14 +76,12 @@ namespace Virtuous.Items
                 Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Main.rand.Next(150), Main.rand.OneIn(2)); // Random offset in either direction
 
                 var proj = Projectile.NewProjectileDirect(newPosition, newVelocity, newType, damage, knockBack, player.whoAmI);
-                proj.tileCollide = false; // The WarArrow code activates collision later
+                proj.tileCollide = false;
                 proj.noDropItem = true;
 
-                var warArrow = proj.modProjectile as WarArrow;
-                if (warArrow != null)
-                {
-                    warArrow.CollidePositionY = player.Center.Y; // Signals when to make arrows collide again
-                }
+                var modProj = proj.GetGlobalProjectile<VirtuousProjectile>();
+                modProj.artOfWar = true;
+                modProj.collidePositionY = player.position.Y;
             }
 
             Main.PlaySound(SoundID.Item5, basePosition);

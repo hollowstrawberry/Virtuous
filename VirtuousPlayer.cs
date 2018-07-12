@@ -220,9 +220,10 @@ namespace Virtuous
                 {
                     titanShieldLastExplosion = Math.Abs(titanShieldDashing);
                     Main.PlaySound(SoundID.Item14, npc.Center);
-                    Projectile.NewProjectileDirect(
-                        npc.Center, Vector2.Zero, mod.ProjectileType<ProjTitanAOE>(), damage, knockBack / 2,
-                        player.whoAmI, /*ai[0]*/crit ? 1 : 0);
+                    var proj = Projectile.NewProjectileDirect(
+                        npc.Center, Vector2.Zero, mod.ProjectileType<ProjTitanAOE>(), damage, knockBack / 2, player.whoAmI);
+                    var modProj = proj.modProjectile as ProjTitanAOE;
+                    modProj.Crit = crit;
                 }
 
                 // Prevents player from taking damage

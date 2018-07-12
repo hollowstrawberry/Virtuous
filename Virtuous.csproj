@@ -62,12 +62,7 @@
     <Compile Include="Items\EtherSlit.cs" />
     <Compile Include="Items\Fireplower.cs" />
     <Compile Include="Items\FlurryNova.cs" />
-    <Compile Include="Items\LaserPointer\LaserPointerGreen.cs" />
-    <Compile Include="Items\LaserPointer\LaserPointerOrange.cs" />
-    <Compile Include="Items\LaserPointer\LaserPointerYellow.cs" />
-    <Compile Include="Items\LaserPointer\LaserPointerPurple.cs" />
-    <Compile Include="Items\LaserPointer\LaserPointerWhite.cs" />
-    <Compile Include="Items\LaserPointer\LaserPointerBlue.cs" />
+    <Compile Include="Items\LaserPointer\LaserPointerColorVariants.cs" />
     <Compile Include="Items\LaserPointer\LaserPointer.cs" />
     <Compile Include="Items\LionsMane.cs" />
     <Compile Include="Items\RainBow.cs" />

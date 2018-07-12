@@ -1,27 +1,49 @@
 using System;
+using System.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.Localization;
 
 namespace Virtuous.Projectiles
 {
     public class ProjCrusherPillar : ModProjectile
     {
-        public override void SetStaticDefaults()
+        public const int SpawnDistance = 100; // How far from the target the projectile spawns. Used by the item's class
+        private const int Lifespan = 40; // Total duration of the projectile
+        private const int FadeTime = 20; // How long it fades away for
+
+
+
+        private int MoveTime // How long the projectile will move for, stored as localAI[0]
         {
-            DisplayName.SetDefault("Crusher Pillar");
-            Main.projFrames[projectile.type] = 3;
+            get { return (int)projectile.localAI[0]; }
+            set { projectile.localAI[0] = value; }
+        } 
+
+        public int Appearance // How long it moves for before stopping, stored as ai[0]
+        {
+            get { return (int)projectile.ai[0]; }
+            set { projectile.ai[0] = value; }
         }
 
-        public  const int SpawnDistance = 100; //How far from the target the projectile spawns. Used by the item's class
-        private const int Lifespan = 40; //Total duration of the projectile
-        private const int FadeTime = 20; //How long it fades away for
-        private int moveTime; //How long the projectile will move for
-        public int Appearance { get { return (int)projectile.ai[0]; } set { projectile.ai[0] = value; } } //How long it moves for before stopping. Stored as the projectile's native ai[0]
-        public bool Crit { get { return projectile.ai[1] != 0; } set { projectile.ai[1] = value ? 1 : 0;  } } //Whether the original hit was a critical hit or not, passed as ai[1]
+        public bool Crit // Whether the original hit was a critical hit or not, stored as ai[1]
+        {
+            get { return projectile.ai[1] != 0; }
+            set { projectile.ai[1] = value ? 1 : 0; }
+        }
+
+
+
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[projectile.type] = 3;
+
+            DisplayName.SetDefault("Crusher Pillar");
+            DisplayName.AddTranslation(GameCulture.Spanish, "Pilar Apretillo");
+        }
+
 
         public override void SetDefaults()
         {
@@ -34,48 +56,57 @@ namespace Virtuous.Projectiles
             projectile.melee = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
-            projectile.usesLocalNPCImmunity = true; //Hits once per individual projectile
+            projectile.usesLocalNPCImmunity = true; // Hits once per individual projectile
             projectile.localNPCHitCooldown = Lifespan;
         }
 
+
         public override void AI()
         {
-            if (projectile.timeLeft == Lifespan) //If projectile has just spawned
+            if (projectile.timeLeft == Lifespan) // The pojectile has just spawned
             {
-                moveTime = (int)Math.Ceiling((SpawnDistance-projectile.width/2) / projectile.velocity.Length()); //It'll move until its edge reaches the edge of the opposite pillar
-                moveTime += 1; //Overshoot as the sprites are irregular
+                // It'll move until it reaches the edge of the opposite pillar
+                MoveTime = (int)Math.Ceiling((SpawnDistance-projectile.width/2) / projectile.velocity.Length());
+                MoveTime += 1; // Overshoot as the sprites are irregular
+
                 if (projectile.velocity.X < 0) projectile.spriteDirection = -1; //Going left
                 projectile.frame = Appearance;
-                projectile.netUpdate = true; //Syncs to multiplayer
+
+                projectile.netUpdate = true; // Syncs to multiplayer just in case
             }
-            else if (projectile.timeLeft == Lifespan - moveTime) //Movetime is over, and the pillars have contacted
+           
+            else if (projectile.timeLeft == Lifespan - MoveTime) // The pillars have just contacted
             {
-                int dustAmount = Crit ? Main.rand.Next(6, 10) : Main.rand.Next(12, 15); //More dust if it's a crit
-                Vector2 dustoffset; //How far from the projectile center the dust should spawn
-                dustoffset.X = projectile.velocity.X>0 ? +projectile.width/2 : -projectile.width/2; //To the left or right of the pillar depending on where it's coming from
+                // Dust spawns at the contact line
+                Vector2 dustoffset = new Vector2(projectile.velocity.X > 0 ? +projectile.width / 2 : -projectile.width / 2, 0);
+
+                int dustAmount = Crit ? Main.rand.Next(6, 10) : Main.rand.Next(12, 15);
                 for (int i = 1; i <= dustAmount; i++)
                 {
-                    dustoffset.Y = Main.rand.OneIn(3) ? 0 : Main.rand.Next(-projectile.height/2, projectile.height/2 + 1); //Chance of the dust appearing in the center or somewhere else along the two pillars' contact line
+                    // More dust concentration in the center
+                    dustoffset.Y = Main.rand.OneIn(3) ? 0 : Main.rand.Next(-projectile.height/2, projectile.height/2 + 1);
                     
-                    Dust newDust = Dust.NewDustDirect(projectile.Center+dustoffset, 0, 0, DustID.Stone, 0f, 0f, /*Alpha*/100, default(Color), /*Scale*/2f);
-                    newDust.velocity = projectile.velocity * Main.rand.NextFloat(-0.5f, +0.5f); //Same direction as pillar before stopping
-                    newDust.fadeIn = 0.5f;
-                    newDust.noGravity = true;
+                    var dust = Dust.NewDustDirect(
+                        projectile.Center + dustoffset, 0, 0, DustID.Stone, Alpha: 100, Scale: 2f);
+                    dust.velocity = projectile.velocity * Main.rand.NextFloat(-0.5f, +0.5f);
+                    dust.fadeIn = 0.5f;
+                    dust.noGravity = true;
                 }
 
                 Main.PlaySound(SoundID.Dig, projectile.position);
-                projectile.velocity = Vector2.Zero; //Pillar stops
-            }
-            else if(projectile.timeLeft <= FadeTime) //Fadetime has begun
-            {
-                projectile.alpha += (int)Math.Ceiling(200f / FadeTime); //Spreads the fading over fadetime
+                projectile.velocity = Vector2.Zero;
             }
 
+            else if(projectile.timeLeft <= FadeTime) // Fading
+            {
+                projectile.alpha += (int)Math.Ceiling(200f / FadeTime);
+            }
         }
+
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (Crit) //The critical hit depends on the hammer's critical hit
+            if (Crit) // The critical hit depends on the hammer's critical hit
             {
                 damage /= 2;
                 crit = true;
@@ -85,6 +116,7 @@ namespace Virtuous.Projectiles
                 crit = false;
             }
         }
+
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
             if (Crit)
@@ -96,6 +128,23 @@ namespace Virtuous.Projectiles
             {
                 crit = false;
             }
+        }
+
+
+
+
+        // Syncs local ai slots in multiplayer
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(projectile.localAI[0]);
+            writer.Write(projectile.localAI[1]);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
     }
 }

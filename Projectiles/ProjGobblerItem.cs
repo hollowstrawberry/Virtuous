@@ -4,8 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
-using Terraria.Graphics;
-using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using Virtuous.Items;
@@ -15,6 +13,7 @@ namespace Virtuous.Projectiles
     public class ProjGobblerItem : ModProjectile
     {
         private const int Lifespan = 10 * 60;
+
 
         public GobblerStoredItem GobblerItem // Set when creating the projectile
         {
