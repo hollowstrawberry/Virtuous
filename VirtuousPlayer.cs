@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.DataStructures;
 using Virtuous.Items;
+using Virtuous.Utils;
 using Virtuous.Projectiles;
 
 namespace Virtuous
@@ -39,9 +40,9 @@ namespace Virtuous
             if (player.HeldItem.type == mod.ItemType<EtherSlit>())
             {
                 // I had to make a few eye-guesses for the hand position so that it's centered more or less perfectly
-                Vector2 handPosition = Main.OffsetsPlayerOnhand[player.bodyFrame.Y / 56] * 2f; //Vanilla code
-                if (player.direction == -1) handPosition.X = player.bodyFrame.Width - handPosition.X - 2; //Facing left
-                if (player.gravDir == -1) handPosition.Y = player.bodyFrame.Height - handPosition.Y; //Upside down
+                Vector2 handPosition = Main.OffsetsPlayerOnhand[player.bodyFrame.Y / 56] * 2f; // Vanilla code
+                if (player.direction == -1) handPosition.X = player.bodyFrame.Width - handPosition.X - 2; // Facing left
+                if (player.gravDir == -1) handPosition.Y = player.bodyFrame.Height - handPosition.Y; // Upside down
                 handPosition -= new Vector2(player.bodyFrame.Width - player.width + 8, player.bodyFrame.Height - 30f) / 2f;
 
                 Vector2 position = player.position + handPosition;
@@ -49,7 +50,7 @@ namespace Virtuous
                 for (int i = 0; i < 2; i++)
                 {
                     var dust = Dust.NewDustDirect(
-                        position, 0, 0, /*Type*/180, 2f * player.direction, 0f, /*Alpha*/150, Color.Black, 0.5f);
+                        position, 0, 0, Type: 180, SpeedX: 2f * player.direction, Alpha: 150, newColor: Color.Black, Scale: 0.5f);
                     dust.velocity = player.velocity; // So that it seems to follow the player
                     dust.noGravity = true;
                     dust.fadeIn = 1f;
@@ -101,9 +102,26 @@ namespace Virtuous
                 if (player.controlThrow && GobblerStorage.Count > 0) // Release storage
                 {
                     Main.PlaySound(SoundID.Item3, player.Center);
+
+                    var stacks = new List<KeyValuePair<GobblerStoredItem, int>>();
+
                     foreach (var storedItem in GobblerStorage)
                     {
-                        int itemIndex = Item.NewItem(player.Center, storedItem.type, prefixGiven: storedItem.prefix);
+                        if (storedItem.MakeItem().maxStack == 1)
+                        {
+                            stacks.Add(new KeyValuePair<GobblerStoredItem, int>(storedItem, 1));
+                        }
+                        else
+                        {
+                            int index = stacks.IndexOf(stacks.FirstOrDefault(x => x.Key == storedItem));
+                            if (index > 0) stacks[index] = new KeyValuePair<GobblerStoredItem, int>(storedItem, stacks[index].Value + 1);
+                            else stacks.Add(new KeyValuePair<GobblerStoredItem, int>(storedItem, 1));
+                        }
+                    }
+
+                    foreach (var pair in stacks) // Drop items
+                    {
+                        int itemIndex = Item.NewItem(player.Center, pair.Key.type, Stack: pair.Value, prefixGiven: pair.Key.prefix);
                         if (Main.netMode == NetmodeID.MultiplayerClient) // Syncs to multiplayer
                         {
                             NetMessage.SendData(MessageID.SyncItem, number: itemIndex);

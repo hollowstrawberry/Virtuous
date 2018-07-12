@@ -8,8 +8,7 @@ using Terraria.Utilities;
 
 namespace Virtuous
 {
-    // This class contains many utilities that help make the code cleaner
-
+    /// <summary>Utilities that help make my code cleaner</summary>
     public static class Tools
     {
         // Constants
@@ -41,7 +40,7 @@ namespace Virtuous
             => proj.InternalName().ToUpper().ContainsAny(values.Select(x => x.ToUpper()));
 
 
-        // Changes the size of the hitbox while keeping its center
+        /// <summary>Changes the size of the hitbox while keeping its center</summary>
         public static void ResizeProjectile(int projIndex, int newWidth, int newHeight, bool changeDrawPos = false)
         {
             Projectile projectile = Main.projectile[projIndex];
@@ -59,7 +58,7 @@ namespace Virtuous
         }
 
 
-        // A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon
+        /// <summary>A trick to stop the bugged 1-tick delay between consecutive right-click uses of a weapon</summary>
         public static void HandleAltUseAnimation(Player player)
         {
             if (player.altFunctionUse == 2)
@@ -81,16 +80,19 @@ namespace Virtuous
 
         // Vector extensions
 
-        public static Vector2 Normalized(this Vector2 vector) // Shorthand for SafeNormalize
+        /// <summary>Shorthand for SafeNormalize</summary>
+        public static Vector2 Normalized(this Vector2 vector)
         {
             return vector.SafeNormalize(Vector2.UnitX);
         }
 
-        public static Vector2 OfLength(this Vector2 vector, float length) // Returns a vector with the magnitude changed
+        /// <summary>Returns a vector with the magnitude changed</summary>
+        public static Vector2 OfLength(this Vector2 vector, float length) 
         {
             return vector.Normalized() * length;
         }
 
+        ///<summary>Returns a vector perpendicular to the original</summary>
         public static Vector2 Perpendicular(this Vector2 oldVector, float? length = null, bool clockwise = true)
         {
             Vector2 vector = new Vector2(oldVector.Y, -oldVector.X);
@@ -103,11 +105,13 @@ namespace Virtuous
 
         // String extensions
 
-        public static string If(this string text, bool condition) // Helps with long string concatenation
+        ///<summary>Helps with long string concatenation</summary>
+        public static string If(this string text, bool condition)
         {
             return condition ? text : "";
         }
 
+        ///<summary>Whether the string contains any of the values in the given collection</summary>
         public static bool ContainsAny(this string text, IEnumerable<string> values)
         {
             return values.All(text.Contains);
@@ -117,21 +121,25 @@ namespace Virtuous
 
         // Random extensions
 
+        /// <summary>Produces a vector with random direction and magnitude 1</summary>
         public static Vector2 NextVector2(this UnifiedRandom rand)
         {
             return Vector2.UnitY.RotatedBy(rand.NextFloat(FullCircle));
         }
 
+        /// <summary>Produces a vector with random direction and random length within a range</summary>
         public static Vector2 NextVector2(this UnifiedRandom rand, float minLength, float maxLength)
         {
             return rand.NextVector2().OfLength(rand.NextFloat(minLength, maxLength));
         }
 
-        public static bool OneIn(this UnifiedRandom rand, int amount) // Returns true with a 1/amount chance
+        /// <summary>Returns true with a 1/amount chance </summary>
+        public static bool OneIn(this UnifiedRandom rand, int amount)
         {
             return rand.Next(amount) == 0;
         }
 
+        /// <summary>Returns a random element in a list</summary>
         public static T Choose<T>(this UnifiedRandom rand, IList<T> items)
         {
             if (items.Count == 0) return default(T);
@@ -144,17 +152,20 @@ namespace Virtuous
 
         // Number extensions
 
-        public static float ToRadians(this int deg) // Returns the given degrees in radians
+        /// <summary>Returns the given value in degrees as radians</summary>
+        public static float ToRadians(this int deg)
         {
             return deg * (float)Math.PI / 180f;
         }
 
+        /// <summary>Returns the given value in degrees as radians</summary>
         public static float ToRadians(this float deg)
         {
             return deg * (float)Math.PI / 180f;
         }
 
-        public static float ToDegrees(this float rad) // Returns the given radians in degrees
+        /// <summary>Returns the given value in radians as degrees</summary>
+        public static float ToDegrees(this float rad)
         {
             return rad * 180f / (float)Math.PI;
         }

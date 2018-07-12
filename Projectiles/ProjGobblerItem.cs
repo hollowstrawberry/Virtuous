@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
-using Virtuous.Items;
+using Virtuous.Utils;
 
 namespace Virtuous.Projectiles
 {
@@ -50,94 +50,10 @@ namespace Virtuous.Projectiles
 
 
 
-        ///* Static public methods for projectile characteristics *///
-
-        // The size of the item's sprite from corner to corner
-        public static float DiagonalSize(Item item)
-        {
-            return (float)Math.Sqrt((double)item.width * item.width + (double)item.height * item.height);
-        }
-
-
-        // Modifies the given ref damage to apply class damage bonuses based on the given item and player
-        public static void ApplyClassDamage(ref float damage, Item item, Player player)
-        {
-            if      (item.melee ) damage *= player.meleeDamage;
-            else if (item.ranged) damage *= player.rangedDamage;
-            else if (item.magic ) damage *= player.magicDamage;
-            else if (item.summon) damage *= player.minionDamage;
-            else if (item.thrown) damage *= player.thrownDamage;
-        }
-
-
-        // Final damage of the given item when being shot by the given player, affected by various factors
-        public static int ShotDamage(Item item, Player player)
-        {
-            float damage = TheGobbler.BaseDamage
-                + item.damage
-                + item.defense * 3f
-                + item.value / 5000f
-                + DiagonalSize(item) * 5f
-                + (item.rare > 0 ? item.rare * 10 : 0);
-
-            ApplyClassDamage(ref damage, item, player);
-            return (int)damage;
-        }
-
-
-        // Final knockback of the given item when being shot by the given player, affected by various factors
-        public static float ShotKnockBack(Item item, Player player)
-        {
-            float knockBack = TheGobbler.BaseKnockBack
-                + item.knockBack
-                + item.defense / 6f
-                + DiagonalSize(item) / 10f
-                + (item.createTile > 0 || item.createWall > 0 ? 5 : 0);
-
-            if (player.kbGlove) knockBack *= 1.4f;
-            if (player.kbBuff)  knockBack *= 1.2f;
-
-            return knockBack;
-        }
-
-
-        public static bool IsTool(Item item)
-        {
-            return item.pick > 0 || item.axe > 0 || item.hammer > 0;
-        }
-
-
-        // Whether the specified item is *probably* a consumable explosive
-        public static bool IsExplosive(Item item)
-        {
-            return (item.consumable && item.shoot > 0 && (item.damage <= 0 || item.useStyle == 5));
-            //bool[] explosive = ItemID.Sets.Factory.CreateBoolSet(new int[] { ProjectileID.Dynamite, ProjectileID.BouncyDynamite, ProjectileID.StickyDynamite, ProjectileID.Bomb, ProjectileID.BouncyBomb, ProjectileID.StickyBomb, ProjectileID.Grenade, ProjectileID.BouncyGrenade, ProjectileID.StickyGrenade });
-        }
-
-
-        // Whether the specified item will be lost upon being shot
-        public static bool IsDepletable(Item item)
-        {
-            if (item.type == ItemID.Gel || item.type == ItemID.FallenStar || (item.type >= ItemID.CopperCoin && item.type <= ItemID.PlatinumCoin)
-                || item.createTile > 0 || item.createWall > 0 || item.potion || item.healLife > 0 || item.healMana > 0 || item.buffType > 0
-                || item.InternalNameHas("BossBag", "TreasureBag")
-            )
-            {
-                return false; // Exceptions
-            }
-
-            return item.consumable || item.ammo != 0 || item.type == ItemID.ExplosiveBunny;
-        }
-
-
-
-
-        ///* Private utility methods *///
-
         // If the item is a tool, it will bounce off in the direction it came from when specified
         private bool ToolBounce()
         {
-            if (IsTool(StoredItem))
+            if (GobblerHelper.IsTool(StoredItem))
             {
                 if (projectile.penetrate > 1)
                 {
@@ -160,22 +76,25 @@ namespace Virtuous.Projectiles
         // If the item is a magic weapon it will explode when the projectile dies
         private void MagicExplode()
         {
-            if (StoredItem.magic)
+            if (!StoredItem.magic) return;
+
+            if (Main.myPlayer == projectile.owner)
             {
                 Tools.ResizeProjectile(projectile.whoAmI, projectile.width + 50, projectile.height + 50);
                 projectile.Damage(); // Applies damage in the area
+                projectile.netUpdate = true;
+            }
 
-                Main.PlaySound(SoundID.Item14, projectile.Center);
-                for (int i = 0; i < Math.Max(4, (int)DiagonalSize(StoredItem) / 4); i++) // More dust the higher the size
-                {
-                    Gore.NewGore(
-                        projectile.position + new Vector2(Main.rand.NextFloat(projectile.width),
-                        Main.rand.NextFloat(projectile.height)), Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.2f, 1.2f));
+            Main.PlaySound(SoundID.Item14, projectile.Center);
+            for (int i = 0; i < Math.Max(4, (int)GobblerHelper.DiagonalSize(StoredItem) / 4); i++) // More dust the higher the size
+            {
+                Gore.NewGore(
+                    projectile.position + new Vector2(Main.rand.NextFloat(projectile.width),
+                    Main.rand.NextFloat(projectile.height)), Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.2f, 1.2f));
 
-                    Dust.NewDust(
-                        projectile.position, projectile.width, projectile.height,
-                        /*Type*/31, 0f, 0f, 0, default(Color), Main.rand.NextFloat(2));
-                }
+                Dust.NewDust(
+                    projectile.position, projectile.width, projectile.height,
+                    /*Type*/31, 0f, 0f, 0, default(Color), Main.rand.NextFloat(2));
             }
         }
 
@@ -183,9 +102,11 @@ namespace Virtuous.Projectiles
         // When the projectile dies and the stored item was set to consumed
         private void ItemConsume()
         {
+            if (!Consumed) return;
+
             Player player = Main.player[projectile.owner];
 
-            if (IsDepletable(StoredItem)) // Item won't be returned
+            if (GobblerHelper.IsDepletable(StoredItem)) // Item won't be returned
             {
                 if (StoredItem.buffTime != 0) // Buff-giving consumables
                 {
@@ -198,7 +119,7 @@ namespace Virtuous.Projectiles
             }
             else // Drops the stored item
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient) // In multiplayer it only spawns the item server-side
+                if (Main.netMode != NetmodeID.MultiplayerClient) // Will be synced from the server in multiplayer
                 {
                     Item.NewItem(projectile.Center, StoredItem.type, prefixGiven: StoredItem.prefix);
                 }
@@ -209,6 +130,8 @@ namespace Virtuous.Projectiles
         // When this projectile dies it can shoot out what the stored item would shoot
         private void ItemShoot()
         {
+            if (projectile.owner != Main.myPlayer) return; // It'll get synced in multiplayer
+
             Player player = Main.player[projectile.owner];
 
             // Orbital behavior
@@ -272,7 +195,7 @@ namespace Virtuous.Projectiles
 
                 // Get projectile damage
                 float damage = StoredItem.damage;
-                ApplyClassDamage(ref damage, StoredItem, player);
+                GobblerHelper.ApplyClassDamage(ref damage, StoredItem, player);
 
 
                 // Spawning the projectiles
@@ -286,7 +209,7 @@ namespace Virtuous.Projectiles
                     var proj = Projectile.NewProjectileDirect(
                         position, velocity, projType, (int)damage, StoredItem.knockBack, player.whoAmI);
 
-                    if (IsExplosive(StoredItem)) proj.timeLeft = 3; // Explodes immediately
+                    if (GobblerHelper.IsExplosive(StoredItem)) proj.timeLeft = 3; // Explodes immediately
 
                     if (StoredItem.sentry) // Turrets
                     {
@@ -337,15 +260,15 @@ namespace Virtuous.Projectiles
             {
                 // Inherit properties from the stored item
                 Tools.ResizeProjectile(projectile.whoAmI, StoredItem.width, StoredItem.height);
-                projectile.damage = ShotDamage(StoredItem, player);
-                projectile.knockBack = ShotKnockBack(StoredItem, player);
+                projectile.damage = GobblerHelper.ShotDamage(StoredItem, player);
+                projectile.knockBack = GobblerHelper.ShotKnockBack(StoredItem, player);
                 projectile.melee  = StoredItem.melee;
                 projectile.magic  = StoredItem.magic;
                 projectile.ranged = StoredItem.ranged;
                 projectile.Name = StoredItem.Name;
 
                 // Transparency; copies appear translucent
-                if (!Consumed && !IsDepletable(StoredItem))
+                if (!Consumed && !GobblerHelper.IsDepletable(StoredItem))
                 {
                     projectile.alpha = 120;
                 }
@@ -359,7 +282,7 @@ namespace Virtuous.Projectiles
 
                 // Penetration
                 if (StoredItem.melee) projectile.penetrate = -1; // Melee weapons penetrate infinitely
-                if (IsTool(StoredItem)) projectile.penetrate = 3; // But tools penetrate only a bit
+                if (GobblerHelper.IsTool(StoredItem)) projectile.penetrate = 3; // But tools penetrate only a bit
                 else if (StoredItem.accessory) projectile.penetrate = 2;
 
                 projectile.netUpdate = true; // Sync to multiplayer
@@ -368,10 +291,10 @@ namespace Virtuous.Projectiles
             // Every tick: Projectile rotation and movement
             if (!ItemID.Sets.ItemNoGravity[StoredItem.type])
             {
-                projectile.velocity.Y += DiagonalSize(StoredItem) / 200f; // How fast they fall down depends on their size
+                projectile.velocity.Y += GobblerHelper.DiagonalSize(StoredItem) / 200f; // How fast they fall down depends on their size
 
                 // Swingable weapons and projectiles point to where they're going, adjusted for sprite orientation
-                if (StoredItem.useStyle == 1 && !StoredItem.consumable && !IsTool(StoredItem))
+                if (StoredItem.useStyle == 1 && !StoredItem.consumable && !GobblerHelper.IsTool(StoredItem))
                 {
                     projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians();
                 }
@@ -401,13 +324,9 @@ namespace Virtuous.Projectiles
         {
             Player player = Main.player[projectile.owner];
 
-            if (projectile.owner == Main.myPlayer) // So it doesn't repeat the code for everyone in a server
-            {
-                ItemShoot();
-                MagicExplode();
-            }
-
-            if (Consumed) ItemConsume();
+            ItemShoot();
+            MagicExplode();
+            ItemConsume();
 
             if (StoredItem.UseSound != null) Main.PlaySound(StoredItem.UseSound, projectile.Center);
         }

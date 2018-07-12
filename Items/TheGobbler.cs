@@ -7,31 +7,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameInput;
 using Terraria.Localization;
+using Virtuous.Utils;
 using Virtuous.Projectiles;
 
 namespace Virtuous.Items
 {
-    public struct GobblerStoredItem
-    {
-        public int type;
-        public byte prefix;
-
-        public GobblerStoredItem(int type, byte prefix)
-        {
-            this.type = type;
-            this.prefix = prefix;
-        }
-
-        public Item MakeItem()
-        {
-            var item = new Item();
-            item.SetDefaults(type);
-            item.prefix = prefix;
-            return item;
-        }
-    }
-
-
     public class TheGobbler : ModItem
     {
         public const int StorageCapacity = 100;
@@ -154,8 +134,8 @@ namespace Virtuous.Items
             }
             else
             {
-                int damage = ProjGobblerItem.ShotDamage(storedItem, player);
-                float knockBack = ProjGobblerItem.ShotKnockBack(storedItem, player);
+                int damage = GobblerHelper.ShotDamage(storedItem, player);
+                float knockBack = GobblerHelper.ShotKnockBack(storedItem, player);
                 int preserveChance = 100 - (int)(ConsumeChance(storedItem) * 100);
 
 
@@ -330,7 +310,7 @@ namespace Virtuous.Items
                         {
                             var proj = Projectile.NewProjectileDirect(
                                 position, new Vector2(speedX, speedY), item.shoot,
-                                ProjGobblerItem.ShotDamage(item, player), ProjGobblerItem.ShotKnockBack(item, player),
+                                GobblerHelper.ShotDamage(item, player), GobblerHelper.ShotKnockBack(item, player),
                                 player.whoAmI);
                             proj.noDropItem = true;
                         }
