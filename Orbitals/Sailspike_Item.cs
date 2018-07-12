@@ -44,7 +44,7 @@ namespace Virtuous.Orbitals
             var recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.Gel, 15);
             recipe.AddIngredient(ItemID.Silk, 2);
-            recipe.AddIngredient(ItemID.Star, 1);
+            recipe.AddIngredient(ItemID.FallenStar, 1);
             recipe.AddTile(TileID.WorkBenches);
             recipe.SetResult(this);
             recipe.AddRecipe();

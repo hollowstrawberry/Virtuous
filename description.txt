@@ -1,6 +1,6 @@
 Samrux's Virtuous weapon pack! Aiming to create new and fun weapon mechanics.
 
-UPDATE 1.1: See forum thread or discord server for patchnotes.
+UPDATE 1.1.1: See forum thread or discord server for patchnotes.
 
 Have you ever wanted to shoot an arrow at the sky and have it rain despair on your enemies, fling your foes into the air and make them take fall damage, or hastily punch mobs to death like in a true anime scene? In this first release we include 19 unique weapons to play around with, most of which balanced for late-hardmode to Moon Lord.
 
