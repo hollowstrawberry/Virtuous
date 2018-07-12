@@ -111,9 +111,9 @@ namespace Virtuous.Projectiles
             int dustAmount = Burst ? 10 : 1;
             for (int i = 0; i < dustAmount; i++)
             {
-                Dust newDust = Dust.NewDustDirect(projectile.Center, 0, 0, type, 0f, 0f, newColor: Color, Scale: scale);
-                if (velocity != Vector2.Zero) newDust.velocity = velocity; // If a special velocity was set, apply it
-                if (Mode == ArrowMode.Rain) newDust.position.Y -= projectile.height/2; // Trails behind
+                var dust = Dust.NewDustDirect(projectile.Center, 0, 0, type, 0f, 0f, newColor: Color, Scale: scale);
+                if (velocity != Vector2.Zero) dust.velocity = velocity; // If a special velocity was set, apply it
+                if (Mode == ArrowMode.Rain) dust.position.Y -= projectile.height/2; // Trails behind
             }
         }
 

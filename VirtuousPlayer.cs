@@ -90,39 +90,6 @@ namespace Virtuous
         }
 
 
-        public override void DrawEffects(PlayerDrawInfo drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright)
-        {
-            // I'll get back to this when the accessories are actually released
-
-            //if (accessoryAstroBoots)
-            //{
-            //    if (Math.Abs(player.velocity.Length()) > 0.1f && !player.mount.Active)
-            //    {
-            //        if (Main.rand.OneIn(2) && drawInfo.shadow == 0f)
-            //        {
-            //            int newDust = Dust.NewDust(player.Center, 0, 0, /*Type*/14, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, /*Alpha*/50, default(Color), /*Scale*/2.0f);
-            //            Main.dust[newDust].noGravity = true;
-            //            Main.playerDrawDust.Add(newDust);
-            //        }
-            //        fullBright = true;
-            //    }
-            //}
-            //if (accessoryArchangel)
-            //{
-            //    if (Math.Abs(player.velocity.Length()) > 0.1f && !player.mount.Active)
-            //    {
-            //        if (Main.rand.OneIn(2) && drawInfo.shadow == 0f)
-            //        {
-            //            int newDust = Dust.NewDust(player.Center, 0, 0, /*Type*/14, player.velocity.X * 0.4f, player.velocity.Y * 0.4f, /*Alpha*/50, default(Color), /*Scale*/2.0f);
-            //            Main.dust[newDust].noGravity = true;
-            //            Main.playerDrawDust.Add(newDust);
-            //        }
-            //        fullBright = true;
-            //    }
-            //}
-        }
-
-
 
 
         // The Gobbler
