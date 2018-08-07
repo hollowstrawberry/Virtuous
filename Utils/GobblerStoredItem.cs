@@ -26,7 +26,7 @@ namespace Virtuous.Utils
         public override bool Equals(object obj)
         {
             var item = obj as GobblerStoredItem?;
-            return item != null && item.Value == this;
+            return item.HasValue && item.Value == this;
         }
 
         public override int GetHashCode()

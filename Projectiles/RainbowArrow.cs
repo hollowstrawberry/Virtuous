@@ -11,7 +11,22 @@ namespace Virtuous.Projectiles
         private const int Lifespan = 6 * 60; // Total duration of the projetile
         private const int RainDelay = 50; // Time it takes for a special arrow effect to activate
 
-        public int MaxArrowColor = 11;
+        private static readonly Color[] ArrowColors = new[]
+        {
+            new Color(000, 050, 255), // Blue
+            new Color(000, 125, 255), // Sky
+            new Color(000, 255, 255), // Cyan
+            new Color(000, 255, 110), // Aqua
+            new Color(000, 255, 000), // Green
+            new Color(110, 255, 000), // Lime
+            new Color(240, 240, 000), // Yellow
+            new Color(255, 100, 000), // Orange
+            new Color(255, 000, 000), // Red
+            new Color(255, 000, 150), // Fuchsia
+            new Color(150, 000, 255), // Purple
+            new Color(090, 020, 255), // Violet
+        };
+
 
         public enum ArrowMode
         {
@@ -34,28 +49,16 @@ namespace Virtuous.Projectiles
             get
             {
                 if (Mode == ArrowMode.White) return new Color(255, 255, 255, 0);
-
-                int alpha = 120;
-                switch ((int)projectile.ai[1])
-                {
-                    case  0: return new Color(000, 050, 255, alpha); // Blue
-                    case  1: return new Color(000, 125, 255, alpha); // Sky
-                    case  2: return new Color(000, 255, 255, alpha); // Cyan
-                    case  3: return new Color(000, 255, 110, alpha); // Aqua
-                    case  4: return new Color(000, 255, 000, alpha); // Green
-                    case  5: return new Color(110, 255, 000, alpha); // Lime
-                    case  6: return new Color(240, 240, 000, alpha); // Yellow
-                    case  7: return new Color(255, 100, 000, alpha); // Orange
-                    case  8: return new Color(255, 000, 000, alpha); // Red
-                    case  9: return new Color(255, 000, 150, alpha); // Fuchsia
-                    case 10: return new Color(150, 000, 255, alpha); // Purple
-                    case 11: return new Color(090, 020, 255, alpha); // Violet
-                    default: return Color.Black;
-                }
+                if (ColorId >= 0 && ColorId < ArrowColors.Length) return ArrowColors[ColorId] * 0.5f;
+                return Color.Black;
             }
         }
 
-        public int ColorId { set { projectile.ai[1] = value; } }
+        public int ColorId
+        {
+            get { return (int)projectile.ai[1]; }
+            set { projectile.ai[1] = value; }
+        }
 
 
 
@@ -167,7 +170,7 @@ namespace Virtuous.Projectiles
                         arrow.ColorId = nextColor;
                     }
 
-                    if (nextColor < MaxArrowColor) nextColor++; // Cycles through colors
+                    if (nextColor < ArrowColors.Length - 1) nextColor++; // Cycles through colors
                     else nextColor = 0;
                 }
 
@@ -176,15 +179,9 @@ namespace Virtuous.Projectiles
         }
 
 
-        public override void Kill(int timeLeft)
-        {
-            SpawnRainbowDust(Burst: true);
-        }
+        public override void Kill(int timeLeft) => SpawnRainbowDust(Burst: true);
 
 
-        public override Color? GetAlpha(Color newColor) //Sets the custom color
-        {
-            return Color;
-        }
+        public override Color? GetAlpha(Color newColor) => Color;
     }
 }

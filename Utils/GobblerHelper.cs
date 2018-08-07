@@ -7,25 +7,25 @@ namespace Virtuous.Utils
 {
     public static class GobblerHelper
     {
-        /// <summary>The size of the item's sprite from corner to corner</summary> 
+        /// <summary>The size of the item's sprite from corner to corner.</summary> 
         public static float DiagonalSize(Item item)
         {
-            return (float)Math.Sqrt((double)item.width * item.width + (double)item.height * item.height);
+            return (float)Math.Sqrt(item.width*item.width + item.height*item.height);
         }
 
 
-        /// <summary>Modifies the given ref damage to apply class damage bonuses based on the given item and player</summary>
+        /// <summary>Modifies the given ref damage to apply class damage bonuses based on the given item and player.</summary>
         public static void ApplyClassDamage(ref float damage, Item item, Player player)
         {
-            if (item.melee) damage *= player.meleeDamage;
+            if (item.melee)       damage *= player.meleeDamage;
             else if (item.ranged) damage *= player.rangedDamage;
-            else if (item.magic) damage *= player.magicDamage;
+            else if (item.magic)  damage *= player.magicDamage;
             else if (item.summon) damage *= player.minionDamage;
             else if (item.thrown) damage *= player.thrownDamage;
         }
 
 
-        /// <summary>Final damage of the given item when being shot by the given player, affected by various factors</summary>
+        /// <summary>Final damage of the given item when being shot by the given player, affected by various factors.</summary>
         public static int ShotDamage(Item item, Player player)
         {
             float damage = TheGobbler.BaseDamage
@@ -40,7 +40,7 @@ namespace Virtuous.Utils
         }
 
 
-        /// <summary>Final knockback of the given item when being shot by the given player, affected by various factors</summary>
+        /// <summary>Final knockback of the given item when being shot by the given player, affected by various factors.</summary>
         public static float ShotKnockBack(Item item, Player player)
         {
             float knockBack = TheGobbler.BaseKnockBack
@@ -56,14 +56,14 @@ namespace Virtuous.Utils
         }
 
 
-        /// <summary>Whether the item is a tool</summary>
+        /// <summary>Whether the item is a tool.</summary>
         public static bool IsTool(Item item)
         {
             return item.pick > 0 || item.axe > 0 || item.hammer > 0;
         }
 
 
-        /// <summary>Whether the specified item is *probably* a consumable explosive</summary>
+        /// <summary>Whether the specified item is (probably) a consumable explosive.</summary>
         public static bool IsExplosive(Item item)
         {
             return item.consumable && item.shoot > 0 && (item.damage <= 0 || item.useStyle == 5);
@@ -71,7 +71,7 @@ namespace Virtuous.Utils
         }
 
 
-        /// <summary>Whether the specified item will be lost upon being shot</summary>
+        /// <summary>Whether the specified item will be lost upon being shot.</summary>
         public static bool IsDepletable(Item item)
         {
             if (item.type == ItemID.Gel || item.type == ItemID.FallenStar || (item.type >= ItemID.CopperCoin && item.type <= ItemID.PlatinumCoin)
