@@ -27,7 +27,7 @@ namespace Virtuous.Orbitals
         public override void SetOrbitalDefaults()
         {
             type = OrbitalID.HolyLight;
-            duration = 30 * 60;
+            duration = 45 * 60;
             amount = 6;
 
             item.width = 30;

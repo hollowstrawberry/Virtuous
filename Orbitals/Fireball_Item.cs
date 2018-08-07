@@ -11,7 +11,7 @@ namespace Virtuous.Orbitals
         {
             DisplayName.SetDefault("Fireball");
             Tooltip.SetDefault(
-                "Burn nearby enemies\nRight-Click after summoning for a fire burst\n" +
+                "Burns nearby enemies\nRight-Click after summoning for a fire burst\n" +
                 "Aligns with either magic or melee users");
 
             DisplayName.AddTranslation(GameCulture.Spanish, "Bola de Fuego");
@@ -32,7 +32,7 @@ namespace Virtuous.Orbitals
         public override void SetOrbitalDefaults()
         {
             type = OrbitalID.Fireball;
-            duration = 20 * 60;
+            duration = 25 * 60;
             amount = 1;
             specialType = SpecialType.RightClick;
 

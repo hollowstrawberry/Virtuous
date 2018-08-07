@@ -27,7 +27,7 @@ namespace Virtuous.Orbitals
         public override void SetOrbitalDefaults()
         {
             type = OrbitalID.Facade;
-            duration = 15 * 60;
+            duration = 20 * 60;
             amount = 4;
 
             item.width = 30;

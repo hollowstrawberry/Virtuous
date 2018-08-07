@@ -36,7 +36,7 @@ namespace Virtuous.Orbitals
         public override void SetOrbitalDefaults()
         {
             type = OrbitalID.SacDagger;
-            duration = 20 * 60;
+            duration = 15 * 60;
             amount = 2;
             specialType = SpecialType.Reuse;
 

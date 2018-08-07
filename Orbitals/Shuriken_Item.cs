@@ -29,7 +29,7 @@ namespace Virtuous.Orbitals
         public override void SetOrbitalDefaults()
         {
             type = OrbitalID.Shuriken;
-            duration = 35 * 60;
+            duration = 50 * 60;
             amount = 3;
 
             item.width = 30;

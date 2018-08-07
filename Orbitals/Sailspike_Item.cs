@@ -26,7 +26,7 @@ namespace Virtuous.Orbitals
         public override void SetOrbitalDefaults()
         {
             type = OrbitalID.Sailspike;
-            duration = 5 * 60;
+            duration = 10 * 60;
             amount = 1;
 
             item.width = 30;
@@ -43,7 +43,7 @@ namespace Virtuous.Orbitals
         {
             var recipe = new ModRecipe(mod);
             recipe.AddIngredient(ItemID.Gel, 15);
-            recipe.AddIngredient(ItemID.Silk, 2);
+            recipe.AddIngredient(ItemID.Silk, 1);
             recipe.AddIngredient(ItemID.FallenStar, 1);
             recipe.AddTile(TileID.WorkBenches);
             recipe.SetResult(this);
