@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -7,18 +8,34 @@ using Virtuous.Orbitals;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Stores the active orbital data for a given player.
+    /// </summary>
     public class OrbitalPlayer : ModPlayer
     {
-        public int time; // Time left, in ticks, of an orbital summon. 0 is inactive
+        /// <summary>Time left, in ticks, of the current orbital summon. 0 is inactive.</summary>
+        public int time;
+
+        /// <summary>Whether an orbital at a given index (orbital ID) is active for the current player.</summary>
         public bool[] active = new bool[OrbitalID.Orbital.Length];
-        public float damageBuffFromOrbitals; // Set every tick by active orbitals
+
+        /// <summary>Deducted from total damage so that orbitals don't boost their own damage.</summary>
+        public float damageBuffFromOrbitals;
+
+        /// <summary>Multiplier for orbital duration.</summary>
         public float durationMultiplier = 1f;
+
+        /// <summary>Multiplier for orbital damage.</summary>
         public float damageMultiplier = 1f;
+
+        /// <summary>Whether the player is wearing the accessory that gives orbitals infinite duration.</summary>
         public bool accessoryPermanent;
+
 
         private bool specialFunction;
         private bool specialFunctionTurnOff;
 
+        /// <summary>Starts or ends the active orbital's special effect.</summary>
         public bool SpecialFunctionActive // Turning off is handled by the player itself so that orbitals don't desync
         {
             get { return specialFunction; }
@@ -38,13 +55,15 @@ namespace Virtuous
 
 
 
+        /// <summary>The final duration of an orbital, all effects taken into account.</summary>
         public int ModifiedOrbitalTime(OrbitalItem item)
         {
             return (int)(item.duration * durationMultiplier + OrbitalID.Orbital[item.type].DyingTime);
         }
 
 
-        public void ResetOrbitals() // Resets all active orbital data for the player
+        /// <summary>Resets all active orbital data for the player.</summary>
+        public void ResetOrbitals()
         {
             time = 0;
             specialFunction = false;
@@ -53,14 +72,18 @@ namespace Virtuous
         }
 
 
-        public override void PostUpdateEquips() // Applies orbital buffs
+        public override void PostUpdateEquips()
         {
             for (int type = 0; type < OrbitalID.Orbital.Length; type++)
             {
-                if (active[type])
-                {
-                    OrbitalProjectile.FindFirst(mod, player, type)?.PlayerEffects();
-                }
+                if (!active[type]) continue;
+
+                var orbital = Main.projectile
+                    .Where(proj => proj.active && proj.owner == player.whoAmI)
+                    .Select(proj => proj.modProjectile as OrbitalProjectile)
+                    .FirstOrDefault(orb => orb != null && orb.Type == type);
+
+                orbital?.PlayerEffects();
             }
         }
         

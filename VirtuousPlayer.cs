@@ -13,6 +13,11 @@ using Virtuous.Projectiles;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Custom data and effects given to a player by this mod.
+    /// Includes <see cref="TheGobbler"/> storage, held item effects, etc.
+    /// For orbital-related data and effects use <see cref="OrbitalPlayer"/> intead.
+    /// </summary>
     public class VirtuousPlayer : ModPlayer
     {
         const string DeprecatedGobblerStorageKey = "GobblerStorage";
@@ -20,12 +25,17 @@ namespace Virtuous
         const string GobblerItemPrefixesKey = "GobblerStoragePrefixes";
 
 
-        // Stores the types of items sucked by the gobbler
+        /// <summary>Stores all items sucked by the gobbler, reduced to their type and prefix.</summary>
         public List<GobblerStoredItem> GobblerStorage = new List<GobblerStoredItem>(TheGobbler.StorageCapacity);
 
-        public int titanShieldDashing = 0; // Time left and direction of the dash. 0 is inactive
-        public int titanShieldCoolDown = TitanShield.CoolDown; // Time left until the dash can be used again
-        public int titanShieldLastExplosion = 0; // Point in titanShieldDashing when an explosion was last spawned. 0 is unregistered
+        /// <summary>Time left and direction of the dash. 0 is inactive.</summary>
+        public int titanShieldDashing = 0;
+
+        /// <summary>Time left until the dash can be used again.</summary>
+        public int titanShieldCoolDown = TitanShield.CoolDown;
+
+        /// <summary>Point in titanShieldDashing when an explosion was last spawned. 0 is none.</summary>
+        public int titanShieldLastExplosion = 0;
 
         public bool accessoryAstroBoots = false;
         public bool accessoryArchangel = false;

@@ -9,121 +9,143 @@ using Virtuous.Orbitals;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Base class for an orbital projectile, that defines behavior for all orbitals
+    /// and allows the customization of an orbital's unique traits.
+    /// </summary>
     public abstract class OrbitalProjectile : ModProjectile
     {
-        /*
-         * This class contains all the properties and methods used by orbitals.
-         * The orbitals themselves will override these virtual members to obtain the exact behavior of each unique orbital.
-         */
-
-
         // Constants
-        public const bool Outwards = true;
         public const bool Inwards = false;
+        public const bool Outwards = true;
 
         // Owner alias
         public Player player => Main.player[projectile.owner];
         public OrbitalPlayer orbitalPlayer => player.GetModPlayer<OrbitalPlayer>();
 
 
-        // Constant traits
 
-        public abstract int Type { get; } // The orbital ID associated with the projectile. An invalid ID will throw an exception
-        public virtual int FadeTime => 0; // How many ticks, if any, the projectile fades away for
-        public virtual int DyingTime => 0; // How many ticks, if any, the projectile spends in "dying mode" at the end of its lifespan, during which no orbital items can be used
-        public virtual int OriginalAlpha => 50; // Original alpha value of the projectile
-        public virtual float BaseDistance => 50; // Distance from the player it starts at
-        public virtual float RotationSpeed => 0; // Speed at which the projectile's sprite rotates
-        public virtual float OrbitingSpeed => 0; // Speed at which the projectile orbits around the player
-        public virtual float DyingSpeed => 0; // Speed at which the projectile will shoot out in DyingTime (default behavior)
-        public virtual float OscillationSpeedMax => 0; // Oscillation peed limit. Means how far it can go before changing direction of movement
-        public virtual float OscillationAcc => OscillationSpeedMax / 60; // Oscillation acceleration rate. Means how fast it reaches the point of direction change
+        // Type traits
+
+        /// <summary>The orbital ID associated with the projectile. A valid ID must be provided.</summary>
+        public abstract int Type { get; }
+
+        /// <summary>How many ticks, if any, the projectile fades away for.</summary>
+        public virtual int FadeTime => 0;
+
+        /// <summary>How many ticks, if any, the projectile spends in "dying mode" at the end of its lifespan, during which no orbital items can be used.</summary>
+        public virtual int DyingTime => 0;
+
+        /// <summary>Original alpha value of the projectile.</summary>
+        public virtual int OriginalAlpha => 50;
+
+        /// <summary>Distance from the player the orbital starts at./summary>
+        public virtual float BaseDistance => 50;
+
+        /// <summary>Speed at which the projectile's sprite rotates.</summary>
+        public virtual float RotationSpeed => 0;
+
+        /// <summary>Speed at which the projectile orbits around the player.</summary>
+        public virtual float OrbitingSpeed => 0;
+
+        /// <summary>Speed at which the projectile will shoot out in DyingTime (default behavior).</summary>
+        public virtual float DyingSpeed => 0;
+
+        /// <summary>Oscillation speed limit. Will affect how far it can go before changing direction of movement.</summary>
+        public virtual float OscillationSpeedMax => 0;
+
+        /// <summary>Oscillation acceleration rate. Will affect how quickly it reaches the point of direction change.</summary>
+        public virtual float OscillationAcc => OscillationSpeedMax / 60;
+
+
 
 
         // Current state
 
-        public Vector2 relativePosition // Relative position to the player, stored as velocity
+        /// <summary>Relative position to the player, stored as velocity.</summary>
+        public Vector2 relativePosition
         {
             get { return projectile.velocity; }
             set { projectile.velocity = value; }
-        } 
-        public float relativeDistance // Distance away from the player. Affects RelativePosition directly.
+        }
+
+        /// <summary>Distance away from the player. Affects <see cref="relativePosition"/> directly.</summary>
+        public float relativeDistance
         {
             get { return relativePosition.Length(); }
             set { relativePosition = relativePosition.OfLength(value); }
         }
-        public float oscillationSpeed // Current speed of back-and-forth oscillation, Stored as ai[0]
+
+        /// <summary>Current speed of back-and-forth oscillation, Stored as the projectile's ai[0].</summary>
+        public float oscillationSpeed
         {
             get { return projectile.ai[0]; }
             set { projectile.ai[0] = value; }
         }
-        public bool direction // Direction of movement, inwards or outwards, used by default for oscillation. Stored as ai[1]
+
+        /// <summary>Direction of movement, inwards or outwards, used by default for oscillation. Stored as the projectile's ai[1].</summary>
+        public bool direction
         {
             get { return projectile.ai[1] == 0; }
             set { projectile.ai[1] = value ? 0 : 1; }
         }
-        public int specialFunctionTimer //Time passed since the special effect was used. Stored as localAI[0]
+
+        /// <summary>Ticks upward as long as <see cref="IsDoingSpecial"/> is true. Stored as the projectile's localAI[0].</summary>
+        public int specialFunctionTimer
         {
             get { return (int)projectile.localAI[0]; }
             set { projectile.localAI[0] = value; }
         }
 
 
+
         // Checks
 
-        public virtual bool IsFirstTick // Whether it's the first tick of the orbital's life.
-            => (relativeDistance == 1.0f); // Orbitals are always created with a velocity vector of size 1, but it's changed in the first tick
+        /// <summary>Whether it's the first tick of the orbital's life.</summary>
+        public virtual bool IsFirstTick => relativeDistance == 1.0f; // Orbitals are created with a velocity vector of length 1
 
-        public virtual bool IsDying // Whether the projectile is at the end of its life
-            => (DyingTime > 0 && Main.myPlayer == projectile.owner && orbitalPlayer.time <= DyingTime);
+        /// <summary>Whether the projectile is at the end of its life</summary>
+        public virtual bool IsDying => DyingTime > 0 && Main.myPlayer == projectile.owner && orbitalPlayer.time <= DyingTime;
 
-        public virtual bool IsDoingSpecial // Whether to run the special effect method or not
-            => (Main.myPlayer == projectile.owner && orbitalPlayer.SpecialFunctionActive && !IsDying);
+        /// <summary>Whether to execute <see cref="SpecialFunction"/>.</summary>
+        public virtual bool IsDoingSpecial => Main.myPlayer == projectile.owner && orbitalPlayer.SpecialFunctionActive && !IsDying;
 
 
 
 
         // Utility methods
 
-        public void SetPosition(Vector2? newPos = null) // Moves the orbital relative to the player
+        /// <summary>Moves the orbital relative to the player.</summary>
+        public void SetPosition(Vector2? newPos = null)
         {
             if (newPos != null) relativePosition = (Vector2)newPos;
             projectile.Center = player.MountedSpriteCenter() + relativePosition;
         }
 
-        public void RotatePosition(float radians) // Rotates the orbital relative to the player
+        /// <summary>Rotates the orbital relative to the player by the given amount.</summary>
+        public void RotatePosition(float radians)
         {
             SetPosition(relativePosition.RotatedBy(radians));
         }
 
-        public void SetDistance(float newDistance) // Applies a new distance relative to the player and moves the orbital accordingly
+        /// <summary>Moves the orbital relative to the player and at the given distance.</summary>
+        public void SetDistance(float newDistance)
         {
             SetPosition(relativePosition.OfLength(newDistance));
         }
 
+        /// <summary>Adjusts the distance relative to the player by the given amount.</summary>
         public void AddDistance(float distance)
         {
             SetDistance(relativeDistance + distance);
         }
 
-        public static OrbitalProjectile FindFirst(Mod mod, Player player, int id = OrbitalID.None)
-        {
-            foreach (var proj in Main.projectile.Where(x => x.active && x.owner == player.whoAmI))
-            {
-                var orbital = proj.modProjectile as OrbitalProjectile;
-                if (orbital != null && (id == OrbitalID.None || orbital.Type == id))
-                {
-                    return orbital;
-                }
-            }
-
-            return null;
-        }
 
 
 
+        // Behavior methods
 
-        // Projectile traits
+        /// <summary>Where this orbital projectile's projectile traits can be set.</summary>
         public virtual void SetOrbitalDefaults()
         {
         }
@@ -144,14 +166,14 @@ namespace Virtuous
         }
 
 
-        // Effects the orbital type will apply on the player while it is active.
-        // Only runs for the first orbital of a type. Called by OrbitalPlayer
+        /// <summary>Effects the orbital type will apply on the player while it is active.
+        /// Only runs once if there are multiple orbitals of the same type.</summary>
         public virtual void PlayerEffects()
         {
         }
 
 
-        // Only runs once at the beginning of the orbital's life
+        /// <summary>Runs once when the projectile is spawned, according to <see cref="IsFirstTick"/>.</summary>
         public virtual void FirstTick()
         {
             SetDistance(BaseDistance);
@@ -160,51 +182,56 @@ namespace Virtuous
         }
 
 
-        // Returns whether to execute movement
+        /// <summary>Whether to execute <see cref="Movement"/>.
+        /// By default, doesn't execute movement if dying or in special mode.</summary>
         public virtual bool PreMovement()
         {
-            return (!IsDying && !IsDoingSpecial); // By default doesn't do normal movement if it's dying or in special mode
+            return !IsDying && !IsDoingSpecial;
         }
 
 
-        // Main orbital behavior
+        /// <summary>Main orbital behavior. By default, it will orbit around the player, rotating and oscillating,
+        /// dictated by the values of the orbital's properties.</summary>
         public virtual void Movement()
         {
-            if (OscillationSpeedMax != 0) // Oscillation
+            if (OscillationSpeedMax != 0)
             {
-                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;  // Changes direction when it reaches the limit
+                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;
                 else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards;
                 oscillationSpeed += OscillationAcc * (direction ? +1 : -1); // Accelerate in the corresponding direction
                 AddDistance(oscillationSpeed);
             }
 
-            RotatePosition(OrbitingSpeed); // Rotates the projectile around the player
-            projectile.rotation += RotationSpeed; // Rotates the projectile itself
+            RotatePosition(OrbitingSpeed);
+            projectile.rotation += RotationSpeed;
         }
 
 
-        // Executes special effect if isDoingSpecial is true
+        /// <summary>Special effect of the orbital, none by default. Runs when <see cref="IsDoingSpecial"/> is true.</summary>
         public virtual void SpecialFunction()
         {
         }
 
 
-        // Only runs once at the beginning of DyingTime
+        /// <summary>Runs once at the beginning of <see cref="DyingTime"/>.
+        /// By default, it shoots outward according to <see cref="DyingSpeed"/>.</summary>
         public virtual void DyingFirstTick()
         {
-            projectile.velocity = relativePosition.OfLength(DyingSpeed); //Shoots out
+            projectile.velocity = relativePosition.OfLength(DyingSpeed);
         }
 
 
-        // Runs every tick during DyingTime
+        /// <summary>Runs every tick during <see cref="DyingTime"/>.
+        /// By default, it shoots outward according to <see cref="DyingSpeed"/>.</summary>
         public virtual void Dying()
         {
-            projectile.velocity -= projectile.velocity.OfLength(DyingSpeed / DyingTime); //Slows down to a halt
-            projectile.position += projectile.velocity; //Re-applies velocity as it would normally be nullified for orbitals
+            projectile.velocity -= projectile.velocity.OfLength(DyingSpeed / DyingTime); // Slows down to a halt
+            projectile.position += projectile.velocity; // Re-applies velocity as it would normally be nullified for orbitals
         }
 
 
-        // Runs every tick after everything else. Used for fading away, light, etc.
+        /// <summary>Runs every tick after everything else. By default, it manages the projectile's transparency
+        /// according to <see cref="FadeTime"/> and <see cref="OriginalAlpha"/>.</summary>
         public virtual void PostAll()
         {
             if (FadeTime > 0 && Main.myPlayer == projectile.owner)
@@ -223,7 +250,7 @@ namespace Virtuous
 
 
 
-        // Main method
+        /// <summary>Skeleton for orbital behavior running every tick.</summary>
         public sealed override void AI()
         {
             if (!orbitalPlayer.active[Type] && Main.myPlayer == projectile.owner) // Keep it alive only while the summon is active
@@ -278,16 +305,9 @@ namespace Virtuous
 
 
 
-        public override bool? CanCutTiles()
-        {
-            return false; // So they don't become a lawnmower
-        }
+        public override bool? CanCutTiles() => false; // Orbitals would be glorified lawnmowers otherwise
 
-
-        public override Color? GetAlpha(Color lightColor)
-        {
-            return new Color(255, 255, 255, 100) * projectile.Opacity; // Fullbright
-        }
+        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 100) * projectile.Opacity; // Fully lit
 
 
         // Syncs local ai slots in multiplayer

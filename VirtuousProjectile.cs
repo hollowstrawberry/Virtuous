@@ -9,13 +9,22 @@ using Virtuous.Projectiles;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Custom data given to all projectiles by this mod.
+    /// Includes <see cref="Items.SpotterGun"/>'s crosshair effect and <see cref="Items.ArtOfWar"/>'s collision mechanics.
+    /// </summary>
     class VirtuousProjectile : GlobalProjectile
     {
         public override bool InstancePerEntity => true;
 
-        public bool spotter = false; // Was shot by the spotter gun
-        public bool artOfWar = false; // Was shot by the war bow
-        public float collidePositionY = 0; // Position past which the arrow will collide again
+        /// <summary>Whether this projectile was shot by <see cref="Items.SpotterGun"/> and can spawn a <see cref="ProjCrosshair"/>.</summary>
+        public bool spotter = false;
+
+        /// <summary>Whether this projectile was shot by <see cref="Items.ArtOfWar"/>.</summary>
+        public bool artOfWar = false;
+
+        /// <summary>Position past which the arrow will collide again if <see cref="artOfWar"/> is true.</summary>
+        public float collidePositionY = 0;
 
 
 

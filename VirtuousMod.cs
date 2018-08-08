@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -80,12 +78,6 @@ namespace Virtuous
                 ItemID.WingsNebula,
                 ItemID.WingsStardust,
             }));
-        }
-
-
-        public static void DontCrashMyGame() // The mere presence of this magical method stops a compiling error
-        {
-            var thanks = Enumerable.Range(1, 10);
         }
     }
 }

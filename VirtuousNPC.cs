@@ -7,16 +7,24 @@ using Virtuous.Projectiles;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Custom data given to all NPCs by this mod.
+    /// Includes fall damage mechanics and the damage over time induced by <see cref="ProjSummonedSword"/>.
+    /// </summary>
     public class VirtuousNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
 
 
-        public int fallDamage = 0; // Fall damage accumulated. 0 is inactive
-        public bool alreadyStartedFalling = false; // Whether the target afflicted with fall damage is in falling motion
+        /// <summary>Fall damage accumulated. 0 is inactive.</summary>
+        public int fallDamage = 0;
 
-        public int summonedSwordStuck = 0; // How many summoned swords are stuck in the target
-        public int summonedSwordStuckTimer = 0; // Ticks passed since the last damage dealt by the stuck swords
+        /// <summary>Whether the target afflicted with fall damage is in falling motion.</summary>
+        public bool alreadyStartedFalling = false;
+
+        /// <summary>How many <see cref="ProjSummonedSword"/>s are stuck to this NPC.</summary>
+        public int summonedSwordStuck = 0;
+
 
 
         public override void ResetEffects(NPC npc)
@@ -25,13 +33,13 @@ namespace Virtuous
             {
                 if (npc.active && !npc.dontTakeDamage && Main.GameUpdateCount % 10 == 0)
                 {
-                    // Damages every 10 ticks, damage stacking caps at StuckMaxAmount
-                    npc.StrikeNPC(ProjSummonedSword.StuckDOT * Math.Min(summonedSwordStuck/2, ProjSummonedSword.StuckMaxAmount),
-                                  0, 0, false, true);
+                    npc.StrikeNPC(
+                        ProjSummonedSword.StuckDOT * Math.Min(summonedSwordStuck/2, ProjSummonedSword.StuckMaxAmount),
+                        0, 0, false, true);
                 }
             }
 
-            summonedSwordStuck = 0; // Effect gets reapplied by the swords stuck on the target
+            summonedSwordStuck = 0; // Effect will get reapplied by the swords stuck on the target
 
 
             if (fallDamage > 0) // Fall damage effect active
@@ -45,11 +53,11 @@ namespace Virtuous
 
                     if (npc.collideY) // Has hit the ground
                     {
-                        npc.StrikeNPC(fallDamage, 0, 0, false, true, false); // Applies the accumulated damage
-                        fallDamage = 0; // Turns off the effect
+                        npc.StrikeNPC(fallDamage, 0, 0, false, true, false);
+                        fallDamage = 0;
                     }
                 }
-                else if (alreadyStartedFalling) // If it's not falling anymore, turns off the effect
+                else if (alreadyStartedFalling) // Was falling but not anymore
                 {
                     fallDamage = 0;
                 }

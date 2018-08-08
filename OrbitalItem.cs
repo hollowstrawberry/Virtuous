@@ -10,17 +10,29 @@ using Virtuous.Orbitals;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Base class for an item that summons an orbital. Its default traits can be set in <see cref="SetOrbitalDefaults"/>.
+    /// </summary>
     public abstract class OrbitalItem : ModItem
     {
         public override bool CloneNewInstances => true; // The defaults are copied to new items
 
-        // Traits set in defaults
-        public int type = OrbitalID.None; // The orbital this item spawns. Failing to provide a valid one will cause an exception
-        public int duration = 5 * 60; // How long the summoned orbital will last, in ticks
-        public int amount = 1; // The amount of orbitals that will be spawned in a circle
-        public SpecialType specialType = SpecialType.None; // If and how an orbital special effect triggers
+
+        /// <summary>The orbital this item spawns. Must be set in <see cref="SetOrbitalDefaults"/>.</summary>
+        public int type = OrbitalID.None;
+
+        /// <summary>How long the summoned orbital will last, in ticks.</summary>
+        public int duration = 5 * 60;
+
+        /// <summary>The amount of orbitals that will be summoned in a circle.</summary>
+        public int amount = 1;
+
+        /// <summary>If and how the summoned orbital's special effect triggers.</summary>
+        public SpecialType specialType = SpecialType.None;
 
 
+
+        /// <summary>If and how an orbital's special effect is triggered by its item.</summary>
         public enum SpecialType
         {
             None,
@@ -31,6 +43,7 @@ namespace Virtuous
 
 
 
+        /// <summary>Where this orbital item's traits can be set, including the summoned orbital's traits.</summary>
         public virtual void SetOrbitalDefaults()
         {
         }

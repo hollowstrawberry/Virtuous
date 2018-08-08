@@ -7,15 +7,19 @@ using Virtuous.Orbitals;
 
 namespace Virtuous
 {
+    /// <summary>
+    /// Custom data given to all items by this mod.
+    /// Includes the "being sucked" state induced by <see cref="Items.TheGobbler"/>.
+    /// </summary>
     public class VirtuousItem : GlobalItem
     {
         public override bool InstancePerEntity => true;
         public override bool CloneNewInstances => true;
 
 
-        // Gobbler
-
+        /// <summary>Whether an item is being sucked by <see cref="Items.TheGobbler"/> and thus can't be picked up.</summary>
         public bool beingGobbled = false;
+
 
         public override bool CanPickup(Item item, Player player)
         {
