@@ -200,7 +200,7 @@ namespace Virtuous
                 tooltips.RemoveAt(durationIndex);
             }
 
-            tooltips.Insert(Math.Max(durationIndex, 0), new TooltipLine(mod, "OrbitalDuration", durationText));
+            tooltips.Insert(Math.Max(durationIndex, 1), new TooltipLine(mod, "OrbitalDuration", durationText));
         }
     }
 }

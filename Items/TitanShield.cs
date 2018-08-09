@@ -72,7 +72,7 @@ namespace Virtuous.Items
                 nonEquipableText = "Weapon, non-equipable";
 
             int insertIndex = tooltips.IndexOf(tooltips.FirstOrDefault(x => x.mod == "Terraria" && x.Name == "Damage"));
-            tooltips.Insert(Math.Max(0, insertIndex), new TooltipLine(mod, "NonEquipable", nonEquipableText));
+            tooltips.Insert(Math.Max(1, insertIndex), new TooltipLine(mod, "NonEquipable", nonEquipableText));
 
 
             TooltipLine knockbackLine = tooltips.FirstOrDefault(x => x.mod == "Terraria" && x.Name == "Knockback");

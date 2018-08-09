@@ -13,18 +13,18 @@ namespace Virtuous.Projectiles
 
         private static readonly Color[] ArrowColors = new[]
         {
-            new Color(000, 050, 255), // Blue
-            new Color(000, 125, 255), // Sky
-            new Color(000, 255, 255), // Cyan
-            new Color(000, 255, 110), // Aqua
-            new Color(000, 255, 000), // Green
-            new Color(110, 255, 000), // Lime
-            new Color(240, 240, 000), // Yellow
-            new Color(255, 100, 000), // Orange
-            new Color(255, 000, 000), // Red
-            new Color(255, 000, 150), // Fuchsia
-            new Color(150, 000, 255), // Purple
-            new Color(090, 020, 255), // Violet
+            new Color(000, 050, 255, 100), // Blue
+            new Color(000, 125, 255, 100), // Sky
+            new Color(000, 255, 255, 100), // Cyan
+            new Color(000, 255, 110, 100), // Aqua
+            new Color(000, 255, 000, 100), // Green
+            new Color(110, 255, 000, 100), // Lime
+            new Color(240, 240, 000, 100), // Yellow
+            new Color(255, 100, 000, 100), // Orange
+            new Color(255, 000, 000, 100), // Red
+            new Color(255, 000, 150, 100), // Fuchsia
+            new Color(150, 000, 255, 100), // Purple
+            new Color(090, 020, 255, 100), // Violet
         };
 
 
@@ -49,7 +49,7 @@ namespace Virtuous.Projectiles
             get
             {
                 if (Mode == ArrowMode.White) return new Color(255, 255, 255, 0);
-                if (ColorId >= 0 && ColorId < ArrowColors.Length) return ArrowColors[ColorId] * 0.5f;
+                if (ColorId >= 0 && ColorId < ArrowColors.Length) return ArrowColors[ColorId];
                 return Color.Black;
             }
         }

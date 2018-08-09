@@ -172,7 +172,7 @@ namespace Virtuous.Items
             customTooltips.Add(new TooltipLine(mod, "GobblerItem", nextItemTooltip.ToString()));
             customTooltips.Add(new TooltipLine(mod, "GobblerTooltip", descriptionText));
 
-            tooltips.RemoveAll(line => line.mod == "Terraria" && TooltipsToRemove.Any(x => line.Name == x));
+            tooltips.RemoveAll(line => line.mod == "Terraria" && TooltipsToRemove.Contains(line.Name));
             tooltips.InsertRange(1, customTooltips);
         }
 
