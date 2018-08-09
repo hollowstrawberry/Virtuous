@@ -5,8 +5,43 @@ using Virtuous.Items;
 
 namespace Virtuous.Utils
 {
+    /// <summary>Methods that define characteristics of <see cref="TheGobbler"/> projectiles and stored items.</summary>
     public static class GobblerHelper
     {
+        private static readonly float[] ConsumeChances = new[] // Based on item rarity
+        {
+            1,
+            1,
+            4/5f,
+            3/4f,
+            2/3f,
+            1/2f,
+            1/3f,
+            1/4f,
+            1/5f,
+            1/6f,
+            1/8f,
+            1/10f,
+            1/12f,
+        };
+
+
+
+        /// <summary>The probability from 0 to 1 that an item will not be preserved when shot by the gobbler.</summary>
+        public static float ConsumeChance(Item item)
+        {
+            if (item.type == ItemID.EndlessMusketPouch || item.type == ItemID.EndlessQuiver) return 0f;
+
+            float chance = ConsumeChances[Math.Max(ConsumeChances.Length - 1, Math.Min(0, item.rare))];
+
+            if (item.questItem || item.expert || item.expertOnly) chance *= 0.5f; // Expert or quest
+            if (item.accessory || item.defense > 0 || item.vanity || item.damage > 0) chance *= 0.5f; // Weapon or equipable
+            if (item.type == ItemID.Arkhalis) chance *= 0.5f;
+
+            return chance;
+        }
+
+
         /// <summary>The size of the item's sprite from corner to corner.</summary> 
         public static float DiagonalSize(Item item)
         {

@@ -39,7 +39,7 @@ namespace Virtuous
         /// <summary>Original alpha value of the projectile.</summary>
         public virtual int OriginalAlpha => 50;
 
-        /// <summary>Distance from the player the orbital starts at./summary>
+        /// <summary>Distance from the player the orbital starts at.</summary>
         public virtual float BaseDistance => 50;
 
         /// <summary>Speed at which the projectile's sprite rotates.</summary>

@@ -111,33 +111,33 @@ namespace Virtuous
             {
                 if (player.controlThrow && GobblerStorage.Count > 0) // Release storage
                 {
-                    Main.PlaySound(SoundID.Item3, player.Center);
-
-                    var stacks = new List<KeyValuePair<GobblerStoredItem, int>>();
-
+                    var items = new Dictionary<GobblerStoredItem, int>();
                     foreach (var storedItem in GobblerStorage)
                     {
-                        if (storedItem.MakeItem().maxStack == 1)
-                        {
-                            stacks.Add(new KeyValuePair<GobblerStoredItem, int>(storedItem, 1));
-                        }
-                        else
-                        {
-                            int index = stacks.IndexOf(stacks.FirstOrDefault(x => x.Key == storedItem));
-                            if (index > 0) stacks[index] = new KeyValuePair<GobblerStoredItem, int>(storedItem, stacks[index].Value + 1);
-                            else stacks.Add(new KeyValuePair<GobblerStoredItem, int>(storedItem, 1));
-                        }
+                        if (!items.ContainsKey(storedItem)) items[storedItem] = 0;
+                        items[storedItem]++;
                     }
 
-                    foreach (var pair in stacks) // Drop items
+                    foreach (var pair in items)
                     {
-                        int itemIndex = Item.NewItem(player.Center, pair.Key.type, Stack: pair.Value, prefixGiven: pair.Key.prefix);
-                        if (Main.netMode == NetmodeID.MultiplayerClient) // Syncs to multiplayer
+                        var storedItem = pair.Key;
+                        int amount = pair.Value;
+                        int maxStack = storedItem.MakeItem().maxStack;
+                        while (amount > 0)
                         {
-                            NetMessage.SendData(MessageID.SyncItem, number: itemIndex);
+                            int stackSize = Math.Min(amount, maxStack);
+                            amount -= stackSize;
+
+                            int itemIndex = Item.NewItem(player.Center, storedItem.type, stackSize, false, storedItem.prefix);
+                            if (Main.netMode == NetmodeID.MultiplayerClient) // Syncs to multiplayer
+                            {
+                                NetMessage.SendData(MessageID.SyncItem, number: itemIndex);
+                            }
                         }
+
                     }
 
+                    Main.PlaySound(SoundID.Item3, player.Center);
                     GobblerStorage.Clear();
                 }
             }

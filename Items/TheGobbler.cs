@@ -23,6 +23,7 @@ namespace Virtuous.Items
 
         private static readonly string[] TooltipsToRemove = new[] {
             "Favorite",
+            "FavoriteDesc",
             "Damage",
             "CritChance",
             "Speed",
@@ -87,7 +88,9 @@ namespace Virtuous.Items
                 item.useAnimation = 20;
 
                 var modPlayer = player.GetModPlayer<VirtuousPlayer>();
-                if (modPlayer.GobblerStorage.Count > 0 && ConsumeChance(modPlayer.GobblerStorage.First().MakeItem()) == 0f)
+
+                if (modPlayer.GobblerStorage.Count > 0
+                    && GobblerHelper.ConsumeChance(modPlayer.GobblerStorage.First().MakeItem()) == 0f)
                 {
                     item.useAnimation = 15; // An exception: Shoots faster with endless quiver or musket pouch
                 }
@@ -136,7 +139,7 @@ namespace Virtuous.Items
             {
                 int damage = GobblerHelper.ShotDamage(storedItem, player);
                 float knockBack = GobblerHelper.ShotKnockBack(storedItem, player);
-                int preserveChance = 100 - (int)(ConsumeChance(storedItem) * 100);
+                int preserveChance = 100 - (int)(GobblerHelper.ConsumeChance(storedItem) * 100);
 
 
                 nextItemTooltip.Append($"Next item: {storedItem.Name}");
@@ -174,35 +177,6 @@ namespace Virtuous.Items
 
             tooltips.RemoveAll(line => line.mod == "Terraria" && TooltipsToRemove.Contains(line.Name));
             tooltips.InsertRange(1, customTooltips);
-        }
-
-
-        public static float ConsumeChance(Item item) // The chance of the given item not being preserved when shot
-        {
-            if (item.type == ItemID.EndlessMusketPouch || item.type == ItemID.EndlessQuiver) return 0f;
-
-            float chance; // Chance to consume item depends on its rarity and other factors
-
-            switch(item.rare)
-            {
-                case  2: chance = 4f / 5f; break;
-                case  3: chance = 3f / 4f; break;
-                case  4: chance = 2f / 3f; break;
-                case  5: chance = 1f / 2f; break;
-                case  6: chance = 1f / 3f; break;
-                case  7: chance = 1f / 4f; break;
-                case  8: chance = 1f / 5f; break;
-                case  9: chance = 1f / 6f; break;
-                case 10: chance = 1f / 7f; break;
-                case 11: chance = 1f / 8f; break;
-                default: chance = 1f; break;
-            }
-
-            if (item.questItem || item.expert || item.expertOnly) chance *= 0.5f; // Expert or quest
-            if (item.accessory || item.defense > 0 || item.vanity || item.damage > 0) chance *= 0.5f; // Weapon or equipable
-            if (item.type == ItemID.Arkhalis) chance *= 0.5f;
-
-            return chance;
         }
 
 
@@ -272,7 +246,7 @@ namespace Virtuous.Items
                                         Main.PlaySound(SoundID.Item3, position);
                                     }
 
-                                    modPlayer.GobblerStorage.Add(new GobblerStoredItem(item.type, item.prefix));
+                                    modPlayer.GobblerStorage.Add(new GobblerStoredItem(item));
 
                                     if (--item.stack == 0)
                                     {
@@ -304,7 +278,7 @@ namespace Virtuous.Items
 
                         var gobblerItem = modPlayer.GobblerStorage.First();
                         var item = gobblerItem.MakeItem();
-                        bool consume = Main.rand.NextFloat() < ConsumeChance(item);
+                        bool consume = Main.rand.NextFloat() < GobblerHelper.ConsumeChance(item);
 
                         if (item.ammo == AmmoID.Arrow) // Arrows are shot just fine
                         {
