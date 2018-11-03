@@ -157,7 +157,7 @@ namespace Virtuous
         {
             GobblerStorage.Clear();
 
-            int[] itemTypes;
+            int[] itemTypes = new int[0];
             if (tag.ContainsKey(GobblerItemTypesKey))
             {
                 itemTypes = tag.GetIntArray(GobblerItemTypesKey);
@@ -166,13 +166,14 @@ namespace Virtuous
             {
                 itemTypes = tag.GetIntArray(DeprecatedGobblerStorageKey).Where(x => x != ItemID.None).ToArray();
             }
-            else itemTypes = new int[0];
 
             if (itemTypes.Length == 0) return; // Nothing to add
 
-            byte[] itemPrefixes;
-            if (tag.ContainsKey(GobblerItemPrefixesKey)) itemPrefixes = tag.GetByteArray(GobblerItemPrefixesKey);
-            else itemPrefixes = new byte[itemTypes.Length];
+            byte[] itemPrefixes = new byte[itemTypes.Length];
+            if (tag.ContainsKey(GobblerItemPrefixesKey))
+            {
+                itemPrefixes = tag.GetByteArray(GobblerItemPrefixesKey);
+            }
 
             var items = Enumerable.Range(0, itemTypes.Length).Select(i => new GobblerStoredItem(itemTypes[i], itemPrefixes[i]));
             GobblerStorage.AddRange(items);
@@ -183,7 +184,7 @@ namespace Virtuous
 
         // Titan Shield
 
-        public void TitanShieldDash()
+        public void TitanShieldDash(TitanShield shield)
         {
             int dashDirection = titanShieldDashing > 0 ? +1 : -1; // Negative is left
 
@@ -195,16 +196,15 @@ namespace Virtuous
                 player.width + 8,
                 player.height + 8);
 
-            // All NPCs colliding with the expanded player hitbox
-            foreach (NPC npc in Main.npc.Where(x => x.active && !x.dontTakeDamage && !x.friendly && x.immune[player.whoAmI] <= 0
-                                                    && playerRect.Intersects(x.getRect()) && (x.noTileCollide || player.CanHit(x))))
-            {
-                var titanShield = (TitanShield)player.inventory[player.selectedItem].modItem; // Gets the held item
-                if (titanShield == null) return; // Shouldn't happen
+            var npcs = Main.npc
+                .Where(x => x.active && !x.dontTakeDamage && !x.friendly && x.immune[player.whoAmI] <= 0)
+                .Where(x => playerRect.Intersects(x.getRect()) && (x.noTileCollide || player.CanHit(x)));
 
-                int damage = 0; titanShield.GetWeaponDamage(player, ref damage);
-                float knockBack = titanShield.item.knockBack;
-                bool crit = Main.rand.Next(100) < (titanShield.item.crit + player.meleeCrit);
+            foreach (NPC npc in npcs)
+            {
+                int damage = 0; shield.GetWeaponDamage(player, ref damage);
+                float knockBack = shield.item.knockBack;
+                bool crit = Main.rand.Next(100) < (shield.item.crit + player.meleeCrit);
 
                 // Damages the enemy
                 player.ApplyDamageToNPC(npc, damage, knockBack, player.direction, crit);
@@ -256,9 +256,10 @@ namespace Virtuous
 
         public override void PostUpdate()
         {
-            // Titan shield mechanics
+            // Holding the titan shield
 
-            if (player.HeldItem.type == mod.ItemType<TitanShield>()) // Holding the item
+            var shield = player.HeldItem?.modItem as TitanShield;
+            if (shield == null)
             {
                 if (player.controlUseItem && titanShieldCoolDown == 0) // Clicking
                 {
@@ -267,8 +268,8 @@ namespace Virtuous
                     Main.PlaySound(SoundID.Item15, player.Center);
                 }
 
-                if (titanShieldDashing == 0) titanShieldLastExplosion = 0; // Resets explosion cooldown
-                else TitanShieldDash(); // Executes the dash
+                if (titanShieldDashing == 0) titanShieldLastExplosion = 0; // Reset cooldown
+                else TitanShieldDash(shield); // Execute dash
             }
             else
             {
@@ -281,7 +282,7 @@ namespace Virtuous
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             // Titan shield held: Reduces damage if the hit comes from the front
-            if (player.HeldItem.type == mod.ItemType<TitanShield>() && hitDirection != player.direction)
+            if (hitDirection != player.direction && player.HeldItem?.type == mod.ItemType<TitanShield>())
             {
                 damage = (int)(damage * (1 - TitanShield.DamageReduction));
                 int dustAmount = Main.rand.Next(15, 21);
