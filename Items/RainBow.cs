@@ -92,6 +92,7 @@ namespace Virtuous.Items
             var arrow = proj.modProjectile as RainbowArrow;
             arrow.Mode = mode;
             arrow.ColorId = NextColor;
+            proj.netUpdate = true;
             return false;
         }
         

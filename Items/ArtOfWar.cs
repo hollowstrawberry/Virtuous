@@ -78,6 +78,7 @@ namespace Virtuous.Items
                 var proj = Projectile.NewProjectileDirect(newPosition, newVelocity, newType, damage, knockBack, player.whoAmI);
                 proj.tileCollide = false;
                 proj.noDropItem = true;
+                proj.netUpdate = true;
 
                 var modProj = proj.GetGlobalProjectile<VirtuousProjectile>();
                 modProj.artOfWar = true;

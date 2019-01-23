@@ -287,6 +287,7 @@ namespace Virtuous.Items
                                 GobblerHelper.ShotDamage(item, player), GobblerHelper.ShotKnockBack(item, player),
                                 player.whoAmI);
                             proj.noDropItem = true;
+                            proj.netUpdate = true;
                         }
                         else // Shooting the custom projectile that takes the form of any item
                         {
@@ -297,6 +298,7 @@ namespace Virtuous.Items
                             var gobblerProj = proj.modProjectile as ProjGobblerItem;
                             gobblerProj.Consumed = consume;
                             gobblerProj.GobblerItem = gobblerItem;
+                            proj.netUpdate = true;
 
 
                             if (gobblerItem.type == ItemID.Arkhalis) // Ridiculous effect for ridiculous weapon
@@ -309,6 +311,7 @@ namespace Virtuous.Items
                                     gobblerProj = proj.modProjectile as ProjGobblerItem;
                                     gobblerProj.Consumed = false;
                                     gobblerProj.GobblerItem = gobblerItem;
+                                    proj.netUpdate = true;
                                 }
                             }
                         }

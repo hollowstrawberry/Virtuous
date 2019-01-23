@@ -75,6 +75,7 @@ namespace Virtuous.Items
             var mane = proj.modProjectile as ProjLionsMane;
             mane.RelativePosition = position.OfLength(5);
             mane.Direction = player.altFunctionUse == 2 ? -1 : +1;
+            proj.netUpdate = true;
             return false;
         }
 

@@ -52,6 +52,7 @@ namespace Virtuous
                     damage*5, knockback*2, projectile.owner);
                 var crosshair = proj.modProjectile as ProjCrosshair;
                 crosshair.Target = target.whoAmI;
+                proj.netUpdate = true;
             }
         }
     }

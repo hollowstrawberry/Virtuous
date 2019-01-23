@@ -253,16 +253,16 @@ namespace Virtuous
         /// <summary>Skeleton for orbital behavior running every tick.</summary>
         public sealed override void AI()
         {
+            projectile.netUpdate = true; // Sync to multiplayer, I'm lazy
+
             if (!orbitalPlayer.active[Type] && Main.myPlayer == projectile.owner) // Keep it alive only while the summon is active
             {
-                projectile.netUpdate = true; // Sync to multiplayer
                 projectile.Kill();
             }
             else
             {
                 if (IsFirstTick)
                 {
-                    projectile.netUpdate = true;
                     FirstTick();
                 }
 
@@ -285,7 +285,6 @@ namespace Virtuous
                 {
                     if (orbitalPlayer.time == DyingTime)
                     {
-                        projectile.netUpdate = true;
                         DyingFirstTick();
                     }
 

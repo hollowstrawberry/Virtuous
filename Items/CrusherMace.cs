@@ -60,6 +60,7 @@ namespace Virtuous.Items
                 var pillar = proj.modProjectile as ProjCrusherPillar;
                 pillar.Appearance = appearance;
                 pillar.Crit = crit;
+                proj.netUpdate = true;
             }
         }
 

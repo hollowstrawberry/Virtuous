@@ -101,6 +101,8 @@ namespace Virtuous.Orbitals
             }
 
             // Firing
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+
             int fireChances = InOverdrive() ? 15 : 5; // How many times in a cycle it gets the chance to shoot
             if (specialFunctionTimer % (CycleTime / fireChances) == 0 && Main.rand.OneIn(3))
             {

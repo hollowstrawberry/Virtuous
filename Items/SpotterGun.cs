@@ -54,6 +54,7 @@ namespace Virtuous.Items
         {
             var proj = Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
             proj.GetGlobalProjectile<VirtuousProjectile>().spotter = true; // Projectile can spawn a Crosshair
+            proj.netUpdate = true;
 
             return false;
         }
