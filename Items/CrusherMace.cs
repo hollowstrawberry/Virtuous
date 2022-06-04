@@ -14,39 +14,39 @@ namespace Virtuous.Items
             DisplayName.SetDefault("Crusher Mace");
             Tooltip.SetDefault("\"To shreds, you say?\"");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Martillo Apretillo");
-            Tooltip.AddTranslation(GameCulture.Spanish, "\"Aplasta a tus enemigos\"");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Martillo Apretillo");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "\"Aplasta a tus enemigos\"");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Дробилка");
-            Tooltip.AddTranslation(GameCulture.Russian, "\"На кусочки, говоришь?\"");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Дробилка");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "\"На кусочки, говоришь?\"");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "粉碎战锤");
-            Tooltip.AddTranslation(GameCulture.Chinese, "去粉碎它,你说呢?");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "粉碎战锤");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "去粉碎它,你说呢?");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 43;
-            item.height = 37;
-            item.scale = 1.1f;
-            item.useStyle = 1;
-            item.useTime = 40;
-            item.useAnimation = item.useTime;
-            item.UseSound = SoundID.Item1;
-            item.damage = 100;
-            item.crit = 5;
-            item.knockBack = 5f;
-            item.melee = true;
-            item.autoReuse = true;
-            item.rare = 9;
-            item.value = Item.sellPrice(0, 15, 0, 0);
+            Item.width = 43;
+            Item.height = 37;
+            Item.scale = 1.1f;
+            Item.useStyle = 1;
+            Item.useTime = 40;
+            Item.useAnimation = Item.useTime;
+            Item.UseSound = SoundID.Item1;
+            Item.damage = 100;
+            Item.crit = 5;
+            Item.knockBack = 5f;
+            Item.melee = true;
+            Item.autoReuse = true;
+            Item.rare = 9;
+            Item.value = Item.sellPrice(0, 15, 0, 0);
         }
 
 
         public override void OnHitNPC(Player player, NPC target, int damage, float knockBack, bool crit)
         {
-            int type = mod.ProjectileType<ProjCrusherPillar>();
+            int type = Mod.Find<ModProjectile>(nameof(ProjCrusherPillar)).Type;
             int appearance = Main.rand.Next(Main.projFrames[type]);
             damage *= 2;
             knockBack = 0;
@@ -57,7 +57,7 @@ namespace Virtuous.Items
                 var velocity = new Vector2(-direction * (crit ? 10 : 5), 0f);
 
                 var proj = Projectile.NewProjectileDirect(position, velocity, type, damage, knockBack, player.whoAmI);
-                var pillar = proj.modProjectile as ProjCrusherPillar;
+                var pillar = proj.ModProjectile as ProjCrusherPillar;
                 pillar.Appearance = appearance;
                 pillar.Crit = crit;
                 proj.netUpdate = true;
@@ -67,7 +67,7 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.StaffofEarth);
             recipe.AddIngredient(ItemID.ChlorophyteWarhammer);
             recipe.AddIngredient(ItemID.Marble, 20);

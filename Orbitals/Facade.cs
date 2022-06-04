@@ -5,7 +5,7 @@ namespace Virtuous.Orbitals
 {
     public class Facade : OrbitalProjectile
     {
-        public override int Type => OrbitalID.Facade;
+        public override int OrbitalType => OrbitalID.Facade;
         public override int OriginalAlpha => 80;
         public override int FadeTime => 30;
         public override float BaseDistance => 50;
@@ -16,15 +16,15 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Summoned Barrier");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Barrera Mágica");
-            DisplayName.AddTranslation(GameCulture.Russian, "Призванный Барьер");
-            DisplayName.AddTranslation(GameCulture.Chinese, "召唤屏障");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Barrera Mágica");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Призванный Барьер");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "召唤屏障");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = 18;
-            projectile.height = 44;
+            Projectile.width = 18;
+            Projectile.height = 44;
         }
 
 
@@ -32,15 +32,15 @@ namespace Virtuous.Orbitals
         {
             base.Movement();
 
-            relativeDistance -= oscillationSpeed; // Undoes the distance oscillation
-            RotatePosition(oscillationSpeed); // Applies it as angular oscillation
-            projectile.rotation += oscillationSpeed; // Rotates the sprite
+            RelativeDistance -= OscillationSpeed; // Undoes the distance oscillation
+            RotatePosition(OscillationSpeed); // Applies it as angular oscillation
+            Projectile.rotation += OscillationSpeed; // Rotates the sprite
         }
 
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(250, 233, 0, 100) * projectile.Opacity;
+            return new Color(250, 233, 0, 100) * Projectile.Opacity;
         }
     }
 }

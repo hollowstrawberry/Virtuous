@@ -14,39 +14,39 @@ namespace Virtuous.Items
             DisplayName.SetDefault("Fireplower");
             Tooltip.SetDefault("50% chance to not consume gel\nLeaves burning gel on the ground");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Arrasallamas");
-            Tooltip.AddTranslation(GameCulture.Spanish, "50% probabilidad de no consumir gel\nDeja restos de gel ardiente");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Arrasallamas");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "50% probabilidad de no consumir gel\nDeja restos de gel ardiente");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Огнеплюв");
-            Tooltip.AddTranslation(GameCulture.Russian, "50% не потратить гель\nОставляет горящий гель на земле");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Огнеплюв");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "50% не потратить гель\nОставляет горящий гель на земле");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "烈焰之星");
-            Tooltip.AddTranslation(GameCulture.Chinese, "50%几率不消耗凝胶\n在地上留下徐徐花瓣");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "烈焰之星");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "50%几率不消耗凝胶\n在地上留下徐徐花瓣");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 50;
-            item.height = 22;
-            item.useStyle = 5;
-            item.autoReuse = true;
-            item.useAnimation = 30;
-            item.useTime = item.useAnimation / 2;
-            item.shoot = ProjectileID.Flames;
-            item.useAmmo = AmmoID.Gel;
-            item.UseSound = SoundID.Item34;
-            item.damage = 120;
-            item.knockBack = 2f;
-            item.shootSpeed = 7f;
-            item.noMelee = true;
-            item.value = Item.sellPrice(0, 15, 0, 0);
-            item.rare = 8;
-            item.ranged = true;
+            Item.width = 50;
+            Item.height = 22;
+            Item.useStyle = 5;
+            Item.autoReuse = true;
+            Item.useAnimation = 30;
+            Item.useTime = Item.useAnimation / 2;
+            Item.shoot = ProjectileID.Flames;
+            Item.useAmmo = AmmoID.Gel;
+            Item.UseSound = SoundID.Item34;
+            Item.damage = 120;
+            Item.knockBack = 2f;
+            Item.shootSpeed = 7f;
+            Item.noMelee = true;
+            Item.value = Item.sellPrice(0, 15, 0, 0);
+            Item.rare = 8;
+            Item.ranged = true;
         }
 
 
-        public override bool ConsumeAmmo(Player player) => Main.rand.OneIn(2);
+        public override bool ConsumeAmmo(Player player) => Main.rand.NextBool(2);
 
         //public override Vector2? HoldoutOffset() => new Vector2(10, 0);
 
@@ -64,7 +64,7 @@ namespace Virtuous.Items
             }
 
             int gelAmount = Main.rand.Next(1, 4);
-            var gelPosition = position + new Vector2(speedX, speedY).OfLength(item.width); // Tip of the nozzle
+            var gelPosition = position + new Vector2(speedX, speedY).OfLength(Item.width); // Tip of the nozzle
             if (!Collision.CanHit(player.Center, 0, 0, gelPosition, 0, 0)) gelPosition = position; // So that it doesn't go through walls
 
             for (int i = 0; i < gelAmount; i++)
@@ -73,17 +73,17 @@ namespace Virtuous.Items
                     .RotatedBy(shootArc * Main.rand.NextFloat(-1, +1)) // Random inside the fire arc
                     * Main.rand.NextFloat(0, 2); // Random power
 
-                Projectile.NewProjectile(gelPosition, gelVelocity, mod.ProjectileType<ProjGelFire>(), damage, 0, player.whoAmI);
+                Projectile.NewProjectile(gelPosition, gelVelocity, Mod.Find<ModProjectile>(nameof(ProjGelFire)).Type, damage, 0, player.whoAmI);
             }
 
-            if (Main.rand.OneIn(1000)) Main.NewText("Burn, baby! Burn!", Color.Orange);
+            if (Main.rand.NextBool(1000)) Main.NewText("Burn, baby! Burn!", Color.Orange);
             return false;
         }
 
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.Flamethrower);
             recipe.AddIngredient(ItemID.FireFeather);
             recipe.AddIngredient(ItemID.LunarTabletFragment, 10);

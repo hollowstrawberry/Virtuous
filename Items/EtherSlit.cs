@@ -15,42 +15,42 @@ namespace Virtuous.Items
             Tooltip.SetDefault(
                 "Right Click for a barrage attack\nBarrage swords have higher speed, critical chance and stick duration");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Éter");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Éter");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "Haz Click Derecho para un ataque concentrado de mayor potencia");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Небесная Скважина");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Небесная Скважина");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "ПКМ для стихийной атаки\nУ стихийных клинков повышены скорость, шанс критического удара и время застревания");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "苍穹裂痕");
-            Tooltip.AddTranslation(GameCulture.Chinese,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "苍穹裂痕");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese),
                 "右键释放空灵剑诀\n空灵剑诀拥有更高的攻速,暴击率及持续时间");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 24;
-            item.height = 28;
-            item.shoot = mod.ProjectileType<ProjSummonedSword>();
-            item.UseSound = mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Slash");
-            item.damage = 250;
-            item.knockBack = 7f;
-            item.mana = 7;
-            item.magic = true;
-            item.noMelee = true;
-            item.autoReuse = true;
-            item.noUseGraphic = true;
-            item.rare = 10;
-            item.value = Item.sellPrice(0, 50, 0, 0);
+            Item.width = 24;
+            Item.height = 28;
+            Item.shoot = Mod.Find<ModProjectile>(nameof(ProjSummonedSword)).Type;
+            Item.UseSound = Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Slash");
+            Item.damage = 250;
+            Item.knockBack = 7f;
+            Item.mana = 7;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.noUseGraphic = true;
+            Item.rare = 10;
+            Item.value = Item.sellPrice(0, 50, 0, 0);
 
             // Replaced in SetUseStats
-            item.useStyle = 5;
-            item.useTime = 10;
-            item.useAnimation = item.useTime;
-            item.shootSpeed = 16f;
-            item.crit = 15;
+            Item.useStyle = 5;
+            Item.useTime = 10;
+            Item.useAnimation = Item.useTime;
+            Item.shootSpeed = 16f;
+            Item.crit = 15;
         }
         
 
@@ -62,20 +62,20 @@ namespace Virtuous.Items
             // Left Click
             if (player.altFunctionUse != 2)
             {
-                item.useStyle = 5;
-                item.useTime = 10;
-                item.useAnimation = item.useTime;
-                item.shootSpeed = 16f;
-                item.crit = 15;
+                Item.useStyle = 5;
+                Item.useTime = 10;
+                Item.useAnimation = Item.useTime;
+                Item.shootSpeed = 16f;
+                Item.crit = 15;
             }
             // Right Click
             else
             {
-                item.useStyle = 3;
-                item.useTime = 7;
-                item.useAnimation = item.useTime;
-                item.shootSpeed = 20f;
-                item.crit = 30;
+                Item.useStyle = 3;
+                Item.useTime = 7;
+                Item.useAnimation = Item.useTime;
+                Item.shootSpeed = 20f;
+                Item.crit = 30;
             }
         }
         
@@ -108,8 +108,8 @@ namespace Virtuous.Items
             // Right click: Horizontal, in the direction the player is facing
             // Left click: Middlepoint between straight from the player to the cursor and straight from the sword to the cursor
             Vector2 velocity = player.altFunctionUse == 2
-                ? new Vector2(player.direction * item.shootSpeed, 0)
-                : Vector2.Lerp(Main.MouseWorld - player.Center, Main.MouseWorld - position, 0.5f).OfLength(item.shootSpeed);
+                ? new Vector2(player.direction * Item.shootSpeed, 0)
+                : Vector2.Lerp(Main.MouseWorld - player.Center, Main.MouseWorld - position, 0.5f).OfLength(Item.shootSpeed);
 
             Projectile.NewProjectile(position, velocity, type, damage, knockBack, player.whoAmI);
             return false;
@@ -118,7 +118,7 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.SkyFracture);
             recipe.AddIngredient(ItemID.LunarBar, 10);
             recipe.AddIngredient(ItemID.Ectoplasm, 20);

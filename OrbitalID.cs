@@ -40,7 +40,7 @@ namespace Virtuous
         /// <summary>Returns the projectile type for the given orbital ID.</summary>
         public static int OrbitalProjectileType(this Mod mod, int id)
         {
-            return mod.ProjectileType(Orbital[id].GetType().Name);
+            return mod.Find<ModProjectile>(Orbital[id].GetType().Name).Type;
         }
 
 
@@ -52,11 +52,11 @@ namespace Virtuous
             var orbitals = typeof(OrbitalProjectile).Assembly.GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(OrbitalProjectile)))
                 .Select(type => (OrbitalProjectile)Activator.CreateInstance(type))
-                .OrderBy(orbital => orbital.Type)
+                .OrderBy(orbital => orbital.OrbitalType)
                 .ToArray();
 
             // Ensures one-to-one correspondence
-            if (Enumerable.Range(0, orbitals.Length).Any(i => orbitals[i].Type != i))
+            if (Enumerable.Range(0, orbitals.Length).Any(i => orbitals[i].OrbitalType != i))
             {
                 throw new Exception("Virtuous: An orbital projectile has an invalid orbital ID, or the same orbital ID as another orbital. " +
                                     "Valid IDs are non-negative and consecutive.");

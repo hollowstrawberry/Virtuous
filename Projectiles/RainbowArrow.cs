@@ -40,8 +40,8 @@ namespace Virtuous.Projectiles
 
         public ArrowMode Mode // Stored as ai[0]
         {
-            get { return (ArrowMode)(int)projectile.ai[0]; }
-            set { projectile.ai[0] = (int)value; }
+            get { return (ArrowMode)(int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = (int)value; }
         }
 
         private Color Color // Stored as ai[1]
@@ -56,8 +56,8 @@ namespace Virtuous.Projectiles
 
         public int ColorId
         {
-            get { return (int)projectile.ai[1]; }
-            set { projectile.ai[1] = value; }
+            get { return (int)Projectile.ai[1]; }
+            set { Projectile.ai[1] = value; }
         }
 
 
@@ -66,19 +66,19 @@ namespace Virtuous.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Rainbow Arrow");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Flecha Iris");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Flecha Iris");
         }
 
 
         public override void SetDefaults()
         {
-            projectile.width = 15;
-            projectile.height = 15;
-            projectile.friendly = true;
-            projectile.arrow = true;
-            projectile.alpha = 0;
-            projectile.timeLeft = Lifespan;
-            projectile.ranged = true;
+            Projectile.width = 15;
+            Projectile.height = 15;
+            Projectile.friendly = true;
+            Projectile.arrow = true;
+            Projectile.alpha = 0;
+            Projectile.timeLeft = Lifespan;
+            Projectile.ranged = true;
         }
 
 
@@ -102,11 +102,11 @@ namespace Virtuous.Projectiles
                     break;
 
                 case ArrowMode.Rain:
-                    type = mod.DustType<RainbowDust>();
+                    type = Mod.Find<ModDust>(nameof(RainbowDust)).Type;
                     scale = Burst ? 1.5f : 1.2f; // Bigger size if it's a burst of dust
                     if (!Burst) // X is random, Y follows the arrow
                     {
-                        velocity = new Vector2(Main.rand.NextFloat(-0.25f, +0.25f), projectile.velocity.Length() / 2);
+                        velocity = new Vector2(Main.rand.NextFloat(-0.25f, +0.25f), Projectile.velocity.Length() / 2);
                     }
                     break;
             }
@@ -114,9 +114,9 @@ namespace Virtuous.Projectiles
             int dustAmount = Burst ? 10 : 1;
             for (int i = 0; i < dustAmount; i++)
             {
-                var dust = Dust.NewDustDirect(projectile.Center, 0, 0, type, 0f, 0f, newColor: Color, Scale: scale);
+                var dust = Dust.NewDustDirect(Projectile.Center, 0, 0, type, 0f, 0f, newColor: Color, Scale: scale);
                 if (velocity != Vector2.Zero) dust.velocity = velocity; // If a special velocity was set, apply it
-                if (Mode == ArrowMode.Rain) dust.position.Y -= projectile.height/2; // Trails behind
+                if (Mode == ArrowMode.Rain) dust.position.Y -= Projectile.height/2; // Trails behind
             }
         }
 
@@ -124,13 +124,13 @@ namespace Virtuous.Projectiles
         public override void AI()
         {
             // On projectile spawn
-            if (projectile.timeLeft == Lifespan) 
+            if (Projectile.timeLeft == Lifespan) 
             {
                 switch (Mode)
                 {
                     case ArrowMode.White:
-                        projectile.scale *= 1.4f;
-                        projectile.friendly = false; // Doesn't affect enemies
+                        Projectile.scale *= 1.4f;
+                        Projectile.friendly = false; // Doesn't affect enemies
                         break;
 
                     case ArrowMode.Rain:
@@ -138,34 +138,34 @@ namespace Virtuous.Projectiles
                         break;
                 }
 
-                projectile.rotation = projectile.velocity.ToRotation() + 90.ToRadians(); // Adds 90 degrees because of the sprite
+                Projectile.rotation = Projectile.velocity.ToRotation() + 90.ToRadians(); // Adds 90 degrees because of the sprite
             }
 
             // On every tick
             SpawnRainbowDust();
             Color color = Color;
-            Lighting.AddLight(projectile.Center, 0.7f*color.R/255, 0.7f*color.G/255, 0.7f*color.B/255);
+            Lighting.AddLight(Projectile.Center, 0.7f*color.R/255, 0.7f*color.G/255, 0.7f*color.B/255);
 
             // White arrow effect
-            if (Mode == ArrowMode.White && projectile.timeLeft == Lifespan - RainDelay && projectile.owner == Main.myPlayer) 
+            if (Mode == ArrowMode.White && Projectile.timeLeft == Lifespan - RainDelay && Projectile.owner == Main.myPlayer) 
             {
                 const int ArrowAmount = 30;
-                float arrowSpacing = projectile.width * 6f;
+                float arrowSpacing = Projectile.width * 6f;
                 int nextColor = Main.rand.Next(12); // Starts the rainbow at a random color
 
                 for(int i = 1; i <= ArrowAmount; i++)
                 {
-                    Vector2 position = projectile.Center;
+                    Vector2 position = Projectile.Center;
                     position.X += -ArrowAmount*arrowSpacing/2 - arrowSpacing/2 + i*arrowSpacing; // Evenly spaced
                     position.Y += 120; // Distance below the original arrow
 
-                    if (!Main.tile[(int)position.X/16, (int)position.Y/16].active()
-                        || !Main.tile[(int)position.X/16, (int)position.Y/16].nactive()) // Only spawns if it's open space
+                    if (!Main.tile[(int)position.X/16, (int)position.Y/16].HasTile
+                        || !Main.tile[(int)position.X/16, (int)position.Y/16].HasUnactuatedTile) // Only spawns if it's open space
                     {
                         var proj = Projectile.NewProjectileDirect(
-                            position, new Vector2(0, projectile.velocity.Length()), mod.ProjectileType<RainbowArrow>(),
-                            projectile.damage, 0, projectile.owner);
-                        var arrow = proj.modProjectile as RainbowArrow;
+                            position, new Vector2(0, Projectile.velocity.Length()), Mod.Find<ModProjectile>(nameof(RainbowArrow)).Type,
+                            Projectile.damage, 0, Projectile.owner);
+                        var arrow = proj.ModProjectile as RainbowArrow;
                         arrow.Mode = ArrowMode.Rain;
                         arrow.ColorId = nextColor;
                     }
@@ -174,7 +174,7 @@ namespace Virtuous.Projectiles
                     else nextColor = 0;
                 }
 
-                projectile.Kill();
+                Projectile.Kill();
             }
         }
 

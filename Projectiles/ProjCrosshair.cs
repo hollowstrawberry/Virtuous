@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -18,14 +19,14 @@ namespace Virtuous.Projectiles
 
         public int Target // Stored as ai[0]
         {
-            get { return (int)projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return (int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
 
         private int State // Stored as ai[1]
         {
-            get { return (int)projectile.ai[1]; }
-            set { projectile.ai[1] = value; }
+            get { return (int)Projectile.ai[1]; }
+            set { Projectile.ai[1] = value; }
         }
 
 
@@ -33,40 +34,40 @@ namespace Virtuous.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sniper");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Francotirador");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Francotirador");
         }
 
 
         public override void SetDefaults()
         {
-            projectile.width = 78;
-            projectile.height = 78;
-            projectile.timeLeft = StateTime[Tracking];
-            projectile.alpha = 250;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.friendly = false; // Doesn't damage enemies
-            projectile.hostile = false; // Doesn't damage players
-            projectile.usesIDStaticNPCImmunity = true; // Doesn't interfere with other piercing damage
-            projectile.idStaticNPCHitCooldown = StateTime[GoingUp] + 1;
+            Projectile.width = 78;
+            Projectile.height = 78;
+            Projectile.timeLeft = StateTime[Tracking];
+            Projectile.alpha = 250;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.friendly = false; // Doesn't damage enemies
+            Projectile.hostile = false; // Doesn't damage players
+            Projectile.usesIDStaticNPCImmunity = true; // Doesn't interfere with other piercing damage
+            Projectile.idStaticNPCHitCooldown = StateTime[GoingUp] + 1;
         }
 
 
         public override void AI()
         {
             Vector2 targetCenter = Main.npc[Target].SpriteCenter();
-            Vector2 relativePosition = targetCenter - projectile.Center;
+            Vector2 relativePosition = targetCenter - Projectile.Center;
             Vector2 offset;
 
             // Mode deciding
 
-            if (projectile.timeLeft == StateTime[Tracking]) State = Tracking; // First tick
+            if (Projectile.timeLeft == StateTime[Tracking]) State = Tracking; // First tick
 
-            if (projectile.timeLeft == 1 || State == Tracking && relativePosition.Length() < MaxSpeed / 3)
+            if (Projectile.timeLeft == 1 || State == Tracking && relativePosition.Length() < MaxSpeed / 3)
             {
                 State++; // Advance state
-                projectile.timeLeft = StateTime[State];
+                Projectile.timeLeft = StateTime[State];
             }
 
             // Mode behavior
@@ -74,32 +75,32 @@ namespace Virtuous.Projectiles
             switch (State)
             {
                 case Tracking:
-                    projectile.alpha -= 6; // Fades in
-                    float speed = BaseSpeed + (MaxSpeed - BaseSpeed) * (1 - ((float)projectile.timeLeft / StateTime[State])); // Speeds up
-                    projectile.velocity = relativePosition.OfLength(Math.Min(relativePosition.Length(), speed)); // Homes in on target
+                    Projectile.alpha -= 6; // Fades in
+                    float speed = BaseSpeed + (MaxSpeed - BaseSpeed) * (1 - ((float)Projectile.timeLeft / StateTime[State])); // Speeds up
+                    Projectile.velocity = relativePosition.OfLength(Math.Min(relativePosition.Length(), speed)); // Homes in on target
                     break;
 
                 case Holding:
-                    projectile.alpha = 0;
-                    projectile.velocity = Vector2.Zero;
-                    projectile.Center = targetCenter;
+                    Projectile.alpha = 0;
+                    Projectile.velocity = Vector2.Zero;
+                    Projectile.Center = targetCenter;
                     break;
 
                 case GoingUp:
-                    if (projectile.timeLeft == StateTime[State]) // First tick
+                    if (Projectile.timeLeft == StateTime[State]) // First tick
                     {
-                        projectile.friendly = true; // Damages enemies
-                        Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/SniperShot"), projectile.Center);
+                        Projectile.friendly = true; // Damages enemies
+                        SoundEngine.PlaySound(Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/SniperShot"), Projectile.Center);
                     }
-                    offset = new Vector2(0, -(StateTime[State] - projectile.timeLeft) * MaxVerticalOffset / StateTime[State]);
-                    projectile.Center = targetCenter + offset;
+                    offset = new Vector2(0, -(StateTime[State] - Projectile.timeLeft) * MaxVerticalOffset / StateTime[State]);
+                    Projectile.Center = targetCenter + offset;
                     break;
 
                 case GoingDown:
-                    projectile.friendly = false; // Doesn't damage enemies anymore
-                    projectile.alpha += 12; // Fades out
-                    offset = new Vector2(0, -projectile.timeLeft * MaxVerticalOffset / StateTime[State]);
-                    projectile.Center = targetCenter + offset;
+                    Projectile.friendly = false; // Doesn't damage enemies anymore
+                    Projectile.alpha += 12; // Fades out
+                    offset = new Vector2(0, -Projectile.timeLeft * MaxVerticalOffset / StateTime[State]);
+                    Projectile.Center = targetCenter + offset;
                     break;
             }
         }
@@ -115,7 +116,7 @@ namespace Virtuous.Projectiles
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return Color.White * projectile.Opacity; // Unaffected by lighting
+            return Color.White * Projectile.Opacity; // Unaffected by lighting
         }
     }
 }

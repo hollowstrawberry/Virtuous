@@ -1,4 +1,4 @@
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -14,43 +14,43 @@ namespace Virtuous.Orbitals
                 "Burns nearby enemies\nRight-Click after summoning for a fire burst\n" +
                 "Aligns with either magic or melee users");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Bola de Fuego");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Bola de Fuego");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "Quema a los enemigos cercanos\nHaz Click Derecho tras invocarla para una pequeña explosión\n" +
                 "El daño se alínea con magia o cuerpo a cuerpo");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Огненный Шар");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Огненный Шар");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "Поджигает ближайших врагов\nПКМ после вызова для всплеска огня\nПодходит воинам и магам");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "火球术");
-            Tooltip.AddTranslation(GameCulture.Chinese,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "火球术");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese),
                 "使附近的敌人燃烧\n右键使火球爆炸\n更适合战士与法师使用");
         }
 
 
         public override void SetOrbitalDefaults()
         {
-            type = OrbitalID.Fireball;
-            duration = 25 * 60;
-            amount = 1;
-            specialType = SpecialType.RightClick;
+            OrbitalType = OrbitalID.Fireball;
+            Duration = 25 * 60;
+            Amount = 1;
+            Special = SpecialType.RightClick;
 
-            item.width = 30;
-            item.height = 30;
-            item.damage = 50;
-            item.knockBack = 3f;
-            item.mana = 20;
-            item.value = Item.sellPrice(0, 8, 0, 0);
-            item.rare = 5;
-            item.useTime = 50;
-            item.useAnimation = item.useTime;
+            Item.width = 30;
+            Item.height = 30;
+            Item.damage = 50;
+            Item.knockBack = 3f;
+            Item.mana = 20;
+            Item.value = Item.sellPrice(0, 8, 0, 0);
+            Item.rare = 5;
+            Item.useTime = 50;
+            Item.useAnimation = Item.useTime;
         }
 
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
             recipe.AddIngredient(ItemID.TatteredCloth, 1);
             recipe.AddTile(TileID.Books);

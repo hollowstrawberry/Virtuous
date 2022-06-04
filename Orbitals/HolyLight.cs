@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 
@@ -7,7 +8,7 @@ namespace Virtuous.Orbitals
 {
     public class HolyLight : OrbitalProjectile
     {
-        public override int Type => OrbitalID.HolyLight;
+        public override int OrbitalType => OrbitalID.HolyLight;
         public override int DyingTime => 10; // Time it spends bursting
         public override float BaseDistance => 70;
         public override float OrbitingSpeed => 1 / 30f * Tools.RevolutionPerSecond;
@@ -22,15 +23,15 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Light");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Luz Santa");
-            DisplayName.AddTranslation(GameCulture.Russian, "Святое Сияние");
-            DisplayName.AddTranslation(GameCulture.Chinese, "圣光");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Luz Santa");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Святое Сияние");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "圣光");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = OriginalSize;
-            projectile.height = OriginalSize;
+            Projectile.width = OriginalSize;
+            Projectile.height = OriginalSize;
         }
 
 
@@ -38,7 +39,7 @@ namespace Virtuous.Orbitals
         {
             player.lifeRegen += 5;
 
-            if (Main.rand.OneIn(6))
+            if (Main.rand.NextBool(6))
             {
                 var dust = Dust.NewDustDirect(
                     player.Center + Main.rand.NextVector2().OfLength(50), 0, 0,
@@ -57,7 +58,7 @@ namespace Virtuous.Orbitals
             for (int i = 0; i < 15; i++)
             {
                 var dust = Dust.NewDustDirect(
-                    projectile.position, projectile.width, projectile.height,
+                    Projectile.position, Projectile.width, Projectile.height,
                     /*Type*/55, 0f, 0f, /*Alpha*/50, default(Color), Main.rand.NextFloat(1.2f, 1.5f));
                 dust.velocity *= 0.8f;
                 dust.noLight = false;
@@ -74,15 +75,15 @@ namespace Virtuous.Orbitals
 
         public override void DyingFirstTick()
         {
-            projectile.alpha = 255; // Transparent
-            Main.PlaySound(SoundID.Item14, projectile.Center); // Explosion
+            Projectile.alpha = 255; // Transparent
+            SoundEngine.PlaySound(SoundID.Item14, Projectile.Center); // Explosion
 
-            if (Main.myPlayer == projectile.owner) Tools.ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize);
+            if (Main.myPlayer == Projectile.owner) Tools.ResizeProjectile(Projectile.whoAmI, BurstSize, BurstSize);
 
             for (int i = 0; i < 15; i++)
             {
                 var dust = Dust.NewDustDirect(
-                    projectile.Center, 0, 0, /*Type*/55, 0f, 0f, /*Alpha*/200, new Color(255, 230, 100), /*Scale*/1.0f);
+                    Projectile.Center, 0, 0, /*Type*/55, 0f, 0f, /*Alpha*/200, new Color(255, 230, 100), /*Scale*/1.0f);
                 dust.velocity *= 2;
             }
         }
@@ -95,8 +96,8 @@ namespace Virtuous.Orbitals
 
         public override void PostAll()
         {
-            if (IsDying) Lighting.AddLight(projectile.Center, 2.0f, 2.0f, 1.2f);
-            else Lighting.AddLight(projectile.Center, 1.0f, 1.0f, 0.6f);
+            if (IsDying) Lighting.AddLight(Projectile.Center, 2.0f, 2.0f, 1.2f);
+            else Lighting.AddLight(Projectile.Center, 1.0f, 1.0f, 0.6f);
         }
 
 
@@ -113,7 +114,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(255, 255, 255, 50) * projectile.Opacity;
+            return new Color(255, 255, 255, 50) * Projectile.Opacity;
         }
     }
 }

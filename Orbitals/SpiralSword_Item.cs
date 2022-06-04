@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,46 +18,46 @@ namespace Virtuous.Orbitals
                 "Ethereal swords protect you and raise all damage\nRight Click after summoning for an active attack\n" +
                 "Aligns with either magic or melee users");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Hojas Virtud");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Hojas Virtud");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "Las espadas etéreas te protejerán y aumentarán tu daño\nHaz Click Derecho tras invocarlas para realizar un ataque\n" +
                 "El daño se alínea con magia o cuerpo a cuerpo");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Клинки Доблести");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Клинки Доблести");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "Магические клинки защищают вас и увеличивают урон\nПКМ после вызова - активная атака\nПодходит воинам и магам");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "空灵圣剑");
-            Tooltip.AddTranslation(GameCulture.Chinese,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "空灵圣剑");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese),
                 "空灵圣剑将保护你,并增加所有伤害\n召唤后右键可主动攻击\n更适合战士与法师使用");
         }
 
 
         public override void SetOrbitalDefaults()
         {
-            type = OrbitalID.SpiralSword;
-            duration = 40 * 60;
-            amount = 8;
-            specialType = SpecialType.RightClick;
+            OrbitalType = OrbitalID.SpiralSword;
+            Duration = 40 * 60;
+            Amount = 8;
+            Special = SpecialType.RightClick;
 
-            item.width = 30;
-            item.height = 30;
-            item.damage = 250;
-            item.knockBack = 5f;
-            item.mana = ManaCost; // Overwritten by CanUseItem
-            item.rare = 11;
-            item.value = Item.sellPrice(1, 0, 0, 0);
-            item.autoReuse = true;
-            item.useTurn = false;
-            item.useStyle = 4;
-            item.useTime = 35;
-            item.useAnimation = item.useTime;
+            Item.width = 30;
+            Item.height = 30;
+            Item.damage = 250;
+            Item.knockBack = 5f;
+            Item.mana = ManaCost; // Overwritten by CanUseItem
+            Item.rare = 11;
+            Item.value = Item.sellPrice(1, 0, 0, 0);
+            Item.autoReuse = true;
+            Item.useTurn = false;
+            Item.useStyle = 4;
+            Item.useTime = 35;
+            Item.useAnimation = Item.useTime;
         }
 
 
         public override void GetWeaponDamage(Player player, ref int damage)
         {
-            item.mana = ManaCost; // So it always displays the full mana cost
+            Item.mana = ManaCost; // So it always displays the full mana cost
 
             base.GetWeaponDamage(player, ref damage);
         }
@@ -65,7 +65,7 @@ namespace Virtuous.Orbitals
 
         public override bool CanUseItem(Player player)
         {
-            item.mana = player.altFunctionUse == 2
+            Item.mana = player.altFunctionUse == 2
                 ? (int)Math.Ceiling(ManaCost / 10f) // Right click
                 : ManaCost; // Left click
 
@@ -75,7 +75,7 @@ namespace Virtuous.Orbitals
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.LunarBar, 12);
             recipe.AddIngredient(ItemID.Ectoplasm, 20);
             recipe.AddIngredient(ItemID.SoulofMight, 50);

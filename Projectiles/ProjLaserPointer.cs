@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -31,8 +32,8 @@ namespace Virtuous.Projectiles
 
         public LaserColor LaserColor // Stored as ai[0]
         {
-            get { return (LaserColor)(int)projectile.ai[0]; }
-            set { projectile.ai[0] = (int)value; }
+            get { return (LaserColor)(int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = (int)value; }
         }
 
         private Color RgbColor
@@ -56,30 +57,30 @@ namespace Virtuous.Projectiles
 
         public override void SetDefaults()
         {
-            projectile.friendly = false;
-            projectile.hostile = false;
-            projectile.timeLeft = 2;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.width = 2;
-            projectile.height = 2;
-            projectile.netImportant = true;
+            Projectile.friendly = false;
+            Projectile.hostile = false;
+            Projectile.timeLeft = 2;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.width = 2;
+            Projectile.height = 2;
+            Projectile.netImportant = true;
         }
 
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 endPoint = GetEndPoint();
 
-            Texture2D texture = Main.projectileTexture[projectile.type]; // The dot which composes the line
-            float drawRotation = projectile.velocity.ToRotation(); //Direction of the line
-            Vector2 drawOrigin = new Vector2(projectile.width / 2, projectile.height / 2);
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value; // The dot which composes the line
+            float drawRotation = Projectile.velocity.ToRotation(); //Direction of the line
+            Vector2 drawOrigin = new Vector2(Projectile.width / 2, Projectile.height / 2);
 
             Rectangle drawRect = new Rectangle( // Where the line will be from corner to corner
-                (int)Math.Round(projectile.Center.X - Main.screenPosition.X),
-                (int)Math.Round(projectile.Center.Y - Main.screenPosition.Y),
-                (int)Math.Round((endPoint - projectile.Center).Length()),
-                projectile.width);
+                (int)Math.Round(Projectile.Center.X - Main.screenPosition.X),
+                (int)Math.Round(Projectile.Center.Y - Main.screenPosition.Y),
+                (int)Math.Round((endPoint - Projectile.Center).Length()),
+                Projectile.width);
 
             spriteBatch.Draw(texture, drawRect, null, RgbColor, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
 
@@ -91,13 +92,13 @@ namespace Virtuous.Projectiles
 
         private Vector2 GetEndPoint()
         {
-            Vector2 endPoint = projectile.Center;
+            Vector2 endPoint = Projectile.Center;
 
             // We scan along a line to see how far the laser can go before hitting something
-            while ((endPoint - projectile.Center).Length() < Main.screenWidth
-                   && Collision.CanHit(projectile.Center, 1, 1, endPoint, 1, 1))
+            while ((endPoint - Projectile.Center).Length() < Main.screenWidth
+                   && Collision.CanHit(Projectile.Center, 1, 1, endPoint, 1, 1))
             {
-                endPoint += projectile.velocity.OfLength(1);
+                endPoint += Projectile.velocity.OfLength(1);
 
                 foreach (var npc in Main.npc) // Returns if it collides with an entity
                 {
@@ -114,7 +115,7 @@ namespace Virtuous.Projectiles
 
                 foreach (var player in Main.player)
                 {
-                    if (player.active && player.whoAmI != projectile.owner
+                    if (player.active && player.whoAmI != Projectile.owner
                         && player.Hitbox.Contains((int)endPoint.X, (int)endPoint.Y))
                     {
                         return endPoint;
@@ -128,7 +129,7 @@ namespace Virtuous.Projectiles
 
         private void OtherFunEffects(Vector2 endPoint)
         {
-            if (Main.myPlayer == projectile.owner)
+            if (Main.myPlayer == Projectile.owner)
             {
                 var cat = Main.projectile.FirstOrDefault(x => x.active && x.type == ProjectileID.BlackCat);
                 if (cat != null) // Cat follows the laser

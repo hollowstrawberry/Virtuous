@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 
@@ -8,7 +9,7 @@ namespace Virtuous.Orbitals
 {
     public class LuckyBreak : OrbitalProjectile
     {
-        public override int Type => OrbitalID.LuckyBreak;
+        public override int OrbitalType => OrbitalID.LuckyBreak;
         public override int DyingTime => 30;
         public override int FadeTime => 15;
         public override int OriginalAlpha => 0;
@@ -34,24 +35,24 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Card");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Carta");
-            DisplayName.AddTranslation(GameCulture.Russian, "Карта");
-            DisplayName.AddTranslation(GameCulture.Chinese, "卡牌");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Carta");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Карта");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "卡牌");
 
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = 22;
-            projectile.height = 28;
+            Projectile.width = 22;
+            Projectile.height = 28;
         }
 
 
 
         private void ShuffleCard()
         {
-            projectile.frame = Main.rand.Next(Main.projFrames[projectile.type]);
+            Projectile.frame = Main.rand.Next(Main.projFrames[Projectile.type]);
         }
 
 
@@ -59,13 +60,13 @@ namespace Virtuous.Orbitals
         public override void PlayerEffects()
         {
             // Shuffle sound
-            if (!IsFirstTick && specialFunctionTimer == CycleTime - ShuffleTime / 2)
+            if (!IsFirstTick && SpecialFunctionTimer == CycleTime - ShuffleTime / 2)
             {
-                Main.PlaySound(18, player.Center);
+                SoundEngine.PlaySound(18, player.Center);
             }
             
             // Individual card buffs
-            foreach (var proj in Main.projectile.Where(x => x.active && x.owner == projectile.owner && x.type == projectile.type))
+            foreach (var proj in Main.projectile.Where(x => x.active && x.owner == Projectile.owner && x.type == Projectile.type))
             {
                 switch (proj.frame)
                 {
@@ -98,9 +99,9 @@ namespace Virtuous.Orbitals
         {
             RotatePosition(-Tools.FullCircle / 4); // Make the first card be above the player instead of to the right
 
-            specialFunctionTimer = CycleTime - ShuffleTime / 2; // Puts the card in the middle of the shuffling motion
+            SpecialFunctionTimer = CycleTime - ShuffleTime / 2; // Puts the card in the middle of the shuffling motion
             SetDistance(2);
-            oscillationSpeed = ShuffleSpeed;
+            OscillationSpeed = ShuffleSpeed;
         }
 
 
@@ -111,29 +112,29 @@ namespace Virtuous.Orbitals
 
         public override void Movement()
         {
-            if (specialFunctionTimer >= CycleTime - ShuffleTime) // Shuffling motion
+            if (SpecialFunctionTimer >= CycleTime - ShuffleTime) // Shuffling motion
             {
-                if (specialFunctionTimer == CycleTime - ShuffleTime) // First tick
+                if (SpecialFunctionTimer == CycleTime - ShuffleTime) // First tick
                 {
                     SetDistance(BaseDistance);
-                    oscillationSpeed = ShuffleSpeed;
-                    direction = Inwards;
+                    OscillationSpeed = ShuffleSpeed;
+                    Direction = Inwards;
                 }
-                else if (specialFunctionTimer == CycleTime - ShuffleTime/2) // Middle of the motion
+                else if (SpecialFunctionTimer == CycleTime - ShuffleTime/2) // Middle of the motion
                 {
                     ShuffleCard();
-                    direction = Outwards;
+                    Direction = Outwards;
                 }
-                else if (specialFunctionTimer == CycleTime) // Last tick
+                else if (SpecialFunctionTimer == CycleTime) // Last tick
                 {
                     SetDistance(BaseDistance);
-                    oscillationSpeed = OscillationSpeedMax;
-                    specialFunctionTimer = 0;
+                    OscillationSpeed = OscillationSpeedMax;
+                    SpecialFunctionTimer = 0;
                     base.Movement(); // Starts moving inward. TODO: Find out why I put this here
                     return;
                 }
 
-                AddDistance(oscillationSpeed * (direction ? +1 : -1));
+                AddDistance(OscillationSpeed * (Direction ? +1 : -1));
                 RotatePosition(OrbitingSpeed);
             }
             else // Normal movement
@@ -145,9 +146,9 @@ namespace Virtuous.Orbitals
 
         public override void Dying()
         {
-            projectile.rotation += 5 * Tools.RevolutionPerSecond;
-            projectile.velocity.Y += 2f; // Gravity
-            projectile.position += projectile.velocity;
+            Projectile.rotation += 5 * Tools.RevolutionPerSecond;
+            Projectile.velocity.Y += 2f; // Gravity
+            Projectile.position += Projectile.velocity;
         }
 
 
@@ -155,13 +156,13 @@ namespace Virtuous.Orbitals
         {
             if (IsDying) damage *= 7;
 
-            if (projectile.frame == Diamonds && target.lifeMax > 5 && !target.immortal)
+            if (Projectile.frame == Diamonds && target.lifeMax > 5 && !target.immortal)
             {
                 target.AddBuff(BuffID.Midas, 7 * 60);
 
                 int newItem = Item.NewItem(
                     target.position, target.width, target.height,
-                    (Main.rand.OneIn(10) ? (Main.rand.OneIn(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin),
+                    (Main.rand.NextBool(10) ? (Main.rand.NextBool(10) ? ItemID.GoldCoin : ItemID.SilverCoin) : ItemID.CopperCoin),
                     Main.rand.Next(3, 16));
 
                 if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -180,7 +181,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(255, 255, 255) * projectile.Opacity;
+            return new Color(255, 255, 255) * Projectile.Opacity;
         }
     }
 }

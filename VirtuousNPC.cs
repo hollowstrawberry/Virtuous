@@ -4,6 +4,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Virtuous.Items;
 using Virtuous.Projectiles;
+using Virtuous.Orbitals;
+using Microsoft.Xna.Framework;
 
 namespace Virtuous
 {
@@ -65,46 +67,46 @@ namespace Virtuous
         }
 
 
-        public override void NPCLoot(NPC npc)
+        public override void OnKill(NPC npc)
         {
             int dropType = ItemID.None, dropAmount = 1;
 
             switch (npc.type)
             {
                 case NPCID.SkeletronHead:
-                    dropType = mod.ItemType<Orbitals.Facade_Item>();
+                    dropType = Mod.Find<ModItem>(nameof(Facade_Item)).Type;
                     break;
 
                 case NPCID.Golem:
-                    dropType = mod.ItemType<Orbitals.HolyLight_Item>();
+                    dropType = Mod.Find<ModItem>(nameof(HolyLight_Item)).Type;
                     break;
 
                 case NPCID.GiantCursedSkull:
-                    if (Main.rand.OneIn(15)) dropType = mod.ItemType<Orbitals.SacDagger_Item>();
+                    if (Main.rand.NextBool(15)) dropType = Mod.Find<ModItem>(nameof(SacDagger_Item)).Type;
                     break;
 
                 case NPCID.DukeFishron:
-                    dropType = mod.ItemType<Orbitals.Shuriken_Item>();
+                    dropType = Mod.Find<ModItem>(nameof(Shuriken_Item)).Type;
                     break;
 
                 case NPCID.MoonLordCore:
-                    dropType = mod.ItemType<TheGobbler>();
+                    dropType = Mod.Find<ModItem>(nameof(TheGobbler)).Type;
                     break;
 
                 case NPCID.PirateCaptain:
                 case NPCID.PirateShip:
-                    if (Main.rand.OneIn(10)) dropType = mod.ItemType<Orbitals.LuckyBreak_Item>();
+                    if (Main.rand.NextBool(10)) dropType = Mod.Find<ModItem>(nameof(LuckyBreak_Item)).Type;
                     break;
 
                 case NPCID.TheDestroyer:
                 case NPCID.Retinazer:
                 case NPCID.Spazmatism:
                 case NPCID.SkeletronPrime:
-                    if (Main.rand.OneIn(6)) dropType = mod.ItemType<Orbitals.EnergyCrystal_Item>();
+                    if (Main.rand.NextBool(6)) dropType = Mod.Find<ModItem>(nameof(EnergyCrystal_Item)).Type;
                     break;
             }
 
-            if (dropType != ItemID.None) Item.NewItem(npc.Center, dropType, dropAmount);
+            if (dropType != ItemID.None) Item.NewItem(null, npc.Center, Vector2.Zero, dropType, dropAmount);
         }
     }
 }

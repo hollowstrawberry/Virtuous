@@ -6,7 +6,7 @@ namespace Virtuous.Orbitals
 {
     public class Sailspike : OrbitalProjectile
     {
-        public override int Type => OrbitalID.Sailspike;
+        public override int OrbitalType => OrbitalID.Sailspike;
         public override int DyingTime => 30;
         public override int FadeTime => 20;
         public override int OriginalAlpha => 100;
@@ -17,15 +17,15 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sailspike");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Picabichos");
-            DisplayName.AddTranslation(GameCulture.Russian, "Парящий Шип");
-            DisplayName.AddTranslation(GameCulture.Chinese, "飞梭尖刺");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Picabichos");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Парящий Шип");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "飞梭尖刺");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = 30;
-            projectile.height = 14;
+            Projectile.width = 30;
+            Projectile.height = 14;
         }
 
 
@@ -37,7 +37,7 @@ namespace Virtuous.Orbitals
             for (int i = 0; i < 15; i++)
             {
                 var dust = Dust.NewDustDirect(
-                    projectile.position, projectile.width, projectile.height,
+                    Projectile.position, Projectile.width, Projectile.height,
                     /*Type*/172, 0f, 0f, /*Alpha*/50, default(Color), 1.5f);
                 dust.velocity *= 0.2f;
                 dust.noLight = false;
@@ -49,14 +49,14 @@ namespace Virtuous.Orbitals
         public override void Movement()
         {
             // Stays in front of the player
-            projectile.spriteDirection = player.direction;
-            SetPosition(new Vector2(player.direction * relativeDistance, 0));
+            Projectile.spriteDirection = player.direction;
+            SetPosition(new Vector2(player.direction * RelativeDistance, 0));
         }
 
 
         public override void PostAll()
         {
-            Lighting.AddLight(projectile.Center, 0.15f, 0.5f, 1.5f);
+            Lighting.AddLight(Projectile.Center, 0.15f, 0.5f, 1.5f);
             base.PostAll(); // Fades
         }
 
@@ -74,7 +74,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(28, 77, 255, 200) * projectile.Opacity;
+            return new Color(28, 77, 255, 200) * Projectile.Opacity;
         }
     }
 }

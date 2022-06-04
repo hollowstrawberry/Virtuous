@@ -37,37 +37,37 @@ namespace Virtuous.Items
             DisplayName.SetDefault("Flurry Nova");
             Tooltip.SetDefault("\"Over 9000 punches per hour\"\nRight Click for a boring punch");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Golpe Nova");
-            Tooltip.AddTranslation(GameCulture.Spanish, "\"Más de 9000 golpes por hora\"\nHaz Click Derecho para un golpe normal");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Golpe Nova");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "\"Más de 9000 golpes por hora\"\nHaz Click Derecho para un golpe normal");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Шквал");
-            Tooltip.AddTranslation(GameCulture.Russian, "\"9000 ударов в час\"\nПКМ для обычного удара");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Шквал");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "\"9000 ударов в час\"\nПКМ для обычного удара");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "疾风新星");
-            Tooltip.AddTranslation(GameCulture.Chinese, "\"每小时拳击可超过9000次\"\n右键出\"石头\"");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "疾风新星");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "\"每小时拳击可超过9000次\"\n右键出\"石头\"");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 36;
-            item.height = 36;
-            item.UseSound = SoundID.Item1;
-            item.crit = 20;
-            item.knockBack = 3f;
-            item.melee = true;
-            item.autoReuse = true;
-            item.rare = 9;
-            item.value = Item.sellPrice(0, 20, 0, 0);
+            Item.width = 36;
+            Item.height = 36;
+            Item.UseSound = SoundID.Item1;
+            Item.crit = 20;
+            Item.knockBack = 3f;
+            Item.melee = true;
+            Item.autoReuse = true;
+            Item.rare = 9;
+            Item.value = Item.sellPrice(0, 20, 0, 0);
             
             // Replaced in SetUseStats
-            item.useStyle = 1;
-            item.useTime = 5;
-            item.useAnimation = item.useTime;
-            item.damage = 300;
-            item.shoot = mod.ProjectileType<ProjFist>();
-            item.noMelee = true;
-            item.noUseGraphic = true;
+            Item.useStyle = 1;
+            Item.useTime = 5;
+            Item.useAnimation = Item.useTime;
+            Item.damage = 300;
+            Item.shoot = Mod.Find<ModProjectile>(nameof(ProjFist)).Type;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
         }
 
 
@@ -79,24 +79,24 @@ namespace Virtuous.Items
             //Left Click
             if (player.altFunctionUse != 2)
             {
-                item.useStyle = 1;
-                item.useTime = 6;
-                item.useAnimation = item.useTime;
-                item.damage = 300;
-                item.shoot = mod.ProjectileType<ProjFist>();
-                item.noMelee = true;
-                item.noUseGraphic = true;
+                Item.useStyle = 1;
+                Item.useTime = 6;
+                Item.useAnimation = Item.useTime;
+                Item.damage = 300;
+                Item.shoot = Mod.Find<ModProjectile>(nameof(ProjFist)).Type;
+                Item.noMelee = true;
+                Item.noUseGraphic = true;
             }
             //Right Click
             else
             {
-                item.useStyle = 3;
-                item.useTime = 10;
-                item.useAnimation = item.useTime;
-                item.shoot = 0;
-                item.damage = 900;
-                item.noMelee = false;
-                item.noUseGraphic = false;
+                Item.useStyle = 3;
+                Item.useTime = 10;
+                Item.useAnimation = Item.useTime;
+                Item.shoot = 0;
+                Item.damage = 900;
+                Item.noMelee = false;
+                Item.noUseGraphic = false;
             }
         }
 
@@ -146,7 +146,7 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.KOCannon);
             recipe.AddIngredient(ItemID.FragmentSolar, 8);
             recipe.AddIngredient(ItemID.FragmentStardust, 8);

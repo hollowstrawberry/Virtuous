@@ -41,16 +41,16 @@ namespace Virtuous
         {
             if (target.active && spotter) // If this projectile was shot by the spotter
             {
-                if (Main.projectile.Any(x => x.active && x.owner == projectile.owner && x.type == mod.ProjectileType<ProjCrosshair>()))
+                if (Main.projectile.Any(x => x.active && x.owner == projectile.owner && x.type == Mod.Find<ModProjectile>(nameof(ProjCrosshair)).Type))
                 {
                     return; // Doesn't spawn a crosshair if there's already one in the world
                 }
 
                 Vector2 position = target.SpriteCenter() + Main.rand.NextVector2(400, 600);
-                var proj = Projectile.NewProjectileDirect(
-                    position, Vector2.Zero, mod.ProjectileType<ProjCrosshair>(),
+                var proj = Projectile.NewProjectileDirect(null,
+                    position, Vector2.Zero, Mod.Find<ModProjectile>(nameof(ProjCrosshair)).Type,
                     damage*5, knockback*2, projectile.owner);
-                var crosshair = proj.modProjectile as ProjCrosshair;
+                var crosshair = proj.ModProjectile as ProjCrosshair;
                 crosshair.Target = target.whoAmI;
                 proj.netUpdate = true;
             }

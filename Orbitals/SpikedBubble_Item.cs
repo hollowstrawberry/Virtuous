@@ -14,43 +14,43 @@ namespace Virtuous.Orbitals
                 "The bubble slightly raises damage and defense\n" +
                 "Enemies are repelled and damaged\nAligns with either magic or melee users");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Burbuja Claveta");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Burbuja Claveta");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "La burbuja aumenta tu daño y defensa\nRepele y daña enemigos\nEl daño se alínea con magia o cuerpo a cuerpo");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Колючий Пузырь");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Колючий Пузырь");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "Пузырь немного увеличивает урон и защиту\nВраги отталкиваются и получают урон\nПодходит воинам и магам");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "尖刺泡泡");
-            Tooltip.AddTranslation(GameCulture.Chinese,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "尖刺泡泡");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese),
                 "尖刺泡泡会略微增加伤害及防御\n碰到泡泡的敌人会受到排斥\n更适合战士与法师使用");
         }
 
 
         public override void SetOrbitalDefaults()
         {
-            type = OrbitalID.SpikedBubble;
-            duration = 30 * 60;
-            amount = 1;
+            OrbitalType = OrbitalID.SpikedBubble;
+            Duration = 30 * 60;
+            Amount = 1;
 
-            item.width = 36;
-            item.height = 36;
-            item.damage = 45;
-            item.knockBack = 4f;
-            item.mana = 60;
-            item.rare = 6;
-            item.value = Item.sellPrice(0, 15, 0, 0);
-            item.useStyle = 2;
-            item.useTime = 20;
-            item.useAnimation = item.useTime;
+            Item.width = 36;
+            Item.height = 36;
+            Item.damage = 45;
+            Item.knockBack = 4f;
+            Item.mana = 60;
+            Item.rare = 6;
+            Item.value = Item.sellPrice(0, 15, 0, 0);
+            Item.useStyle = 2;
+            Item.useTime = 20;
+            Item.useAnimation = Item.useTime;
         }
 
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
-            recipe.AddIngredient(mod.ItemType<Bubble_Item>());
+            var recipe = new ModRecipe(Mod);
+            recipe.AddIngredient(Mod.Find<ModItem><Bubble_Item>().Type);
             recipe.AddIngredient(ItemID.CrystalShard, 10);
             recipe.AddIngredient(ItemID.PinkGel, 20);
             recipe.AddIngredient(ItemID.LifeFruit);

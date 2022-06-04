@@ -18,65 +18,65 @@ namespace Virtuous.Projectiles
 
         private int OriginalDamage // Stored as ai[0]
         {
-            get { return (int)projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return (int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
 
         private float OriginalKnockback // Stored as ai[1]
         {
-            get { return projectile.ai[1]; }
-            set { projectile.ai[1] = value; }
+            get { return Projectile.ai[1]; }
+            set { Projectile.ai[1] = value; }
         }
 
 
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 16;
+            Main.projFrames[Projectile.type] = 16;
 
             DisplayName.SetDefault("Magic Lift");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Hechizo lanzador");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Hechizo lanzador");
         }
 
 
         public override void SetDefaults()
         {
-            projectile.width = 90;
-            projectile.height = 92;
-            projectile.friendly = true;
-            projectile.alpha = 50;
-            projectile.timeLeft = 32;
-            projectile.penetrate = -1;
-            projectile.magic = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.usesLocalNPCImmunity = true; // Hits once per individual projectile
-            projectile.localNPCHitCooldown = Lifespan;
+            Projectile.width = 90;
+            Projectile.height = 92;
+            Projectile.friendly = true;
+            Projectile.alpha = 50;
+            Projectile.timeLeft = 32;
+            Projectile.penetrate = -1;
+            Projectile.magic = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.usesLocalNPCImmunity = true; // Hits once per individual projectile
+            Projectile.localNPCHitCooldown = Lifespan;
         }
 
 
         public override void AI()
         {
-            if (projectile.timeLeft == Lifespan) // First Tick
+            if (Projectile.timeLeft == Lifespan) // First Tick
             {
-                projectile.velocity = Vector2.Zero;
-                OriginalDamage = projectile.damage;
-                OriginalKnockback = projectile.knockBack;
-                projectile.knockBack = 0; // The knockback will be used for the vertical push instead
+                Projectile.velocity = Vector2.Zero;
+                OriginalDamage = Projectile.damage;
+                OriginalKnockback = Projectile.knockBack;
+                Projectile.knockBack = 0; // The knockback will be used for the vertical push instead
 
-                if ((Main.player[projectile.owner].Center - projectile.Center).X < 0) // Facing left
+                if ((Main.player[Projectile.owner].Center - Projectile.Center).X < 0) // Facing left
                 {
-                    projectile.spriteDirection = -1;
+                    Projectile.spriteDirection = -1;
                 }
             }
 
             // The projectile only affect enemies during a part of its life
-            if (projectile.timeLeft <= DamageStart && projectile.timeLeft >= DamageEnd) projectile.damage = OriginalDamage;
-            else projectile.damage = 0;
+            if (Projectile.timeLeft <= DamageStart && Projectile.timeLeft >= DamageEnd) Projectile.damage = OriginalDamage;
+            else Projectile.damage = 0;
 
-            if (projectile.timeLeft % 2 == 0) projectile.frame++; // Changes animation frame every second tick
+            if (Projectile.timeLeft % 2 == 0) Projectile.frame++; // Changes animation frame every second tick
 
-            Lighting.AddLight(projectile.Center, 0.0f, 0.5f, 0.2f);
+            Lighting.AddLight(Projectile.Center, 0.0f, 0.5f, 0.2f);
         }
 
 
@@ -105,7 +105,7 @@ namespace Virtuous.Projectiles
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(50, 255, 100, 150) * projectile.Opacity;
+            return new Color(50, 255, 100, 150) * Projectile.Opacity;
         }
     }
 }

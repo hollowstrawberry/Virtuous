@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameInput;
@@ -38,29 +39,29 @@ namespace Virtuous.Items
             Tooltip.SetDefault(""); // Added in ModifyTooltips
 
             DisplayName.SetDefault("The Gobbler");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Engullidor");
-            //DisplayName.AddTranslation(GameCulture.Russian, "");
-            DisplayName.AddTranslation(GameCulture.Chinese, "吞噬者");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Engullidor");
+            //DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "吞噬者");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 64;
-            item.height = 42;
-            item.useStyle = 5;
-            item.autoReuse = true;
-            item.shoot = mod.ProjectileType<ProjGobblerItem>();
-            item.damage = 100;
-            item.knockBack = BaseKnockBack;
-            item.shootSpeed = 12f;
-            item.noMelee = true;
-            item.value = Item.sellPrice(1, 0, 0, 0);
-            item.rare = 11;
+            Item.width = 64;
+            Item.height = 42;
+            Item.useStyle = 5;
+            Item.autoReuse = true;
+            Item.shoot = Mod.Find<ModProjectile>(nameof(ProjGobblerItem)).Type;
+            Item.damage = 100;
+            Item.knockBack = BaseKnockBack;
+            Item.shootSpeed = 12f;
+            Item.noMelee = true;
+            Item.value = Item.sellPrice(1, 0, 0, 0);
+            Item.rare = 11;
 
             // Replaced in CanUseItem
-            item.useTime = 1;
-            item.useAnimation = 60;
+            Item.useTime = 1;
+            Item.useAnimation = 60;
         }
 
 
@@ -78,21 +79,21 @@ namespace Virtuous.Items
             // Right click
             if (player.altFunctionUse == 2)
             {
-                item.useTime = 1; // Shooting code runs every tick, but the animation is longer so I can control what's happening
-                item.useAnimation = 30; // About right for the looping sound
+                Item.useTime = 1; // Shooting code runs every tick, but the animation is longer so I can control what's happening
+                Item.useAnimation = 30; // About right for the looping sound
             }
             // Left click
             else
             {
-                item.useTime = 1;
-                item.useAnimation = 20;
+                Item.useTime = 1;
+                Item.useAnimation = 20;
 
                 var modPlayer = player.GetModPlayer<VirtuousPlayer>();
 
                 if (modPlayer.GobblerStorage.Count > 0
                     && GobblerHelper.ConsumeChance(modPlayer.GobblerStorage.First().MakeItem()) == 0f)
                 {
-                    item.useAnimation = 15; // An exception: Shoots faster with endless quiver or musket pouch
+                    Item.useAnimation = 15; // An exception: Shoots faster with endless quiver or musket pouch
                 }
             }
 
@@ -103,11 +104,11 @@ namespace Virtuous.Items
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             string descriptionText;
-            if (Language.ActiveCulture == GameCulture.Spanish)
+            if (Language.ActiveCulture == GameCulture.FromCultureName(GameCulture.CultureName.Spanish))
             {
                 descriptionText =
                     $"Click Derecho para succionar objetos en el suelo, Click Izquierdo para dispararlos\n" +
-                    $"Presiona Tirar Objeto{" (con el arma en favoritos)".If(!item.favorited)} para vaciar el arma\n" +
+                    $"Presiona Tirar Objeto{" (con el arma en favoritos)".If(!Item.favorited)} para vaciar el arma\n" +
                     $"El daño, propiedades y comportamiento del proyectil dependerá según el objeto que dispares\n" +
                     $"Los objetos no-consumibles siempre serán recuperados una vez disparados";
             }
@@ -115,13 +116,13 @@ namespace Virtuous.Items
             {
                 descriptionText =
                     $"Right Click to suck items from the ground, Left Click to shoot them\n" +
-                    $"Press Throw{" while favorited".If(!item.favorited)} to release the storage\n" +
+                    $"Press Throw{" while favorited".If(!Item.favorited)} to release the storage\n" +
                     $"Projectile damage, properties and behavior vary on the item\n" +
                     $"Non-consumable items are never lost and will drop after use";
             }
 
 
-            var player = Main.player[item.owner];
+            var player = Main.player[Item.playerIndexTheItemIsReservedFor];
             var modPlayer = player.GetModPlayer<VirtuousPlayer>();
 
             Item storedItem = modPlayer.GobblerStorage.Count > 0 
@@ -171,9 +172,9 @@ namespace Virtuous.Items
             var customTooltips = new List<TooltipLine>();
 
             string capacityTooltip = $"Current capacity: {modPlayer.GobblerStorage.Count}/{StorageCapacity}";
-            customTooltips.Add(new TooltipLine(mod, "GobblerCapacity", capacityTooltip));
-            customTooltips.Add(new TooltipLine(mod, "GobblerItem", nextItemTooltip.ToString()));
-            customTooltips.Add(new TooltipLine(mod, "GobblerTooltip", descriptionText));
+            customTooltips.Add(new TooltipLine(Mod, "GobblerCapacity", capacityTooltip));
+            customTooltips.Add(new TooltipLine(Mod, "GobblerItem", nextItemTooltip.ToString()));
+            customTooltips.Add(new TooltipLine(Mod, "GobblerTooltip", descriptionText));
 
             tooltips.RemoveAll(line => line.mod == "Terraria" && TooltipsToRemove.Contains(line.Name));
             tooltips.InsertRange(1, customTooltips);
@@ -182,7 +183,7 @@ namespace Virtuous.Items
 
         public bool IsGobblableItem(Item item) // Whether the item can be sucked
         {
-            return item.active && item.type != mod.ItemType<TheGobbler>()
+            return item.active && item.type != Mod.Find<ModItem>(nameof(TheGobbler)).Type
                 && item.type != ItemID.CopperCoin && item.type != ItemID.SilverCoin
                 && !ItemID.Sets.NebulaPickup[item.type];
         }
@@ -192,7 +193,7 @@ namespace Virtuous.Items
         {
             var modPlayer = player.GetModPlayer<VirtuousPlayer>();
 
-            position = player.Center + (Main.MouseWorld - player.Center).OfLength(item.width); // Tip of the nozzle
+            position = player.Center + (Main.MouseWorld - player.Center).OfLength(Item.width); // Tip of the nozzle
             position += position.Perpendicular(10); // Moves it up to be centered
 
             if (!Collision.CanHit(player.Center, 0, 0, position, 0, 0)) position = player.Center; // So it doesn't shoot through walls
@@ -203,7 +204,7 @@ namespace Virtuous.Items
             {
                 if (player.itemAnimation == 1) // Resets the animation so it doesn't return to resting position
                 {
-                    player.itemAnimation = item.useAnimation;
+                    player.itemAnimation = Item.useAnimation;
                 }
 
                 if (PlayerInput.Triggers.JustReleased.MouseRight) // Stops the item use immediately
@@ -219,9 +220,9 @@ namespace Virtuous.Items
                 }
 
 
-                if (player.itemAnimation == item.useAnimation - 1)
+                if (player.itemAnimation == Item.useAnimation - 1)
                 {
-                    Main.PlaySound(SoundID.Item22, position); // Once at the beginning of the animation
+                    SoundEngine.PlaySound(SoundID.Item22, position); // Once at the beginning of the animation
                 }
 
 
@@ -243,7 +244,7 @@ namespace Virtuous.Items
                                     if (!sucked)
                                     {
                                         sucked = true;
-                                        Main.PlaySound(SoundID.Item3, position);
+                                        SoundEngine.PlaySound(SoundID.Item3, position);
                                     }
 
                                     modPlayer.GobblerStorage.Add(new GobblerStoredItem(item));
@@ -266,15 +267,15 @@ namespace Virtuous.Items
             // Left click, shoot
             else
             {
-                if (player.itemAnimation == item.useAnimation - 1) // Once every animation
+                if (player.itemAnimation == Item.useAnimation - 1) // Once every animation
                 {
                     if (modPlayer.GobblerStorage.Count == 0)
                     {
-                        Main.PlaySound(SoundID.Item23, position);
+                        SoundEngine.PlaySound(SoundID.Item23, position);
                     }
                     else
                     {
-                        Main.PlaySound(SoundID.Item5, position);
+                        SoundEngine.PlaySound(SoundID.Item5, position);
 
                         var gobblerItem = modPlayer.GobblerStorage.First();
                         var item = gobblerItem.MakeItem();
@@ -295,7 +296,7 @@ namespace Virtuous.Items
 
                             var proj = Projectile.NewProjectileDirect(
                                 position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
-                            var gobblerProj = proj.modProjectile as ProjGobblerItem;
+                            var gobblerProj = proj.ModProjectile as ProjGobblerItem;
                             gobblerProj.Consumed = consume;
                             gobblerProj.GobblerItem = gobblerItem;
                             proj.netUpdate = true;
@@ -308,7 +309,7 @@ namespace Virtuous.Items
                                     proj = Projectile.NewProjectileDirect(
                                         position, new Vector2(speedX, speedY) * Main.rand.NextFloat(),
                                         type, damage, knockBack, player.whoAmI);
-                                    gobblerProj = proj.modProjectile as ProjGobblerItem;
+                                    gobblerProj = proj.ModProjectile as ProjGobblerItem;
                                     gobblerProj.Consumed = false;
                                     gobblerProj.GobblerItem = gobblerItem;
                                     proj.netUpdate = true;

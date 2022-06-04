@@ -6,7 +6,7 @@ namespace Virtuous.Orbitals
 {
     public class Bubble : OrbitalProjectile
     {
-        public override int Type => OrbitalID.Bubble;
+        public override int OrbitalType => OrbitalID.Bubble;
         public override int OriginalAlpha => 120;
         public override int FadeTime => 60;
         public override float BaseDistance => 0;
@@ -15,15 +15,15 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bubble");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Burbuja");
-            DisplayName.AddTranslation(GameCulture.Russian, "Пузырь");
-            DisplayName.AddTranslation(GameCulture.Chinese, "泡泡");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Burbuja");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Пузырь");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "泡泡");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = 100;
-            projectile.height = 100;
+            Projectile.width = 100;
+            Projectile.height = 100;
         }
 
 
@@ -38,12 +38,12 @@ namespace Virtuous.Orbitals
         {
             base.FirstTick();
 
-            projectile.damage = 1;
+            Projectile.damage = 1;
 
             for (int i = 0; i < 40; i++)
             {
                 var dust = Dust.NewDustDirect(
-                    projectile.position, projectile.width, projectile.height,
+                    Projectile.position, Projectile.width, Projectile.height,
                     /*Type*/16, 0f, 0f, /*Alpha*/50, default(Color), 1.5f);
                 dust.velocity *= 1.5f;
                 dust.noLight = false;
@@ -53,7 +53,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(224, 255, 252, 150) * projectile.Opacity;
+            return new Color(224, 255, 252, 150) * Projectile.Opacity;
         }
     }
 }

@@ -15,39 +15,39 @@ namespace Virtuous.Items
             Tooltip.SetDefault(
                 "Damage increases exponentially as it travels\nLeft Click for clockwise, Right Click for counter-clockwise");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Melena de León");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Melena de León");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "El daño aumenta exponencialmente con la distancia\nHaz Click Derecho para ir en sentido contrarreloj");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Львиная Грива");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Львиная Грива");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "Урон увеличивается пропорционально времени полёта\nЛКМ - по часовой стрелке\nПКМ - против часовой стрелки");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "雄狮鬃毛");
-            Tooltip.AddTranslation(GameCulture.Chinese, "随着持续时间成倍增加伤害\n左键顺时针释放,右键逆时针释放");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "雄狮鬃毛");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "随着持续时间成倍增加伤害\n左键顺时针释放,右键逆时针释放");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 16;
-            item.height = 16;
-            item.useStyle = 5;
-            item.useTime = 9;
-            item.useAnimation = item.useTime;
-            item.UseSound = SoundID.Item8;
-            item.damage = 150;
-            item.shoot = mod.ProjectileType<ProjLionsMane>();
-            item.shootSpeed = 0f;
-            item.crit = 5;
-            item.knockBack = 7f;
-            item.mana = 9;
-            item.magic = true;
-            item.noMelee = true;
-            item.autoReuse = true;
-            item.channel = true;
-            item.rare = 8;
-            item.value = Item.sellPrice(0, 20, 0, 0);
+            Item.width = 16;
+            Item.height = 16;
+            Item.useStyle = 5;
+            Item.useTime = 9;
+            Item.useAnimation = Item.useTime;
+            Item.UseSound = SoundID.Item8;
+            Item.damage = 150;
+            Item.shoot = Mod.Find<ModProjectile>(nameof(ProjLionsMane)).Type;
+            Item.shootSpeed = 0f;
+            Item.crit = 5;
+            Item.knockBack = 7f;
+            Item.mana = 9;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.channel = true;
+            Item.rare = 8;
+            Item.value = Item.sellPrice(0, 20, 0, 0);
         }
 
 
@@ -72,7 +72,7 @@ namespace Virtuous.Items
             else position = -Vector2.UnitX; // Left
 
             var proj = Projectile.NewProjectileDirect(Vector2.Zero, Vector2.Zero, type, damage, knockBack, player.whoAmI);
-            var mane = proj.modProjectile as ProjLionsMane;
+            var mane = proj.ModProjectile as ProjLionsMane;
             mane.RelativePosition = position.OfLength(5);
             mane.Direction = player.altFunctionUse == 2 ? -1 : +1;
             proj.netUpdate = true;
@@ -84,7 +84,7 @@ namespace Virtuous.Items
         {
             ModRecipe recipe;
 
-            recipe = new ModRecipe(mod);
+            recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.CursedFlames);
             recipe.AddIngredient(ItemID.FragmentNebula, 8);
             recipe.AddIngredient(ItemID.FragmentSolar, 8);
@@ -92,7 +92,7 @@ namespace Virtuous.Items
             recipe.SetResult(this);
             recipe.AddRecipe();
 
-            recipe = new ModRecipe(mod);
+            recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.GoldenShower);
             recipe.AddIngredient(ItemID.FragmentNebula, 8);
             recipe.AddIngredient(ItemID.FragmentSolar, 8);

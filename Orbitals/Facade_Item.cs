@@ -10,33 +10,33 @@ namespace Virtuous.Orbitals
             DisplayName.SetDefault("Facade");
             Tooltip.SetDefault("Summons barriers to protect you for a short time\nAligns with either magic or melee users");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Tapia");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Tapia");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "Invoca barreras para protegerte por un corto tiempo\nEl daño se alínea con magia o cuerpo a cuerpo");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Преграда");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Преграда");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "Призывает временные защитные барьеры\nПодходит воинам и магам");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "禁制屏障");
-            Tooltip.AddTranslation(GameCulture.Chinese,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "禁制屏障");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese),
                 "召唤障碍来保护你一段时间\n更适合战士与法师使用");
         }
 
 
         public override void SetOrbitalDefaults()
         {
-            type = OrbitalID.Facade;
-            duration = 20 * 60;
-            amount = 4;
+            OrbitalType = OrbitalID.Facade;
+            Duration = 20 * 60;
+            Amount = 4;
 
-            item.width = 30;
-            item.height = 30;
-            item.damage = 20;
-            item.knockBack = 2.0f;
-            item.mana = 30;
-            item.rare = 4;
-            item.value = Item.sellPrice(0, 5, 0, 0);
+            Item.width = 30;
+            Item.height = 30;
+            Item.damage = 20;
+            Item.knockBack = 2.0f;
+            Item.mana = 30;
+            Item.rare = 4;
+            Item.value = Item.sellPrice(0, 5, 0, 0);
         }
     }
 }

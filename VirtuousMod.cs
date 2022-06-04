@@ -9,12 +9,6 @@ namespace Virtuous
     {
         public VirtuousMod()
         {
-            Properties = new ModProperties()
-            {
-                Autoload = true,
-                AutoloadGores = true,
-                AutoloadSounds = true
-            };
         }
 
 

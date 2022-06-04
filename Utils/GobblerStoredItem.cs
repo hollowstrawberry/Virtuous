@@ -9,7 +9,7 @@ namespace Virtuous.Utils
         public int type;
 
         /// <summary>The prefix of the stored item.</summary>
-        public byte prefix;
+        public int prefix;
 
 
         /// <summary>Creates a <see cref="GobblerStoredItem"/> from an item's type and prefix.</summary>

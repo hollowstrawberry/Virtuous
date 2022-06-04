@@ -2,30 +2,31 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Virtuous.Dusts;
 
 namespace Virtuous.Orbitals
 {
     public class Bullseye : OrbitalProjectile
     {
-        public override int Type => OrbitalID.Bullseye;
-        public override int FadeTime => 120;
+        public override int OrbitalType => OrbitalID.Bullseye;
+        public override int FadeTime => 600;
         public override float BaseDistance => 40;
 
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Summoned Sight");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Mira Mágica");
-            DisplayName.AddTranslation(GameCulture.Russian, "Призванный Прицел");
-            DisplayName.AddTranslation(GameCulture.Chinese, "召唤真视");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Mira Mágica");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Призванный Прицел");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "召唤真视");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = 24;
-            projectile.height = 58;
-            projectile.friendly = false; // Doesn't affect enemies
+            Projectile.width = 24;
+            Projectile.height = 58;
+            Projectile.friendly = false; // Doesn't affect enemies
         }
 
 
@@ -40,13 +41,13 @@ namespace Virtuous.Orbitals
         {
             if (BullseyeShot(player))
             {
-                player.rangedDamage *= 2.0f;
-                player.thrownDamage *= 2.0f;
+                player.GetDamage(DamageClass.Ranged) *= 2.0f;
+                player.GetDamage(DamageClass.Throwing) *= 2.0f;
             }
             else
             {
-                player.rangedDamage *= 0.8f;
-                player.thrownDamage *= 0.8f;
+                player.GetDamage(DamageClass.Ranged) *= 0.8f;
+                player.GetDamage(DamageClass.Throwing) *= 0.8f;
             }
         }
 
@@ -54,17 +55,17 @@ namespace Virtuous.Orbitals
         public override void Movement()
         {
             // Stays in front of the player
-            projectile.spriteDirection = player.direction;
-            SetPosition(new Vector2(player.direction * relativeDistance, 0));
+            Projectile.spriteDirection = player.direction;
+            SetPosition(new Vector2(player.direction * RelativeDistance, 0));
 
-            Lighting.AddLight(new Vector2(projectile.Center.X + 2 * player.direction, projectile.Center.Y), 0.5f, 0.3f, 0.05f);
+            Lighting.AddLight(new Vector2(Projectile.Center.X + 2 * player.direction, Projectile.Center.Y), 0.5f, 0.3f, 0.05f);
 
             // Special effect dust
-            if (Main.myPlayer == projectile.owner && BullseyeShot(player))
+            if (Main.myPlayer == Projectile.owner && BullseyeShot(player))
             {
                 var dust = Dust.NewDustDirect(
-                    new Vector2(projectile.Center.X + 2 * player.direction, projectile.Center.Y - 1),
-                    0, 0, mod.DustType<RainbowDust>(), 0f, 0f, 50, new Color(255, 127, 0, 50), 1.5f);
+                    new Vector2(Projectile.Center.X + 2 * player.direction, Projectile.Center.Y - 1),
+                    0, 0, Mod.Find<ModDust>(nameof(RainbowDust)).Type, 0f, 0f, 50, new Color(255, 127, 0, 50), 1.5f);
                 dust.velocity = new Vector2(player.direction * 2.5f, 0);
             }
         }
@@ -72,7 +73,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(255, 130, 20, 200) * projectile.Opacity;
+            return new Color(255, 130, 20, 200) * Projectile.Opacity;
         }
     }
 }

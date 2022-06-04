@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 
@@ -8,7 +9,7 @@ namespace Virtuous.Orbitals
 {
     public class SpikedBubble : OrbitalProjectile
     {
-        public override int Type => OrbitalID.SpikedBubble;
+        public override int OrbitalType => OrbitalID.SpikedBubble;
         public override int DyingTime => 30;
         public override float BaseDistance => 0;
         public override float RotationSpeed => 0; // At first I wanted this to rotate but it made the sprite look weird
@@ -24,15 +25,15 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spiked Bubble");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Burbuja Claveta");
-            DisplayName.AddTranslation(GameCulture.Russian, "Колючий Пузырь");
-            DisplayName.AddTranslation(GameCulture.Chinese, "尖刺泡泡");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Burbuja Claveta");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Колючий Пузырь");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "尖刺泡泡");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = OriginalSize;
-            projectile.height = OriginalSize;
+            Projectile.width = OriginalSize;
+            Projectile.height = OriginalSize;
         }
 
 
@@ -54,7 +55,7 @@ namespace Virtuous.Orbitals
             for (int i = 0; i < 50; i++)
             {
                 var dust = Dust.NewDustDirect(
-                    projectile.position, projectile.width, projectile.height,
+                    Projectile.position, Projectile.width, Projectile.height,
                     /*Type*/16, 0f, 0f, /*Alpha*/50, new Color(255, 200, 245), 1.2f);
                 dust.velocity *= 1.5f;
                 dust.noLight = false;
@@ -70,28 +71,28 @@ namespace Virtuous.Orbitals
 
         public override void Dying()
         {
-            if (projectile.timeLeft >= PopTime) // Expands until PopTime then stops
+            if (Projectile.timeLeft >= PopTime) // Expands until PopTime then stops
             {
                 // Change the apparent size
-                projectile.scale += (ExpandedScale - 1f) / (DyingTime - PopTime);
+                Projectile.scale += (ExpandedScale - 1f) / (DyingTime - PopTime);
                 // Change the hitbox size
-                projectile.height = (int)(OriginalSize * projectile.scale);
-                projectile.width  = (int)(OriginalSize * projectile.scale);
+                Projectile.height = (int)(OriginalSize * Projectile.scale);
+                Projectile.width  = (int)(OriginalSize * Projectile.scale);
                 // Align the sprite with its new size
-                drawOriginOffsetY = (projectile.height - OriginalSize) / 2;
-                drawOffsetX = (projectile.width - OriginalSize) / 2;
+                drawOriginOffsetY = (Projectile.height - OriginalSize) / 2;
+                drawOffsetX = (Projectile.width - OriginalSize) / 2;
 
-                projectile.alpha += (int)Math.Ceiling((float)(ExpandedAlpha - OriginalAlpha) / DyingTime); // Fade
+                Projectile.alpha += (int)Math.Ceiling((float)(ExpandedAlpha - OriginalAlpha) / DyingTime); // Fade
             }
-            else if (projectile.timeLeft == 1) // Last tick
+            else if (Projectile.timeLeft == 1) // Last tick
             {
-                Main.PlaySound(SoundID.Item54, projectile.Center); // Pop
+                SoundEngine.PlaySound(SoundID.Item54, Projectile.Center); // Pop
                 Lighting.AddLight(player.Center, 1.5f, 1.0f, 1.4f);
 
                 for (int i = 0; i < 50; i++)
                 {
                     var dust = Dust.NewDustDirect(
-                        projectile.Center + Main.rand.NextVector2(0, projectile.width / 2), // Random point in the bubble
+                        Projectile.Center + Main.rand.NextVector2(0, Projectile.width / 2), // Random point in the bubble
                         0, 0, /*Type*/16, 0, 0, /*Alpha*/100, new Color(255, 200, 245, 150), /*Scale*/1.2f);
                     dust.velocity *= 2;
                 }
@@ -112,7 +113,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(255, 200, 245, 150) * projectile.Opacity;
+            return new Color(255, 200, 245, 150) * Projectile.Opacity;
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using Virtuous.Projectiles;
+using Terraria.DataStructures;
 
 namespace Virtuous.Items
 {
@@ -14,55 +16,55 @@ namespace Virtuous.Items
             DisplayName.SetDefault("Art of War");
             Tooltip.SetDefault("\"Appear strong when you are, in fact, strong.\"\nWar arrows penetrate armor");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "El Arte de la Guerra");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "El Arte de la Guerra");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "\"Cuando conoces el cielo y la tierra, la victoria es inagotable.\"\n" +
                 "Las flechas de guerra penetran la armadura enemiga");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Искусство Войны");
-            Tooltip.AddTranslation(GameCulture.Russian, "\"Ты силён, когда ты силён.\"\nСтрелы Войны пробивают броню");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Искусство Войны");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "\"Ты силён, когда ты силён.\"\nСтрелы Войны пробивают броню");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "战争艺术");
-            Tooltip.AddTranslation(GameCulture.Chinese, "\"当你真正强大时,再去证明你的强大.\"\n战争之箭会穿透护甲");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "战争艺术");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "\"当你真正强大时,再去证明你的强大.\"\n战争之箭会穿透护甲");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 28;
-            item.height = 70;
-            item.useStyle = 5;
-            item.useTime = 5;
-            item.useAnimation = 30;
-            item.damage = 42;
-            item.crit = 10;
-            item.knockBack = 3.5f;
-            item.shoot = 1;
-            item.useAmmo = AmmoID.Arrow;
-            item.shootSpeed = 16f;
-            item.ranged = true;
-            item.noMelee = true;
-            item.autoReuse = true;
-            item.rare = 10;
-            item.value = Item.sellPrice(0, 25, 0, 0);
+            Item.width = 28;
+            Item.height = 70;
+            Item.useStyle = 5;
+            Item.useTime = 5;
+            Item.useAnimation = 30;
+            Item.damage = 42;
+            Item.crit = 10;
+            Item.knockBack = 3.5f;
+            Item.shoot = 1;
+            Item.useAmmo = AmmoID.Arrow;
+            Item.shootSpeed = 16f;
+            Item.ranged = true;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.rare = 10;
+            Item.value = Item.sellPrice(0, 25, 0, 0);
         }
 
 
-        public override bool ConsumeAmmo(Player player) => player.itemAnimation % 2 == 0; // Every so many uses
+        public override bool ConsumeItem(Player player) => player.itemAnimation % 2 == 0; // Every so many uses
 
         public override Vector2? HoldoutOffset() => new Vector2(-2, 0);
 
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockBack)
         {
             // Position is off the corner of the screen and velocity points toward the mouse
             Vector2 basePosition = player.Center + new Vector2(-player.direction * (Main.screenWidth / 2), -(Main.screenHeight / 2 + 100));
-            Vector2 baseVelocity = (Main.MouseWorld - basePosition).OfLength(item.shootSpeed);
+            Vector2 baseVelocity = (Main.MouseWorld - basePosition).OfLength(Item.shootSpeed);
 
             int projAmount = Main.rand.Next(2, 6);
             for (int i = 0; i < projAmount; i++)
             {
-                int newType = Main.rand.OneIn(2) ? type : mod.ProjectileType<WarArrow>(); // Arrows can be replaced by the special type
+                int newType = Main.rand.NextBool(2) ? type : Mod.Find<ModProjectile>(nameof(WarArrow)).Type; // Arrows can be replaced by the special type
 
                 float velocityRotation; // Adjustment for accuracy
                 switch (newType)
@@ -73,9 +75,9 @@ namespace Virtuous.Items
                 }
 
                 Vector2 newVelocity = baseVelocity.RotatedBy(velocityRotation * -player.direction);
-                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Main.rand.Next(150), Main.rand.OneIn(2)); // Random offset in either direction
+                Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Main.rand.Next(150), Main.rand.NextBool(2)); // Random offset in either direction
 
-                var proj = Projectile.NewProjectileDirect(newPosition, newVelocity, newType, damage, knockBack, player.whoAmI);
+                var proj = Projectile.NewProjectileDirect(null, newPosition, newVelocity, newType, damage, knockBack, player.whoAmI);
                 proj.tileCollide = false;
                 proj.noDropItem = true;
                 proj.netUpdate = true;
@@ -85,7 +87,7 @@ namespace Virtuous.Items
                 modProj.collidePositionY = player.position.Y;
             }
 
-            Main.PlaySound(SoundID.Item5, basePosition);
+            SoundEngine.PlaySound(SoundID.Item5, basePosition);
 
             //if (player.itemAnimation >= item.useAnimation - item.useTime) // If I wanted to make it shoot arrows normally as well
             //{
@@ -99,7 +101,7 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new GlobalRecipe(Mod);
             recipe.AddIngredient(ItemID.Tsunami);
             recipe.AddIngredient(ItemID.FragmentVortex, 10);
             recipe.AddIngredient(ItemID.DynastyWood, 30);

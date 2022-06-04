@@ -14,7 +14,7 @@ namespace Virtuous
     public class VirtuousItem : GlobalItem
     {
         public override bool InstancePerEntity => true;
-        public override bool CloneNewInstances => true;
+        protected override bool CloneNewInstances => true;
 
 
         /// <summary>Whether an item is being sucked by <see cref="Items.TheGobbler"/> and thus can't be picked up.</summary>
@@ -23,7 +23,7 @@ namespace Virtuous
 
         public override bool CanPickup(Item item, Player player)
         {
-            return beingGobbled ? false : base.CanPickup(item, player);
+            return !beingGobbled && base.CanPickup(item, player);
         }
     }
 }

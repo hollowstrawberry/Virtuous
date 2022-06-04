@@ -58,7 +58,7 @@ namespace Virtuous
         /// <summary>The final duration of an orbital, all effects taken into account.</summary>
         public int ModifiedOrbitalTime(OrbitalItem item)
         {
-            return (int)(item.duration * durationMultiplier + OrbitalID.Orbital[item.type].DyingTime);
+            return (int)(item.Duration * durationMultiplier + OrbitalID.Orbital[item.OrbitalType].DyingTime);
         }
 
 
@@ -79,9 +79,9 @@ namespace Virtuous
                 if (!active[type]) continue;
 
                 var orbital = Main.projectile
-                    .Where(proj => proj.active && proj.owner == player.whoAmI)
-                    .Select(proj => proj.modProjectile as OrbitalProjectile)
-                    .FirstOrDefault(orb => orb != null && orb.Type == type);
+                    .Where(proj => proj.active && proj.owner == Player.whoAmI)
+                    .Select(proj => proj.ModProjectile as OrbitalProjectile)
+                    .FirstOrDefault(orb => orb != null && orb.OrbitalType == type);
 
                 orbital?.PlayerEffects();
             }

@@ -13,24 +13,24 @@ namespace Virtuous.Items.Accessories
             Tooltip.SetDefault(
                 "TEST ITEM\nSublime flight and speed!\nExtreme mobility on all surfaces\nTemporary immunity to lava");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Arcángel");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Arcángel");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "TEST ITEM\nVuelo y velocidad sublimes\nMobilidad extrema en toda superficie\nInmunidad temoral a la lava");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Архангел");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Архангел");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "TEST ITEM\nандиозный полёт и ско ость!\nМобильность на вс пов ност\nВ м нна н у звимость к лав");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 36;
-            item.height = 32;
-            item.value = Item.sellPrice(1, 0, 0, 0);
-            item.rare = 11;
-            item.accessory = true;
-            item.expert = true;
+            Item.width = 36;
+            Item.height = 32;
+            Item.value = Item.sellPrice(1, 0, 0, 0);
+            Item.rare = 11;
+            Item.accessory = true;
+            Item.expert = true;
         }
         
 

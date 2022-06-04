@@ -18,38 +18,38 @@ namespace Virtuous.Items
             DisplayName.SetDefault("Rainbow");
             Tooltip.SetDefault("Shoot straight up to rain down on your foes");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Arco Iris");
-            Tooltip.AddTranslation(GameCulture.Spanish, "Dispara al cielo para hacer llover destrucción sobre tus enemigos");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Arco Iris");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Dispara al cielo para hacer llover destrucción sobre tus enemigos");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Радуга");
-			Tooltip.AddTranslation(GameCulture.Russian, "Пустите стрелу вверх для навесной атаки");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Радуга");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Пустите стрелу вверх для навесной атаки");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "彩虹");
-            Tooltip.AddTranslation(GameCulture.Chinese, "向天空射击会降临彩虹箭雨");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "彩虹");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "向天空射击会降临彩虹箭雨");
         }
 
 
         public override void SetDefaults()
         {
-            item.width = 42;
-            item.height = 90;
-            item.useStyle = 5;
-            item.UseSound = SoundID.Item5;
-            item.damage = 300;
-            item.crit = 10;
-            item.knockBack = 6f;
-            item.shoot = mod.ProjectileType<RainbowArrow>();
-            item.useAmmo = AmmoID.Arrow;
-            item.shootSpeed = 12f;
-            item.ranged = true;
-            item.noMelee = true;
-            item.autoReuse = true;
-            item.rare = 10;
-            item.value = Item.sellPrice(0, 50, 0, 0);
+            Item.width = 42;
+            Item.height = 90;
+            Item.useStyle = 5;
+            Item.UseSound = SoundID.Item5;
+            Item.damage = 300;
+            Item.crit = 10;
+            Item.knockBack = 6f;
+            Item.shoot = Mod.Find<ModProjectile>(nameof(RainbowArrow)).Type;
+            Item.useAmmo = AmmoID.Arrow;
+            Item.shootSpeed = 12f;
+            Item.ranged = true;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.rare = 10;
+            Item.value = Item.sellPrice(0, 50, 0, 0);
 
             //Replaced in CanUseItem
-            item.useTime = 30;
-            item.useAnimation = item.useTime;
+            Item.useTime = 30;
+            Item.useAnimation = Item.useTime;
         }
 
 
@@ -65,8 +65,8 @@ namespace Virtuous.Items
         public override void GetWeaponDamage(Player player, ref int damage)
         {
             // Shoots white arrows slower
-            item.useTime = ShootingWhiteArrow(player) ? 25 : 13;
-            item.useAnimation = item.useTime;
+            Item.useTime = ShootingWhiteArrow(player) ? 25 : 13;
+            Item.useAnimation = Item.useTime;
 
             base.GetWeaponDamage(player, ref damage);
         }
@@ -74,7 +74,7 @@ namespace Virtuous.Items
 
         public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            type = mod.ProjectileType<RainbowArrow>();
+            type = Mod.Find<ModProjectile>(nameof(RainbowArrow)).Type;
             
             RainbowArrow.ArrowMode mode;
             if (ShootingWhiteArrow(player))
@@ -89,7 +89,7 @@ namespace Virtuous.Items
             }
 
             var proj = Projectile.NewProjectileDirect(position, new Vector2(speedX, speedY), type, damage, knockBack, player.whoAmI);
-            var arrow = proj.modProjectile as RainbowArrow;
+            var arrow = proj.ModProjectile as RainbowArrow;
             arrow.Mode = mode;
             arrow.ColorId = NextColor;
             proj.netUpdate = true;
@@ -99,7 +99,7 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.DaedalusStormbow);
             recipe.AddIngredient(ItemID.LunarBar, 10);
             recipe.AddIngredient(ItemID.Diamond);

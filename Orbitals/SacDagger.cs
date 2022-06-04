@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -8,7 +8,7 @@ namespace Virtuous.Orbitals
 {
     public class SacDagger : OrbitalProjectile
     {
-        public override int Type => OrbitalID.SacDagger;
+        public override int OrbitalType => OrbitalID.SacDagger;
         public override int DyingTime => 30;
         public override int FadeTime => DyingTime;
         public override float BaseDistance => 105;
@@ -23,28 +23,28 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sacrificial Dagger");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Daga de Sacrificio");
-            DisplayName.AddTranslation(GameCulture.Russian, "Жертвенный Кинжал");
-            DisplayName.AddTranslation(GameCulture.Chinese, "牺牲匕首");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Daga de Sacrificio");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Жертвенный Кинжал");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "牺牲匕首");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = 48;
-            projectile.height = 54;
+            Projectile.width = 48;
+            Projectile.height = 54;
         }
 
 
 
         private void LifeSteal(Vector2 position, int damage) // Spawns vampire heal projectiles
         {
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
 
             float heal = Math.Min(damage / 30f, player.statLifeMax - player.statLife); // Caps at the life missing
             if (heal > 0)
             {
                 Projectile.NewProjectile(
-                    position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, projectile.owner, projectile.owner, heal);
+                    position, Vector2.Zero, ProjectileID.VampireHeal, 0, 0, Projectile.owner, Projectile.owner, heal);
             }
         }
 
@@ -60,36 +60,36 @@ namespace Virtuous.Orbitals
         public override void FirstTick()
         {
             base.FirstTick();
-            projectile.rotation += 45.ToRadians(); // 45 degrees because of the sprite
+            Projectile.rotation += 45.ToRadians(); // 45 degrees because of the sprite
         }
 
 
         public override void SpecialFunction()
         {
-            int spinDirection = specialFunctionTimer >= 0 ? +1 : -1; // Positive for clockwise, negative for counterclockwise
+            int spinDirection = SpecialFunctionTimer >= 0 ? +1 : -1; // Positive for clockwise, negative for counterclockwise
 
-            if (specialFunctionTimer == 0) // First tick, sets direction
+            if (SpecialFunctionTimer == 0) // First tick, sets direction
             {
                 spinDirection = player.direction;
             }
-            else if (Math.Abs(specialFunctionTimer) == SpecialSpinTime - 1) // Last tick
+            else if (Math.Abs(SpecialFunctionTimer) == SpecialSpinTime - 1) // Last tick
             {
                 orbitalPlayer.SpecialFunctionActive = false;
             }
             
             RotatePosition(SpecialSpinSpeed * spinDirection); // Rotate around the player
-            projectile.rotation += SpecialSpinSpeed * spinDirection; // Rotate sprite
+            Projectile.rotation += SpecialSpinSpeed * spinDirection; // Rotate sprite
 
-            specialFunctionTimer--; // Undoes the normal increase of the timer
-            specialFunctionTimer += spinDirection; // Advances timer in either direction
+            SpecialFunctionTimer--; // Undoes the normal increase of the timer
+            SpecialFunctionTimer += spinDirection; // Advances timer in either direction
 
-            projectile.netUpdate = true;
+            Projectile.netUpdate = true;
         }
 
 
         public override void PostAll()
         {
-            Lighting.AddLight(projectile.Center, 1.8f, 0f, 0f);
+            Lighting.AddLight(Projectile.Center, 1.8f, 0f, 0f);
             base.PostAll(); // Fades
         }
 
@@ -129,7 +129,7 @@ namespace Virtuous.Orbitals
 
         public override Color? GetAlpha(Color newColor)
         {
-            return new Color(255, 0, 0, 180) * projectile.Opacity;
+            return new Color(255, 0, 0, 180) * Projectile.Opacity;
         }
     }
 }

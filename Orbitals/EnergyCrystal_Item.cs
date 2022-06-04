@@ -12,34 +12,34 @@ namespace Virtuous.Orbitals
                 "The crystals fire at nearby enemies\nGetting hurt causes a momentary overdrive\n" +
                 "Aligns with either magic or melee users");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Cristal de Energía");
-            Tooltip.AddTranslation(GameCulture.Spanish,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Cristal de Energía");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish),
                 "Los cristales dispararán a enemigos cercanos\nSer herido los sobrecalentará por un momento\n" +
                 "El daño se alínea con magia o cuerpo a cuerpo");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Энергетический Кристалл");
-            Tooltip.AddTranslation(GameCulture.Russian,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Энергетический Кристалл");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian),
                 "Кристаллы стреляют по ближайшим врагам\nПолучение урона вызывает короткую перегрузку\nПодходит воинам и магам");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "能量水晶");
-            Tooltip.AddTranslation(GameCulture.Chinese,
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "能量水晶");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese),
                 "能量水晶会向附近的敌人射击\n受到伤害会瞬间过载\n更适合战士或法师使用");
         }
 
 
         public override void SetOrbitalDefaults()
         {
-            type = OrbitalID.EnergyCrystal;
-            duration = 30 * 60;
-            amount = 5;
+            OrbitalType = OrbitalID.EnergyCrystal;
+            Duration = 30 * 60;
+            Amount = 5;
 
-            item.width = 18;
-            item.height = 32;
-            item.damage = 55;
-            item.knockBack = 2f;
-            item.mana = 40;
-            item.rare = 6;
-            item.value = Item.sellPrice(0, 8, 0, 0);
+            Item.width = 18;
+            Item.height = 32;
+            Item.damage = 55;
+            Item.knockBack = 2f;
+            Item.mana = 40;
+            Item.rare = 6;
+            Item.value = Item.sellPrice(0, 8, 0, 0);
         }
     }
 }

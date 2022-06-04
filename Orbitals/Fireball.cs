@@ -1,5 +1,6 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.Localization;
 
@@ -7,7 +8,7 @@ namespace Virtuous.Orbitals
 {
     class Fireball : OrbitalProjectile
     {
-        public override int Type => OrbitalID.Fireball;
+        public override int OrbitalType => OrbitalID.Fireball;
         public override int DyingTime => 60;
         public override int FadeTime => DyingTime;
         public override float BaseDistance => 90;
@@ -21,14 +22,14 @@ namespace Virtuous.Orbitals
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fireball");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Bola de Fuego");
-            DisplayName.AddTranslation(GameCulture.Chinese, "火球");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Bola de Fuego");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "火球");
         }
 
         public override void SetOrbitalDefaults()
         {
-            projectile.width = OriginalSize;
-            projectile.height = OriginalSize;
+            Projectile.width = OriginalSize;
+            Projectile.height = OriginalSize;
         }
 
 
@@ -38,8 +39,8 @@ namespace Virtuous.Orbitals
             for (int i = 0; i < 7; i++) 
             {
                 var dust = Dust.NewDustDirect(
-                    projectile.position, projectile.width, projectile.height,
-                    Main.rand.Choose(new int[] { DustID.Fire, DustID.SolarFlare, 158 }), 0f, 0f, projectile.alpha, default(Color), 1f);
+                    Projectile.position, Projectile.width, Projectile.height,
+                    Main.rand.Choose(new int[] { DustID.Fire, DustID.SolarFlare, 158 }), 0f, 0f, Projectile.alpha, default(Color), 1f);
 
                 dust.noGravity = true;
                 if (dust.type == DustID.SolarFlare) dust.scale = 1.5f;
@@ -55,7 +56,7 @@ namespace Virtuous.Orbitals
 
             for (int i = 0; i < 15; i++)
             {
-                var dust = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.SolarFlare);
+                var dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.SolarFlare);
                 dust.velocity *= 2;
             }
         }
@@ -75,26 +76,26 @@ namespace Virtuous.Orbitals
 
         public override void SpecialFunction()
         {
-            if (specialFunctionTimer == 0) // First tick
+            if (SpecialFunctionTimer == 0) // First tick
             {
-                Tools.ResizeProjectile(projectile.whoAmI, BurstSize, BurstSize, true);
-                Main.PlaySound(SoundID.Item14, projectile.Center);
+                Tools.ResizeProjectile(Projectile.whoAmI, BurstSize, BurstSize, true);
+                SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
 
                 MakeDust();
 
                 for (int i = 0; i < 6; i++) // Extra dust
                 {
                     var dust = Dust.NewDustDirect(
-                        projectile.position, projectile.width, projectile.height, DustID.SolarFlare, 0f, 0f,
-                        projectile.alpha, default(Color), 4f);
+                        Projectile.position, Projectile.width, Projectile.height, DustID.SolarFlare, 0f, 0f,
+                        Projectile.alpha, default(Color), 4f);
                     dust.noGravity = true;
                 }
 
-                projectile.Damage(); // Damage enemies instantly
+                Projectile.Damage(); // Damage enemies instantly
             }
-            else if (specialFunctionTimer >= 5) // Last tick
+            else if (SpecialFunctionTimer >= 5) // Last tick
             {
-                Tools.ResizeProjectile(projectile.whoAmI, OriginalSize, OriginalSize, true);
+                Tools.ResizeProjectile(Projectile.whoAmI, OriginalSize, OriginalSize, true);
                 orbitalPlayer.SpecialFunctionActive = false;
             }
         }
@@ -107,9 +108,9 @@ namespace Virtuous.Orbitals
         public override void Dying()
         {
             // Accelerates throughout DyingTime
-            float rotationMult = 7f * (DyingTime - projectile.timeLeft) / DyingTime;
+            float rotationMult = 7f * (DyingTime - Projectile.timeLeft) / DyingTime;
             RotatePosition(OrbitingSpeed * rotationMult);
-            projectile.rotation += RotationSpeed * rotationMult;
+            Projectile.rotation += RotationSpeed * rotationMult;
         }
 
 

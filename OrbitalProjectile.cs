@@ -20,7 +20,7 @@ namespace Virtuous
         public const bool Outwards = true;
 
         // Owner alias
-        public Player player => Main.player[projectile.owner];
+        public Player player => Main.player[Projectile.owner];
         public OrbitalPlayer orbitalPlayer => player.GetModPlayer<OrbitalPlayer>();
 
 
@@ -28,7 +28,7 @@ namespace Virtuous
         // Type traits
 
         /// <summary>The orbital ID associated with the projectile. A valid ID must be provided.</summary>
-        public abstract int Type { get; }
+        public abstract int OrbitalType { get; }
 
         /// <summary>How many ticks, if any, the projectile fades away for.</summary>
         public virtual int FadeTime => 0;
@@ -63,38 +63,38 @@ namespace Virtuous
         // Current state
 
         /// <summary>Relative position to the player, stored as velocity.</summary>
-        public Vector2 relativePosition
+        public Vector2 RelativePosition
         {
-            get { return projectile.velocity; }
-            set { projectile.velocity = value; }
+            get { return Projectile.velocity; }
+            set { Projectile.velocity = value; }
         }
 
-        /// <summary>Distance away from the player. Affects <see cref="relativePosition"/> directly.</summary>
-        public float relativeDistance
+        /// <summary>Distance away from the player. Affects <see cref="RelativePosition"/> directly.</summary>
+        public float RelativeDistance
         {
-            get { return relativePosition.Length(); }
-            set { relativePosition = relativePosition.OfLength(value); }
+            get { return RelativePosition.Length(); }
+            set { RelativePosition = RelativePosition.OfLength(value); }
         }
 
         /// <summary>Current speed of back-and-forth oscillation, Stored as the projectile's ai[0].</summary>
-        public float oscillationSpeed
+        public float OscillationSpeed
         {
-            get { return projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
 
         /// <summary>Direction of movement, inwards or outwards, used by default for oscillation. Stored as the projectile's ai[1].</summary>
-        public bool direction
+        public bool Direction
         {
-            get { return projectile.ai[1] == 0; }
-            set { projectile.ai[1] = value ? 0 : 1; }
+            get { return Projectile.ai[1] == 0; }
+            set { Projectile.ai[1] = value ? 0 : 1; }
         }
 
         /// <summary>Ticks upward as long as <see cref="IsDoingSpecial"/> is true. Stored as the projectile's localAI[0].</summary>
-        public int specialFunctionTimer
+        public int SpecialFunctionTimer
         {
-            get { return (int)projectile.localAI[0]; }
-            set { projectile.localAI[0] = value; }
+            get { return (int)Projectile.localAI[0]; }
+            set { Projectile.localAI[0] = value; }
         }
 
 
@@ -102,13 +102,13 @@ namespace Virtuous
         // Checks
 
         /// <summary>Whether it's the first tick of the orbital's life.</summary>
-        public virtual bool IsFirstTick => relativeDistance == 1.0f; // Orbitals are created with a velocity vector of length 1
+        public virtual bool IsFirstTick => RelativeDistance == 1.0f; // Orbitals are created with a velocity vector of length 1
 
         /// <summary>Whether the projectile is at the end of its life</summary>
-        public virtual bool IsDying => DyingTime > 0 && Main.myPlayer == projectile.owner && orbitalPlayer.time <= DyingTime;
+        public virtual bool IsDying => DyingTime > 0 && Main.myPlayer == Projectile.owner && orbitalPlayer.time <= DyingTime;
 
         /// <summary>Whether to execute <see cref="SpecialFunction"/>.</summary>
-        public virtual bool IsDoingSpecial => Main.myPlayer == projectile.owner && orbitalPlayer.SpecialFunctionActive && !IsDying;
+        public virtual bool IsDoingSpecial => Main.myPlayer == Projectile.owner && orbitalPlayer.SpecialFunctionActive && !IsDying;
 
 
 
@@ -118,26 +118,26 @@ namespace Virtuous
         /// <summary>Moves the orbital relative to the player.</summary>
         public void SetPosition(Vector2? newPos = null)
         {
-            if (newPos != null) relativePosition = (Vector2)newPos;
-            projectile.Center = player.MountedSpriteCenter() + relativePosition;
+            if (newPos != null) RelativePosition = (Vector2)newPos;
+            Projectile.Center = player.MountedSpriteCenter() + RelativePosition;
         }
 
         /// <summary>Rotates the orbital relative to the player by the given amount.</summary>
         public void RotatePosition(float radians)
         {
-            SetPosition(relativePosition.RotatedBy(radians));
+            SetPosition(RelativePosition.RotatedBy(radians));
         }
 
         /// <summary>Moves the orbital relative to the player and at the given distance.</summary>
         public void SetDistance(float newDistance)
         {
-            SetPosition(relativePosition.OfLength(newDistance));
+            SetPosition(RelativePosition.OfLength(newDistance));
         }
 
         /// <summary>Adjusts the distance relative to the player by the given amount.</summary>
         public void AddDistance(float distance)
         {
-            SetDistance(relativeDistance + distance);
+            SetDistance(RelativeDistance + distance);
         }
 
 
@@ -152,15 +152,15 @@ namespace Virtuous
 
         public sealed override void SetDefaults() // Safe way to set standard defaults
         {
-            projectile.netImportant = true; // So it syncs more frequently in multiplayer
-            projectile.penetrate = -1;
-            projectile.friendly = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.usesIDStaticNPCImmunity = true; // Doesn't interfere with other piercing damage
-            projectile.idStaticNPCHitCooldown = 10;
-            projectile.alpha = OriginalAlpha;
-            projectile.timeLeft = (DyingTime > 0) ? DyingTime : 2; // Time left resets every tick during the orbital's life
+            Projectile.netImportant = true; // So it syncs more frequently in multiplayer
+            Projectile.penetrate = -1;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.usesIDStaticNPCImmunity = true; // Doesn't interfere with other piercing damage
+            Projectile.idStaticNPCHitCooldown = 10;
+            Projectile.alpha = OriginalAlpha;
+            Projectile.timeLeft = (DyingTime > 0) ? DyingTime : 2; // Time left resets every tick during the orbital's life
 
             SetOrbitalDefaults();
         }
@@ -177,8 +177,8 @@ namespace Virtuous
         public virtual void FirstTick()
         {
             SetDistance(BaseDistance);
-            oscillationSpeed = OscillationSpeedMax;
-            projectile.rotation = relativePosition.ToRotation();
+            OscillationSpeed = OscillationSpeedMax;
+            Projectile.rotation = RelativePosition.ToRotation();
         }
 
 
@@ -196,14 +196,14 @@ namespace Virtuous
         {
             if (OscillationSpeedMax != 0)
             {
-                if      (oscillationSpeed >= +OscillationSpeedMax) direction = Inwards;
-                else if (oscillationSpeed <= -OscillationSpeedMax) direction = Outwards;
-                oscillationSpeed += OscillationAcc * (direction ? +1 : -1); // Accelerate in the corresponding direction
-                AddDistance(oscillationSpeed);
+                if      (OscillationSpeed >= +OscillationSpeedMax) Direction = Inwards;
+                else if (OscillationSpeed <= -OscillationSpeedMax) Direction = Outwards;
+                OscillationSpeed += OscillationAcc * (Direction ? +1 : -1); // Accelerate in the corresponding direction
+                AddDistance(OscillationSpeed);
             }
 
             RotatePosition(OrbitingSpeed);
-            projectile.rotation += RotationSpeed;
+            Projectile.rotation += RotationSpeed;
         }
 
 
@@ -217,7 +217,7 @@ namespace Virtuous
         /// By default, it shoots outward according to <see cref="DyingSpeed"/>.</summary>
         public virtual void DyingFirstTick()
         {
-            projectile.velocity = relativePosition.OfLength(DyingSpeed);
+            Projectile.velocity = RelativePosition.OfLength(DyingSpeed);
         }
 
 
@@ -225,8 +225,8 @@ namespace Virtuous
         /// By default, it shoots outward according to <see cref="DyingSpeed"/>.</summary>
         public virtual void Dying()
         {
-            projectile.velocity -= projectile.velocity.OfLength(DyingSpeed / DyingTime); // Slows down to a halt
-            projectile.position += projectile.velocity; // Re-applies velocity as it would normally be nullified for orbitals
+            Projectile.velocity -= Projectile.velocity.OfLength(DyingSpeed / DyingTime); // Slows down to a halt
+            Projectile.position += Projectile.velocity; // Re-applies velocity as it would normally be nullified for orbitals
         }
 
 
@@ -234,15 +234,15 @@ namespace Virtuous
         /// according to <see cref="FadeTime"/> and <see cref="OriginalAlpha"/>.</summary>
         public virtual void PostAll()
         {
-            if (FadeTime > 0 && Main.myPlayer == projectile.owner)
+            if (FadeTime > 0 && Main.myPlayer == Projectile.owner)
             {
                 if (orbitalPlayer.time <= FadeTime)
                 {
-                    projectile.alpha += Math.Max(1, (int)((255f - OriginalAlpha) / FadeTime)); // Fades away completely over fadeTime
+                    Projectile.alpha += Math.Max(1, (int)((255f - OriginalAlpha) / FadeTime)); // Fades away completely over fadeTime
                 }
                 else
                 {
-                    projectile.alpha = OriginalAlpha; // Resets the alpha in case the time resets during fading time
+                    Projectile.alpha = OriginalAlpha; // Resets the alpha in case the time resets during fading time
                 }
             }
         }
@@ -253,11 +253,11 @@ namespace Virtuous
         /// <summary>Skeleton for orbital behavior running every tick.</summary>
         public sealed override void AI()
         {
-            projectile.netUpdate = true; // Sync to multiplayer, I'm lazy
+            Projectile.netUpdate = true; // Sync to multiplayer, I'm lazy
 
-            if (!orbitalPlayer.active[Type] && Main.myPlayer == projectile.owner) // Keep it alive only while the summon is active
+            if (!orbitalPlayer.active[OrbitalType] && Main.myPlayer == Projectile.owner) // Keep it alive only while the summon is active
             {
-                projectile.Kill();
+                Projectile.Kill();
             }
             else
             {
@@ -274,11 +274,11 @@ namespace Virtuous
                 if (IsDoingSpecial)
                 {
                     SpecialFunction();
-                    specialFunctionTimer++;
+                    SpecialFunctionTimer++;
                 }
                 else
                 {
-                    specialFunctionTimer = 0;
+                    SpecialFunctionTimer = 0;
                 }
 
                 if (IsDying) // timeLeft ticks down during dying time
@@ -292,13 +292,13 @@ namespace Virtuous
                 }
                 else // Keeps the orbital from dying naturally
                 {
-                    projectile.timeLeft = Math.Max(2, DyingTime);
+                    Projectile.timeLeft = Math.Max(2, DyingTime);
                 }
 
 
                 PostAll();
 
-                projectile.position -= projectile.velocity; // Reverses the effect of velocity so the orbital doesn't move by default
+                Projectile.position -= Projectile.velocity; // Reverses the effect of velocity so the orbital doesn't move by default
             }
         }
 
@@ -306,21 +306,21 @@ namespace Virtuous
 
         public override bool? CanCutTiles() => false; // Orbitals would be glorified lawnmowers otherwise
 
-        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 100) * projectile.Opacity; // Fully lit
+        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, 100) * Projectile.Opacity; // Fully lit
 
 
         // Syncs local ai slots in multiplayer
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(projectile.localAI[0]);
-            writer.Write(projectile.localAI[1]);
+            writer.Write(Projectile.localAI[0]);
+            writer.Write(Projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[1] = reader.ReadSingle();
         }
     }
 }

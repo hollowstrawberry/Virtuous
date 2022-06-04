@@ -13,41 +13,41 @@ namespace Virtuous.Items
     {
         public override void SetStaticDefaults()
         {
-            Item.staff[item.type] = true;
+            Item.staff[Item.type] = true;
 
             DisplayName.SetDefault("Staff of Flinging");
             Tooltip.SetDefault("Ground-born enemies will take damage from the fall");
 
-            DisplayName.AddTranslation(GameCulture.Spanish, "Bastón del Lanzamiento");
-            Tooltip.AddTranslation(GameCulture.Spanish, "Los enemigos terrestres reciben daño por caída");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Bastón del Lanzamiento");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Los enemigos terrestres reciben daño por caída");
 
-            DisplayName.AddTranslation(GameCulture.Russian, "Посох Броска");
-            Tooltip.AddTranslation(GameCulture.Russian, "Наземные враги получают урон от падения");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Посох Броска");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Russian), "Наземные враги получают урон от падения");
 
-            DisplayName.AddTranslation(GameCulture.Chinese, "抛掷法杖");
-            Tooltip.AddTranslation(GameCulture.Chinese, "地面上的敌人扔上天,使它们摔死");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "抛掷法杖");
+            Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "地面上的敌人扔上天,使它们摔死");
         }
 
 
         public override void SetDefaults()
         {
-            item.width  = 64;
-            item.height = 64;
-            item.useStyle = 5;
-            item.useTime = 20;
-            item.useAnimation = item.useTime;
-            item.shoot = mod.ProjectileType<ProjFlinging>();
-            item.UseSound = SoundID.Item8;
-            item.damage = 60;
-            item.crit = 15;
-            item.knockBack = 15f;
-            item.mana = 15;
-            item.shootSpeed = 1;
-            item.magic = true;
-            item.noMelee = true;
-            item.autoReuse = false;
-            item.rare = 7;
-            item.value = Item.sellPrice(0, 10, 0, 0);
+            Item.width  = 64;
+            Item.height = 64;
+            Item.useStyle = 5;
+            Item.useTime = 20;
+            Item.useAnimation = Item.useTime;
+            Item.shoot = Mod.Find<ModProjectile>(nameof(ProjFlinging)).Type;
+            Item.UseSound = SoundID.Item8;
+            Item.damage = 60;
+            Item.crit = 15;
+            Item.knockBack = 15f;
+            Item.mana = 15;
+            Item.shootSpeed = 1;
+            Item.magic = true;
+            Item.noMelee = true;
+            Item.autoReuse = false;
+            Item.rare = 7;
+            Item.value = Item.sellPrice(0, 10, 0, 0);
         }
 
 
@@ -56,7 +56,7 @@ namespace Virtuous.Items
             var line = tooltips.FirstOrDefault(x => x.mod == "Terraria" && x.Name == "Knockback");
             if (line != null)
             {
-                if (Language.ActiveCulture == GameCulture.Spanish)
+                if (Language.ActiveCulture == GameCulture.FromCultureName(GameCulture.CultureName.Spanish))
                     line.text = "Retroceso Espacial";
                 else
                     line.text ="Flying Knockback";
@@ -73,7 +73,7 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(mod);
+            var recipe = new ModRecipe(Mod);
             recipe.AddIngredient(ItemID.DirtRod);
             recipe.AddIngredient(ItemID.GiantHarpyFeather);
             recipe.AddIngredient(ItemID.ChlorophyteBar, 10);

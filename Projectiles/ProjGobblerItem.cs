@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -27,20 +29,20 @@ namespace Virtuous.Projectiles
 
         public bool Consumed // Whether the item was consumed and will drop from this projectile. Stored as ai[1]
         {
-            get { return projectile.ai[1] != 0; }
-            set { projectile.ai[1] = value ? 1 : 0; }
+            get { return Projectile.ai[1] != 0; }
+            set { Projectile.ai[1] = value ? 1 : 0; }
         }
 
         private int ItemType // Stored as ai[0]
         {
-            get { return (int)projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return (int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
 
         private byte Prefix // Stored as localAI[0]
         {
-            get { return (byte)projectile.localAI[0]; }
-            set { projectile.localAI[0] = value; }
+            get { return (byte)Projectile.localAI[0]; }
+            set { Projectile.localAI[0] = value; }
         }
 
 
@@ -55,18 +57,18 @@ namespace Virtuous.Projectiles
         {
             if (GobblerHelper.IsTool(StoredItem))
             {
-                if (projectile.penetrate > 1)
+                if (Projectile.penetrate > 1)
                 {
                     if (StoredItem.UseSound != null)
                     {
-                        Main.PlaySound(StoredItem.UseSound, projectile.Center);
+                        SoundEngine.PlaySound(StoredItem.UseSound, Projectile.Center);
                     }
-                    projectile.penetrate--;
-                    projectile.velocity *= new Vector2(-0.5f, -0.5f);
-                    projectile.netUpdate = true; // Sync to multiplayer just in case
+                    Projectile.penetrate--;
+                    Projectile.velocity *= new Vector2(-0.5f, -0.5f);
+                    Projectile.netUpdate = true; // Sync to multiplayer just in case
                     return true;
                 }
-                else projectile.Kill();
+                else Projectile.Kill();
             }
 
             return false;
@@ -78,22 +80,22 @@ namespace Virtuous.Projectiles
         {
             if (!StoredItem.magic) return;
 
-            if (Main.myPlayer == projectile.owner)
+            if (Main.myPlayer == Projectile.owner)
             {
-                Tools.ResizeProjectile(projectile.whoAmI, projectile.width + 50, projectile.height + 50);
-                projectile.Damage(); // Applies damage in the area
-                projectile.netUpdate = true;
+                Tools.ResizeProjectile(Projectile.whoAmI, Projectile.width + 50, Projectile.height + 50);
+                Projectile.Damage(); // Applies damage in the area
+                Projectile.netUpdate = true;
             }
 
-            Main.PlaySound(SoundID.Item14, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
             for (int i = 0; i < Math.Max(4, (int)GobblerHelper.DiagonalSize(StoredItem) / 4); i++) // More dust the higher the size
             {
                 Gore.NewGore(
-                    projectile.position + new Vector2(Main.rand.NextFloat(projectile.width),
-                    Main.rand.NextFloat(projectile.height)), Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.2f, 1.2f));
+                    Projectile.position + new Vector2(Main.rand.NextFloat(Projectile.width),
+                    Main.rand.NextFloat(Projectile.height)), Vector2.Zero, Main.rand.Next(61, 64), Main.rand.NextFloat(0.2f, 1.2f));
 
                 Dust.NewDust(
-                    projectile.position, projectile.width, projectile.height,
+                    Projectile.position, Projectile.width, Projectile.height,
                     /*Type*/31, 0f, 0f, 0, default(Color), Main.rand.NextFloat(2));
             }
         }
@@ -104,7 +106,7 @@ namespace Virtuous.Projectiles
         {
             if (!Consumed) return;
 
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
 
             if (GobblerHelper.IsDepletable(StoredItem)) // Item won't be returned
             {
@@ -114,14 +116,14 @@ namespace Virtuous.Projectiles
                 }
                 if (StoredItem.makeNPC != 0 && Main.netMode != NetmodeID.MultiplayerClient) // Critters
                 {
-                    NPC.NewNPC((int)(projectile.Center.X), (int)(projectile.Center.Y), StoredItem.makeNPC);
+                    NPC.NewNPC((int)(Projectile.Center.X), (int)(Projectile.Center.Y), StoredItem.makeNPC);
                 }
             }
             else // Drops the stored item
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient) // Will be synced from the server in multiplayer
                 {
-                    Item.NewItem(projectile.Center, StoredItem.type, prefixGiven: StoredItem.prefix);
+                    Item.NewItem(Projectile.Center, StoredItem.type, prefixGiven: StoredItem.prefix);
                 }
             }
         }
@@ -130,17 +132,17 @@ namespace Virtuous.Projectiles
         // When this projectile dies it can shoot out what the stored item would shoot
         private void ItemShoot()
         {
-            if (projectile.owner != Main.myPlayer) return; // It'll get synced in multiplayer
+            if (Projectile.owner != Main.myPlayer) return; // It'll get synced in multiplayer
 
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
 
             // Orbital behavior
-            var orbitalItem = StoredItem.modItem as OrbitalItem;
+            var orbitalItem = StoredItem.ModItem as OrbitalItem;
             if (orbitalItem != null)
             {
                 Vector2 position = player.Center;
                 Vector2 velocity = Vector2.Zero;
-                int type = orbitalItem.item.shoot;
+                int type = orbitalItem.Item.shoot;
                 int damage = StoredItem.damage;
                 orbitalItem.GetWeaponDamage(player, ref damage);
 
@@ -152,8 +154,8 @@ namespace Virtuous.Projectiles
             else if (StoredItem.type == ItemID.ExplosiveBunny) // I love these, and they don't have a value for shoot
             {
                 var proj = Projectile.NewProjectileDirect(
-                    projectile.Center, Vector2.Zero, ProjectileID.ExplosiveBunny,
-                    StoredItem.damage, projectile.knockBack, player.whoAmI);
+                    Projectile.Center, Vector2.Zero, ProjectileID.ExplosiveBunny,
+                    StoredItem.damage, Projectile.knockBack, player.whoAmI);
                 proj.timeLeft = 3;
             }
 
@@ -169,8 +171,8 @@ namespace Virtuous.Projectiles
                     }
                     else // Player has the corresponding buff active
                     {
-                        var summon = Main.projectile.First(x => x.active && x.type == StoredItem.shoot && x.owner == projectile.owner);
-                        summon.Center = projectile.Center; // Teleports the pet or summon to this projectile
+                        var summon = Main.projectile.First(x => x.active && x.type == StoredItem.shoot && x.owner == Projectile.owner);
+                        summon.Center = Projectile.Center; // Teleports the pet or summon to this projectile
                         if (StoredItem.damage <= 0) return; // Does nothing else if it's a pet
                     }
                 }
@@ -203,7 +205,7 @@ namespace Virtuous.Projectiles
                 for (int i = 0; i < projAmount; i++)
                 {
                     Vector2 rotation = startingRotation.RotatedBy(Tools.FullCircle * i / projAmount); // In a circle
-                    Vector2 position = projectile.Center + rotation;
+                    Vector2 position = Projectile.Center + rotation;
                     Vector2 velocity = rotation * StoredItem.shootSpeed;
 
                     var proj = Projectile.NewProjectileDirect(
@@ -231,88 +233,88 @@ namespace Virtuous.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Item");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Objeto");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Objeto");
         }
 
 
         public override void SetDefaults()
         {
-            projectile.width = 20;
-            projectile.height = 20;
-            projectile.damage = 100;
-            projectile.alpha = 0;
-            projectile.timeLeft = Lifespan;
-            projectile.penetrate = 1;
-            projectile.friendly = true;
-            projectile.tileCollide = true;
-            projectile.ignoreWater = false;
-            projectile.usesLocalNPCImmunity = true; // Hits go by individual projectile
-            projectile.localNPCHitCooldown = 10;
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.damage = 100;
+            Projectile.alpha = 0;
+            Projectile.timeLeft = Lifespan;
+            Projectile.penetrate = 1;
+            Projectile.friendly = true;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = false;
+            Projectile.usesLocalNPCImmunity = true; // Hits go by individual projectile
+            Projectile.localNPCHitCooldown = 10;
         }
 
 
         public override void AI()
         {
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
 
             // First tick
-            if (projectile.timeLeft == Lifespan && StoredItem.type != ItemID.None)
+            if (Projectile.timeLeft == Lifespan && StoredItem.type != ItemID.None)
             {
                 // Inherit properties from the stored item
-                Tools.ResizeProjectile(projectile.whoAmI, StoredItem.width, StoredItem.height);
-                projectile.damage = GobblerHelper.ShotDamage(StoredItem, player);
-                projectile.knockBack = GobblerHelper.ShotKnockBack(StoredItem, player);
-                projectile.melee  = StoredItem.melee;
-                projectile.magic  = StoredItem.magic;
-                projectile.ranged = StoredItem.ranged;
-                projectile.Name = StoredItem.Name;
+                Tools.ResizeProjectile(Projectile.whoAmI, StoredItem.width, StoredItem.height);
+                Projectile.damage = GobblerHelper.ShotDamage(StoredItem, player);
+                Projectile.knockBack = GobblerHelper.ShotKnockBack(StoredItem, player);
+                Projectile.melee  = StoredItem.melee;
+                Projectile.magic  = StoredItem.magic;
+                Projectile.ranged = StoredItem.ranged;
+                Projectile.Name = StoredItem.Name;
 
                 // Transparency; copies appear translucent
                 if (!Consumed && !GobblerHelper.IsDepletable(StoredItem))
                 {
-                    projectile.alpha = 120;
+                    Projectile.alpha = 120;
                 }
 
                 // Items without gravity
                 if (ItemID.Sets.ItemNoGravity[StoredItem.type]) 
                 {
-                    projectile.timeLeft = 2 * 60;
-                    projectile.penetrate = -1;
+                    Projectile.timeLeft = 2 * 60;
+                    Projectile.penetrate = -1;
                 }
 
                 // Penetration
-                if (StoredItem.melee) projectile.penetrate = -1; // Melee weapons penetrate infinitely
-                if (GobblerHelper.IsTool(StoredItem)) projectile.penetrate = 3; // But tools penetrate only a bit
-                else if (StoredItem.accessory) projectile.penetrate = 2;
+                if (StoredItem.melee) Projectile.penetrate = -1; // Melee weapons penetrate infinitely
+                if (GobblerHelper.IsTool(StoredItem)) Projectile.penetrate = 3; // But tools penetrate only a bit
+                else if (StoredItem.accessory) Projectile.penetrate = 2;
 
-                projectile.netUpdate = true; // Sync to multiplayer
+                Projectile.netUpdate = true; // Sync to multiplayer
             }
 
             // Every tick: Projectile rotation and movement
             if (!ItemID.Sets.ItemNoGravity[StoredItem.type])
             {
-                projectile.velocity.Y += GobblerHelper.DiagonalSize(StoredItem) / 200f; // How fast they fall down depends on their size
+                Projectile.velocity.Y += GobblerHelper.DiagonalSize(StoredItem) / 200f; // How fast they fall down depends on their size
 
                 // Swingable weapons and projectiles point to where they're going, adjusted for sprite orientation
                 if (StoredItem.useStyle == 1 && !StoredItem.consumable && !GobblerHelper.IsTool(StoredItem))
                 {
-                    projectile.rotation = projectile.velocity.ToRotation() + 45.ToRadians();
+                    Projectile.rotation = Projectile.velocity.ToRotation() + 45.ToRadians();
                 }
                 else if (StoredItem.ammo > 0)
                 {
-                    projectile.rotation = projectile.velocity.ToRotation();
-                    if (StoredItem.ammo == AmmoID.Arrow) projectile.rotation += -90.ToRadians();
-                    else if (StoredItem.ammo == AmmoID.Bullet || StoredItem.ammo == AmmoID.Dart) projectile.rotation += 90.ToRadians();
-                    else if (StoredItem.ammo == AmmoID.StyngerBolt || StoredItem.ammo == AmmoID.CandyCorn) projectile.rotation += 45.ToRadians();
+                    Projectile.rotation = Projectile.velocity.ToRotation();
+                    if (StoredItem.ammo == AmmoID.Arrow) Projectile.rotation += -90.ToRadians();
+                    else if (StoredItem.ammo == AmmoID.Bullet || StoredItem.ammo == AmmoID.Dart) Projectile.rotation += 90.ToRadians();
+                    else if (StoredItem.ammo == AmmoID.StyngerBolt || StoredItem.ammo == AmmoID.CandyCorn) Projectile.rotation += 45.ToRadians();
                 }
-                else projectile.rotation += Tools.RevolutionPerSecond; // The rest of the items spin
+                else Projectile.rotation += Tools.RevolutionPerSecond; // The rest of the items spin
             }
         }
 
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Collision.HitTiles(projectile.position, projectile.velocity, projectile.width, projectile.height);
+            Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
 
             if (ToolBounce()) return false;
 
@@ -322,19 +324,19 @@ namespace Virtuous.Projectiles
 
         public override void Kill(int timeLeft)
         {
-            Player player = Main.player[projectile.owner];
+            Player player = Main.player[Projectile.owner];
 
             ItemShoot();
             MagicExplode();
             ItemConsume();
 
-            if (StoredItem.UseSound != null) Main.PlaySound(StoredItem.UseSound, projectile.Center);
+            if (StoredItem.UseSound != null) SoundEngine.PlaySound(StoredItem.UseSound, Projectile.Center);
         }
 
 
         public override bool? CanHitNPC(NPC target)
         {
-            bool canHit = projectile.CanHit(target);
+            bool canHit = Projectile.CanHit(target);
 
             if (canHit && target.type == StoredItem.makeNPC) return false; // Critters can't hit themselves
 
@@ -381,14 +383,14 @@ namespace Virtuous.Projectiles
 
 
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) // Draws the stored item's texture as the projectile's
+        public override bool PreDraw(ref Color lightColor) // Draws the stored item's texture as the projectile's
         {
             if (StoredItem.type != ItemID.None) 
             {
-                Texture2D texture = Main.itemTexture[StoredItem.type];
+                Texture2D texture = TextureAssets.Item[StoredItem.type].Value;
                 Rectangle? frame = null; // Which part of the texture to load, the sourceRect
                 Vector2 drawOrigin = texture.Size() / 2; // Center of the texture
-                Vector2 position = projectile.Center - Main.screenPosition; // Where to draw the texture
+                Vector2 position = Projectile.Center - Main.screenPosition; // Where to draw the texture
 
                 if (Main.itemAnimations[StoredItem.type] != null) // For animated items, gets the current frame
                 {
@@ -406,8 +408,8 @@ namespace Virtuous.Projectiles
                 }
                
                 spriteBatch.Draw(
-                    texture, position, frame, lightColor * projectile.Opacity,
-                    projectile.rotation, drawOrigin, projectile.scale, SpriteEffects.None, 0f);
+                    texture, position, frame, lightColor * Projectile.Opacity,
+                    Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0f);
 
                 return false;
             }

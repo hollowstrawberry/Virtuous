@@ -69,8 +69,8 @@ namespace Virtuous
 
             if (changeDrawPos)
             {
-                projectile.modProjectile.drawOffsetX += (newWidth - projectile.width) / 2;
-                projectile.modProjectile.drawOriginOffsetY += (newHeight - projectile.height) / 2;
+                projectile.ModProjectile.DrawOffsetX += (newWidth - projectile.width) / 2;
+                projectile.ModProjectile.DrawOriginOffsetY += (newHeight - projectile.height) / 2;
             }
 
             projectile.position += new Vector2(projectile.width / 2, projectile.height / 2);
@@ -160,12 +160,6 @@ namespace Virtuous
         public static Vector2 NextVector2(this UnifiedRandom rand, float minLength, float maxLength)
         {
             return rand.NextVector2().OfLength(rand.NextFloat(minLength, maxLength));
-        }
-
-        /// <summary>Returns true with a 1/amount chance.</summary>
-        public static bool OneIn(this UnifiedRandom rand, int amount)
-        {
-            return rand.Next(amount) == 0;
         }
 
         /// <summary>Returns a random element from a list.</summary>

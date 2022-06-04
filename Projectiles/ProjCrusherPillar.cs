@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -18,88 +19,88 @@ namespace Virtuous.Projectiles
 
         private int MoveTime // How long the projectile will move for, stored as localAI[0]
         {
-            get { return (int)projectile.localAI[0]; }
-            set { projectile.localAI[0] = value; }
+            get { return (int)Projectile.localAI[0]; }
+            set { Projectile.localAI[0] = value; }
         } 
 
         public int Appearance // How long it moves for before stopping, stored as ai[0]
         {
-            get { return (int)projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return (int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
 
         public bool Crit // Whether the original hit was a critical hit or not, stored as ai[1]
         {
-            get { return projectile.ai[1] != 0; }
-            set { projectile.ai[1] = value ? 1 : 0; }
+            get { return Projectile.ai[1] != 0; }
+            set { Projectile.ai[1] = value ? 1 : 0; }
         }
 
 
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 3;
 
             DisplayName.SetDefault("Crusher Pillar");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Pilar Apretillo");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Pilar Apretillo");
         }
 
 
         public override void SetDefaults()
         {
-            projectile.width = 40;
-            projectile.height = 76;
-            projectile.alpha = 0;
-            projectile.penetrate = -1;
-            projectile.timeLeft = Lifespan;
-            projectile.friendly = true;
-            projectile.melee = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.usesLocalNPCImmunity = true; // Hits once per individual projectile
-            projectile.localNPCHitCooldown = Lifespan;
+            Projectile.width = 40;
+            Projectile.height = 76;
+            Projectile.alpha = 0;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = Lifespan;
+            Projectile.friendly = true;
+            Projectile.melee = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.usesLocalNPCImmunity = true; // Hits once per individual projectile
+            Projectile.localNPCHitCooldown = Lifespan;
         }
 
 
         public override void AI()
         {
-            if (projectile.timeLeft == Lifespan) // The pojectile has just spawned
+            if (Projectile.timeLeft == Lifespan) // The pojectile has just spawned
             {
                 // It'll move until it reaches the edge of the opposite pillar
-                MoveTime = (int)Math.Ceiling((SpawnDistance-projectile.width/2) / projectile.velocity.Length());
+                MoveTime = (int)Math.Ceiling((SpawnDistance-Projectile.width/2) / Projectile.velocity.Length());
                 MoveTime += 1; // Overshoot as the sprites are irregular
 
-                if (projectile.velocity.X < 0) projectile.spriteDirection = -1; //Going left
-                projectile.frame = Appearance;
+                if (Projectile.velocity.X < 0) Projectile.spriteDirection = -1; //Going left
+                Projectile.frame = Appearance;
 
-                projectile.netUpdate = true; // Syncs to multiplayer just in case
+                Projectile.netUpdate = true; // Syncs to multiplayer just in case
             }
            
-            else if (projectile.timeLeft == Lifespan - MoveTime) // The pillars have just contacted
+            else if (Projectile.timeLeft == Lifespan - MoveTime) // The pillars have just contacted
             {
                 // Dust spawns at the contact line
-                Vector2 dustoffset = new Vector2(projectile.velocity.X > 0 ? +projectile.width / 2 : -projectile.width / 2, 0);
+                Vector2 dustoffset = new Vector2(Projectile.velocity.X > 0 ? +Projectile.width / 2 : -Projectile.width / 2, 0);
 
                 int dustAmount = Crit ? Main.rand.Next(6, 10) : Main.rand.Next(12, 15);
                 for (int i = 1; i <= dustAmount; i++)
                 {
                     // More dust concentration in the center
-                    dustoffset.Y = Main.rand.OneIn(3) ? 0 : Main.rand.Next(-projectile.height/2, projectile.height/2 + 1);
+                    dustoffset.Y = Main.rand.NextBool(3) ? 0 : Main.rand.Next(-Projectile.height/2, Projectile.height/2 + 1);
                     
                     var dust = Dust.NewDustDirect(
-                        projectile.Center + dustoffset, 0, 0, DustID.Stone, Alpha: 100, Scale: 2f);
-                    dust.velocity = projectile.velocity * Main.rand.NextFloat(-0.5f, +0.5f);
+                        Projectile.Center + dustoffset, 0, 0, DustID.Stone, Alpha: 100, Scale: 2f);
+                    dust.velocity = Projectile.velocity * Main.rand.NextFloat(-0.5f, +0.5f);
                     dust.fadeIn = 0.5f;
                     dust.noGravity = true;
                 }
 
-                Main.PlaySound(SoundID.Dig, projectile.position);
-                projectile.velocity = Vector2.Zero;
+                SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
+                Projectile.velocity = Vector2.Zero;
             }
 
-            else if(projectile.timeLeft <= FadeTime) // Fading
+            else if(Projectile.timeLeft <= FadeTime) // Fading
             {
-                projectile.alpha += (int)Math.Ceiling(200f / FadeTime);
+                Projectile.alpha += (int)Math.Ceiling(200f / FadeTime);
             }
         }
 
@@ -137,14 +138,14 @@ namespace Virtuous.Projectiles
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(projectile.localAI[0]);
-            writer.Write(projectile.localAI[1]);
+            writer.Write(Projectile.localAI[0]);
+            writer.Write(Projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[1] = reader.ReadSingle();
         }
     }
 }

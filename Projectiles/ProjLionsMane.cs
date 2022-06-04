@@ -22,17 +22,17 @@ namespace Virtuous.Projectiles
 
         public int Direction // +1 for clockwise, -1 for counterclockwise, stored as ai[0]
         {
-            get { return (int)projectile.ai[0]; }
-            set { projectile.ai[0] = value; }
+            get { return (int)Projectile.ai[0]; }
+            set { Projectile.ai[0] = value; }
         }
 
         public Vector2 RelativePosition // Relative position from the player, stored as velocity
         {
-            get { return projectile.velocity; }
+            get { return Projectile.velocity; }
             set
             {
-                projectile.velocity = value;
-                projectile.position = Main.player[projectile.owner].SpriteCenter() + value;
+                Projectile.velocity = value;
+                Projectile.position = Main.player[Projectile.owner].SpriteCenter() + value;
             }
         }
 
@@ -41,27 +41,27 @@ namespace Virtuous.Projectiles
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lion's Mane");
-            DisplayName.AddTranslation(GameCulture.Spanish, "Melena de León");
+            DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Spanish), "Melena de León");
         }
 
 
         public override void SetDefaults()
         {
-            projectile.width = 22;
-            projectile.height = 22;
-            projectile.alpha = 255;
-            projectile.friendly = true;
-            projectile.magic = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.MaxUpdates = Updates;
-            projectile.timeLeft = Lifespan;
+            Projectile.width = 22;
+            Projectile.height = 22;
+            Projectile.alpha = 255;
+            Projectile.friendly = true;
+            Projectile.magic = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.MaxUpdates = Updates;
+            Projectile.timeLeft = Lifespan;
         }
 
 
         public override void AI()
         {
-            projectile.damage = (int)Math.Ceiling(projectile.damage * DamageMultiplier);
+            Projectile.damage = (int)Math.Ceiling(Projectile.damage * DamageMultiplier);
             RelativePosition = RelativePosition.RotatedBy(OrbitingSpeed * Direction) * DistanceMultiplier;
 
             // Dust
@@ -73,22 +73,22 @@ namespace Virtuous.Projectiles
                 {
                     case 0:
                         dust = Dust.NewDustDirect(
-                            projectile.position, projectile.width, projectile.height,
-                            DustID.Fire, 0f, 0f, projectile.alpha, default(Color), 0.5f);
+                            Projectile.position, Projectile.width, Projectile.height,
+                            DustID.Fire, 0f, 0f, Projectile.alpha, default(Color), 0.5f);
                         dust.velocity *= 3.0f;
                         break;
 
                     case 1:
                         dust = Dust.NewDustDirect(
-                            projectile.position, projectile.width, projectile.height,
-                            158, 0f, 0f, projectile.alpha, default(Color), 0.5f);
+                            Projectile.position, Projectile.width, Projectile.height,
+                            158, 0f, 0f, Projectile.alpha, default(Color), 0.5f);
                         dust.velocity *= 1.5f;
                         break;
 
                     default:
                         dust = Dust.NewDustDirect(
-                            projectile.position, projectile.width, projectile.height,
-                            DustID.SolarFlare, 0f, 0f, projectile.alpha, default(Color), 0.5f);
+                            Projectile.position, Projectile.width, Projectile.height,
+                            DustID.SolarFlare, 0f, 0f, Projectile.alpha, default(Color), 0.5f);
                         break;
                 }
 
@@ -97,15 +97,15 @@ namespace Virtuous.Projectiles
             }
 
 
-            projectile.position -= projectile.velocity; // Undoes normal movement
+            Projectile.position -= Projectile.velocity; // Undoes normal movement
 
-            Lighting.AddLight(projectile.Center, 0.8f, 0.7f, 0.4f);
+            Lighting.AddLight(Projectile.Center, 0.8f, 0.7f, 0.4f);
         }
 
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(255 - projectile.alpha, 255 - projectile.alpha, 255 - projectile.alpha, 64 - projectile.alpha / 4);
+            return new Color(255 - Projectile.alpha, 255 - Projectile.alpha, 255 - Projectile.alpha, 64 - Projectile.alpha / 4);
         }
     }
 }
