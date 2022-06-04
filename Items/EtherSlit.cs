@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using Virtuous.Projectiles;
+using Terraria.DataStructures;
 
 namespace Virtuous.Items
 {
@@ -34,19 +35,19 @@ namespace Virtuous.Items
             Item.width = 24;
             Item.height = 28;
             Item.shoot = Mod.Find<ModProjectile>(nameof(ProjSummonedSword)).Type;
-            Item.UseSound = Mod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/Slash");
+            Item.UseSound = new Terraria.Audio.SoundStyle("Sounds/Item/Slash");
             Item.damage = 250;
             Item.knockBack = 7f;
             Item.mana = 7;
-            Item.magic = true;
+            Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
             Item.autoReuse = true;
             Item.noUseGraphic = true;
-            Item.rare = 10;
+            Item.rare = ItemRarityID.Red;
             Item.value = Item.sellPrice(0, 50, 0, 0);
 
             // Replaced in SetUseStats
-            Item.useStyle = 5;
+            Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 10;
             Item.useAnimation = Item.useTime;
             Item.shootSpeed = 16f;
@@ -62,7 +63,7 @@ namespace Virtuous.Items
             // Left Click
             if (player.altFunctionUse != 2)
             {
-                Item.useStyle = 5;
+                Item.useStyle = ItemUseStyleID.Shoot;
                 Item.useTime = 10;
                 Item.useAnimation = Item.useTime;
                 Item.shootSpeed = 16f;
@@ -71,7 +72,7 @@ namespace Virtuous.Items
             // Right Click
             else
             {
-                Item.useStyle = 3;
+                Item.useStyle = ItemUseStyleID.Thrust;
                 Item.useTime = 7;
                 Item.useAnimation = Item.useTime;
                 Item.shootSpeed = 20f;
@@ -87,17 +88,14 @@ namespace Virtuous.Items
             return base.CanUseItem(player);
         }
 
-
-        public override void GetWeaponDamage(Player player, ref int damage)
+        public override void ModifyWeaponDamage(Player player, ref StatModifier damage)
         {
             SetUseStats(player); // Always displays left-click stats
             Tools.HandleAltUseAnimation(player);
-
-            base.GetWeaponDamage(player, ref damage);
         }
 
 
-        public override bool Shoot(Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             for (int i = 0; i < 20; i++) // Makes 20 attempts at finding a projectile position that the player can reach
             {
@@ -107,25 +105,24 @@ namespace Virtuous.Items
 
             // Right click: Horizontal, in the direction the player is facing
             // Left click: Middlepoint between straight from the player to the cursor and straight from the sword to the cursor
-            Vector2 velocity = player.altFunctionUse == 2
+            velocity = player.altFunctionUse == 2
                 ? new Vector2(player.direction * Item.shootSpeed, 0)
                 : Vector2.Lerp(Main.MouseWorld - player.Center, Main.MouseWorld - position, 0.5f).OfLength(Item.shootSpeed);
 
-            Projectile.NewProjectile(position, velocity, type, damage, knockBack, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             return false;
         }
 
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(Mod);
-            recipe.AddIngredient(ItemID.SkyFracture);
-            recipe.AddIngredient(ItemID.LunarBar, 10);
-            recipe.AddIngredient(ItemID.Ectoplasm, 20);
-            recipe.AddIngredient(ItemID.BlackLens);
-            recipe.AddTile(TileID.LunarCraftingStation);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+                .AddIngredient(ItemID.SkyFracture)
+                .AddIngredient(ItemID.LunarBar, 10)
+                .AddIngredient(ItemID.Ectoplasm, 20)
+                .AddIngredient(ItemID.BlackLens)
+                .AddTile(TileID.LunarCraftingStation)
+                .Register();
         }
     }
 }

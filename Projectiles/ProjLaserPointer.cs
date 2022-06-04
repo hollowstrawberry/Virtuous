@@ -36,22 +36,16 @@ namespace Virtuous.Projectiles
             set { Projectile.ai[0] = (int)value; }
         }
 
-        private Color RgbColor
+        private Color RgbColor => LaserColor switch
         {
-            get
-            {
-                switch (LaserColor)
-                {
-                    default:                return Color.Red;
-                    case LaserColor.Green:  return new Color(0, 255, 0);
-                    case LaserColor.Blue:   return Color.Blue;
-                    case LaserColor.Yellow: return Color.Yellow;
-                    case LaserColor.Purple: return new Color(230, 0, 255);
-                    case LaserColor.White:  return Color.White;
-                    case LaserColor.Orange: return Color.OrangeRed;
-                }
-            }
-        }
+            LaserColor.Green => new Color(0, 255, 0),
+            LaserColor.Blue => Color.Blue,
+            LaserColor.Yellow => Color.Yellow,
+            LaserColor.Purple => new Color(230, 0, 255),
+            LaserColor.White => Color.White,
+            LaserColor.Orange => Color.OrangeRed,
+            _ => Color.Red,
+        };
 
 
 
@@ -72,17 +66,17 @@ namespace Virtuous.Projectiles
         {
             Vector2 endPoint = GetEndPoint();
 
-            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value; // The dot which composes the line
+            var texture = TextureAssets.Projectile[Projectile.type].Value; // The dot which composes the line
             float drawRotation = Projectile.velocity.ToRotation(); //Direction of the line
-            Vector2 drawOrigin = new Vector2(Projectile.width / 2, Projectile.height / 2);
+            var drawOrigin = new Vector2(Projectile.width / 2, Projectile.height / 2);
 
-            Rectangle drawRect = new Rectangle( // Where the line will be from corner to corner
+            var drawRect = new Rectangle( // Where the line will be from corner to corner
                 (int)Math.Round(Projectile.Center.X - Main.screenPosition.X),
                 (int)Math.Round(Projectile.Center.Y - Main.screenPosition.Y),
                 (int)Math.Round((endPoint - Projectile.Center).Length()),
                 Projectile.width);
 
-            spriteBatch.Draw(texture, drawRect, null, RgbColor, drawRotation, Vector2.Zero, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, drawOrigin, drawRect, RgbColor, drawRotation, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             OtherFunEffects(endPoint);
 

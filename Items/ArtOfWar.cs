@@ -33,19 +33,19 @@ namespace Virtuous.Items
         {
             Item.width = 28;
             Item.height = 70;
-            Item.useStyle = 5;
+            Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = 5;
             Item.useAnimation = 30;
             Item.damage = 42;
             Item.crit = 10;
             Item.knockBack = 3.5f;
-            Item.shoot = 1;
+            Item.shoot = ProjectileID.WoodenArrowFriendly;
             Item.useAmmo = AmmoID.Arrow;
             Item.shootSpeed = 16f;
-            Item.ranged = true;
+            Item.DamageType = DamageClass.Ranged;
             Item.noMelee = true;
             Item.autoReuse = true;
-            Item.rare = 10;
+            Item.rare = ItemRarityID.Red;
             Item.value = Item.sellPrice(0, 25, 0, 0);
         }
 
@@ -65,15 +65,12 @@ namespace Virtuous.Items
             for (int i = 0; i < projAmount; i++)
             {
                 int newType = Main.rand.NextBool(2) ? type : Mod.Find<ModProjectile>(nameof(WarArrow)).Type; // Arrows can be replaced by the special type
-
-                float velocityRotation; // Adjustment for accuracy
-                switch (newType)
+                var velocityRotation = newType switch
                 {
-                    case ProjectileID.JestersArrow: velocityRotation = 0; break;
-                    case ProjectileID.HolyArrow:    velocityRotation = 7.ToRadians(); break;
-                    default:                        velocityRotation = 10.ToRadians(); break;
-                }
-
+                    ProjectileID.JestersArrow => 0,
+                    ProjectileID.HolyArrow => 7.ToRadians(),
+                    _ => 10.ToRadians(),
+                };
                 Vector2 newVelocity = baseVelocity.RotatedBy(velocityRotation * -player.direction);
                 Vector2 newPosition = basePosition + baseVelocity.Perpendicular(Main.rand.Next(150), Main.rand.NextBool(2)); // Random offset in either direction
 
@@ -101,13 +98,12 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new GlobalRecipe(Mod);
-            recipe.AddIngredient(ItemID.Tsunami);
-            recipe.AddIngredient(ItemID.FragmentVortex, 10);
-            recipe.AddIngredient(ItemID.DynastyWood, 30);
-            recipe.AddTile(TileID.LunarCraftingStation);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+                .AddIngredient(ItemID.Tsunami)
+                .AddIngredient(ItemID.FragmentVortex, 10)
+                .AddIngredient(ItemID.DynastyWood, 30)
+                .AddTile(TileID.LunarCraftingStation)
+                .Register();
         }
     }
 }

@@ -30,16 +30,16 @@ namespace Virtuous.Items
             Item.width = 43;
             Item.height = 37;
             Item.scale = 1.1f;
-            Item.useStyle = 1;
+            Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 40;
             Item.useAnimation = Item.useTime;
             Item.UseSound = SoundID.Item1;
             Item.damage = 100;
             Item.crit = 5;
             Item.knockBack = 5f;
-            Item.melee = true;
+            Item.DamageType = DamageClass.Melee;
             Item.autoReuse = true;
-            Item.rare = 9;
+            Item.rare = ItemRarityID.Cyan;
             Item.value = Item.sellPrice(0, 15, 0, 0);
         }
 
@@ -67,13 +67,12 @@ namespace Virtuous.Items
 
         public override void AddRecipes()
         {
-            var recipe = new ModRecipe(Mod);
-            recipe.AddIngredient(ItemID.StaffofEarth);
-            recipe.AddIngredient(ItemID.ChlorophyteWarhammer);
-            recipe.AddIngredient(ItemID.Marble, 20);
-            recipe.AddTile(TileID.MythrilAnvil);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe()
+                .AddIngredient(ItemID.StaffofEarth)
+                .AddIngredient(ItemID.ChlorophyteWarhammer)
+                .AddIngredient(ItemID.Marble, 20)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
         }
     }
 }
